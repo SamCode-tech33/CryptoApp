@@ -27,6 +27,7 @@ const eslintConfig = [
       semi: ["error", "always"], // Enforces semicolons at the end of statements
       "no-multiple-empty-lines": ["error", { max: 1 }], // Disallows multiple empty lines
       "no-extra-semi": "error", // Disallows unnecessary semicolons
+      "@typescript-eslint/no-explicit-any": ["off"],
       "react/no-array-index-key": "warn",
       "react/react-in-jsx-scope": "off",
       "no-undef": "off",

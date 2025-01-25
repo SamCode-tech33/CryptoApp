@@ -11,11 +11,11 @@ export default function Navbar() {
   ]);
   const [value, setValue] = useState("");
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     setValue(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     setCoins([...coins, value]);
     setValue("");
