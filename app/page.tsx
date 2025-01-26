@@ -1,29 +1,32 @@
+"use client";
+import StoreProvider from "./StoreProvider";
+import { useAppSelector, useAppDispatch } from "@/lib/hooks";
+import { addTodo, toggleTodo, removeTodo } from "@/lib/features/todo";
+
+const List = () => {
+  const todos = useAppSelector((state: any) => state.todos);
+  const dispatch = useAppDispatch();
+
+  return (
+    <div>
+      <button onClick={() => dispatch(addTodo())}>Add Stuff</button>
+      {todos.map((todo: any, index: any) => (
+        <li key={todo.id}>
+          {todo.value}
+          <button onClick={() => dispatch(toggleTodo(index))}>
+            {todo.completed ? "done" : "pending"}
+          </button>
+          <button onClick={() => dispatch(removeTodo(todo))}>DELETE</button>
+        </li>
+      ))}
+    </div>
+  );
+};
+
 export default function Home() {
   return (
-    <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-      <div
-        style={{
-          width: "100%",
-          height: "0",
-          paddingBottom: "81%",
-          position: "relative",
-        }}
-      >
-        <iframe
-          src="https://giphy.com/embed/l3vRlT2k2L35Cnn5C"
-          width="100%"
-          height="100%"
-          style={{ position: "absolute" }}
-          frameBorder="0"
-          className="giphy-embed"
-          allowFullScreen
-        ></iframe>
-      </div>
-      <p>
-        <a href="https://giphy.com/gifs/dance-donald-l3vRlT2k2L35Cnn5C">
-          via GIPHY
-        </a>
-      </p>
-    </main>
+    <StoreProvider>
+      <List />
+    </StoreProvider>
   );
 }
