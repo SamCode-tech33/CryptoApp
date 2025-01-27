@@ -33,6 +33,11 @@ export default function RootLayout({
             <Link href="/">Home</Link>
             <Link href="/portfolio">Portfolio</Link>
           </div>
+          <div>
+            <Link href="/convertor">Convertor</Link>
+            <Link href="/coins">Coins</Link>
+          </div>
+          <button>Compare</button>
         </div>
         {children}
       </body>
