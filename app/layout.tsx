@@ -28,11 +28,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div style={{ height: "100px", background: "red" }}>
+        <div>
           <div>
             <Link href="/">Home</Link>
             <Link href="/portfolio">Portfolio</Link>
           </div>
+          <div>
+            <Link href="/coins">Coins</Link>
+            <Link href="/convertor">Convertor</Link>
+          </div>
+          <button>Compare</button>
         </div>
         {children}
       </body>
