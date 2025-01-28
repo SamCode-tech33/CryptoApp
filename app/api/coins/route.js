@@ -1,4 +1,3 @@
-// app/api/coins/route.js
 import axios from "axios";
 
 export async function GET() {

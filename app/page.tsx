@@ -2,7 +2,10 @@
 import StoreProvider from "./StoreProvider";
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { addTodo, toggleTodo, removeTodo } from "@/lib/features/todo";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
+//eslint-disable-next-line
 const List = () => {
   const todos = useAppSelector((state: any) => state.todos);
   const dispatch = useAppDispatch();
@@ -24,9 +27,15 @@ const List = () => {
 };
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("/coins");
+  }, [router]);
+
   return (
     <StoreProvider>
-      <List />
+      <div></div>
     </StoreProvider>
   );
 }

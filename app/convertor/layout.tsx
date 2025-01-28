@@ -5,7 +5,6 @@ export default function BlogLayout({
 }) {
   return (
     <section>
-      <div style={{ height: "100px", background: "green" }}></div>
       {children}
     </section>
   );
