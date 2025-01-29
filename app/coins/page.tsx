@@ -5,7 +5,6 @@ export default async function Coins() {
     <div>
       <ul>
         <Navcoin />
-        <h1>COIN LINK WORKING</h1>
       </ul>
     </div>
   );
