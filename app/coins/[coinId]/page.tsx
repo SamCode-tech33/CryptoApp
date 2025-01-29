@@ -25,7 +25,7 @@ export default function Coin({ params }: any) {
 
   useEffect(() => {
     getCoin();
-  }, [loading]);
+  }, [params]);
 
   return (
     <div>
