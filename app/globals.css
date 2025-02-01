@@ -25,3 +25,8 @@ li {
   background: rgba(185, 206, 208, 0.3);
   padding: 2px;
 }
+
+.coin-wrapper {
+  margin-top: 48px;
+  margin-left: 48px;
+}
