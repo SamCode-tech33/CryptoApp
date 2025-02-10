@@ -33,7 +33,10 @@ export default function Navcoin() {
       ) : (
         <ul>
           {coins.map((coin: any) => (
-            <li key={coin.id}>
+            <li
+              key={coin.id}
+              className="dark:bg-gray-600 text-black dark:text-white bg-slate-200"
+            >
               <Link href={`coins/${coin.name}`}>
                 {coin.name}({coin.symbol}) ${coin.quote.USD.price.toFixed(2)}{" "}
                 {coin.quote.USD.percent_change_1h.toFixed(3)}%{" "}
