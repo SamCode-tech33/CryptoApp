@@ -2,33 +2,26 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { addCommas } from "../Utility";
+import { handleImageError } from "../Utility";
 import { useRouter } from "next/navigation";
 
 export default function Navcoin() {
-  const [coins, setCoins] = useState<any>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [coins, setCoins] = useState<any>([]);
 
   const router = useRouter();
 
   const getCoins = async () => {
-    setIsLoading(true);
+    setLoading(true);
     try {
       const { data } = await axios.get("/api/coins");
       setCoins(data.data);
-      setIsLoading(false);
       //eslint-disable-next-line
     } catch (error) {
       setError(true);
-      setIsLoading(false);
     }
-  };
-
-  const handleImageError = (
-    event: React.SyntheticEvent<HTMLImageElement, Event>
-  ) => {
-    event.currentTarget.src =
-      "https://i.ibb.co/rKMFQPFM/pngaaa-com-3638314.png";
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -38,7 +31,7 @@ export default function Navcoin() {
   return (
     <div className="mt-12">
       {error && <p>Something went wrong. Please try again later.</p>}
-      {isLoading ? (
+      {loading ? (
         <p>Loading...</p>
       ) : (
         <ul className="mx-16">
@@ -87,7 +80,7 @@ export default function Navcoin() {
               <li
                 key={coin.id}
                 onClick={() => router.push(`coins/${coin.name}`)}
-                className="dark:bg-gray-800 text-black dark:text-white bg-slate-200 h-14 flex items-center rounded-sm"
+                className="dark:bg-gray-800 dark:hover:bg-slate-700 text-black dark:text-white bg-slate-200 h-14 flex items-center rounded-sm"
               >
                 <div className="w-8 flex justify-center mr-4">
                   <span>{index + 1}</span>

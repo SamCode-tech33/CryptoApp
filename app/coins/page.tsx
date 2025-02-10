@@ -1,5 +1,7 @@
 "use client";
+
 import Navcoin from "../components/Navcoin";
+import Slidercoin from "../components/Slidercoin";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
@@ -19,13 +21,7 @@ export default function Coins() {
       <div className="flex justify-self-end">
         <Button className="mt-8 mr-16">Compare</Button>
       </div>
-      <div
-        id="default-carousel"
-        className="h-32 flex my-8 mx-16 bg-slate-800"
-        data-carousel="slide"
-      >
-        <div>Carousel</div>
-      </div>
+      <Slidercoin />
       <div className="flex mx-16 justify-between justify-left mt-8">
         <div className="h-80 w-half bg-slate-800 rounded-md">Graph</div>
         <div className="w-half h-80 bg-slate-800 rounded-md">Volume Graph</div>

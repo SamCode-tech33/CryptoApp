@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import todosReducer from "./features/todo";
+import convertReducer from "./features/converter";
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
-      todos: todosReducer,
+      converter: convertReducer,
     },
   });
 };
