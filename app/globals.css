@@ -9,11 +9,16 @@ body {
 li {
   margin: 16px 0;
   padding: 2px;
+  cursor: pointer;
 }
 
 .coin-wrapper {
   margin-top: 48px;
   margin-left: 48px;
+}
+
+.w-half {
+  width: 45vw
 }
 
 @layer base {
