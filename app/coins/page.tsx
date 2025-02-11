@@ -3,20 +3,18 @@
 import Navcoin from "../components/Navcoin";
 import Slidercoin from "../components/Slidercoin";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Coins() {
-  const router = useRouter();
-
   return (
     <div>
-      <div className="flex ml-16">
-        <Button onClick={() => router.push("/coins")} className="mr-4">
-          Coins
-        </Button>
-        <Button onClick={() => router.push("/convertor")} className="ml-4">
-          Convertor
-        </Button>
+      <div className="flex">
+        <Link href="/coins" className="ml-16">
+          <Button className="mr-4">Coins</Button>
+        </Link>
+        <Link href="/convertor">
+          <Button className="ml-4">Convertor</Button>
+        </Link>
       </div>
       <div className="flex justify-self-end">
         <Button className="mt-8 mr-16">Compare</Button>

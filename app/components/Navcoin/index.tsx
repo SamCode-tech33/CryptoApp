@@ -3,14 +3,12 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { addCommas } from "../Utility";
 import { handleImageError } from "../Utility";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Navcoin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [coins, setCoins] = useState<any>([]);
-
-  const router = useRouter();
 
   const getCoins = async () => {
     setLoading(true);
@@ -77,54 +75,52 @@ export default function Navcoin() {
             const circSupply = addCommas(coin.circulating_supply);
             const maxSupply = addCommas(coin.max_supply);
             return (
-              <li
-                key={coin.id}
-                onClick={() => router.push(`coins/${coin.name}`)}
-                className="dark:bg-gray-800 dark:hover:bg-slate-700 text-black dark:text-white bg-slate-200 h-14 flex items-center rounded-sm"
-              >
-                <div className="w-8 flex justify-center mr-4">
-                  <span>{index + 1}</span>
-                </div>
-                <div className="w-52 flex justify-left mr-4 items-center">
-                  <img
-                    id="currentPhoto"
-                    src={`https://assets.coincap.io/assets/icons/${coin.symbol.toLowerCase()}@2x.png`}
-                    alt=""
-                    onError={handleImageError}
-                    className="h-8 mr-4"
-                  />
-                  <span>
-                    {coin.name} ({coin.symbol})
-                  </span>
-                </div>
-                <div className="w-24 flex justify-left">
-                  <span>${coinPrice}</span>
-                </div>
-                <div className="w-24 flex justify-left">
-                  <span>{coin.quote.USD.percent_change_1h.toFixed(2)}%</span>
-                </div>
-                <div className="w-24 flex justify-left">
-                  <span>{coin.quote.USD.percent_change_24h.toFixed(2)}%</span>
-                </div>
-                <div className="w-24 flex justify-left">
-                  <span>{coin.quote.USD.percent_change_7d.toFixed(2)}%</span>
-                </div>
-                <div className="w-48 flex justify-left">
-                  <span>${volume24}</span>
-                </div>
-                <div className="w-48 flex justify-left">
-                  <span>${marketCap}</span>
-                </div>
-                <div className="w-48 flex justify-left">
-                  <span>{circSupply}</span>
-                </div>
-                <div className="w-56 flex justify-left">
-                  <span>{maxSupply}</span>
-                </div>
-                <div className="bg-slate-700 w-32 h-12 flex-col items-center">
-                  <div className="bg-orange-500 h-0.5 mt-6 -rotate-12"></div>
-                </div>
-              </li>
+              <Link href={`coins/${coin.name}`} key={coin.id}>
+                <li className="dark:bg-gray-800 text-black dark:text-white bg-slate-200 h-14 flex items-center rounded-sm">
+                  <div className="w-8 flex justify-center mr-4">
+                    <span>{index + 1}</span>
+                  </div>
+                  <div className="w-52 flex justify-left mr-4 items-center">
+                    <img
+                      id="currentPhoto"
+                      src={`https://assets.coincap.io/assets/icons/${coin.symbol.toLowerCase()}@2x.png`}
+                      alt=""
+                      onError={handleImageError}
+                      className="h-8 mr-4"
+                    />
+                    <span>
+                      {coin.name} ({coin.symbol})
+                    </span>
+                  </div>
+                  <div className="w-24 flex justify-left">
+                    <span>${coinPrice}</span>
+                  </div>
+                  <div className="w-24 flex justify-left">
+                    <span>{coin.quote.USD.percent_change_1h.toFixed(2)}%</span>
+                  </div>
+                  <div className="w-24 flex justify-left">
+                    <span>{coin.quote.USD.percent_change_24h.toFixed(2)}%</span>
+                  </div>
+                  <div className="w-24 flex justify-left">
+                    <span>{coin.quote.USD.percent_change_7d.toFixed(2)}%</span>
+                  </div>
+                  <div className="w-48 flex justify-left">
+                    <span>${volume24}</span>
+                  </div>
+                  <div className="w-48 flex justify-left">
+                    <span>${marketCap}</span>
+                  </div>
+                  <div className="w-48 flex justify-left">
+                    <span>{circSupply}</span>
+                  </div>
+                  <div className="w-56 flex justify-left">
+                    <span>{maxSupply}</span>
+                  </div>
+                  <div className="bg-slate-700 w-32 h-12 flex-col items-center">
+                    <div className="bg-orange-500 h-0.5 mt-6 -rotate-12"></div>
+                  </div>
+                </li>
+              </Link>
             );
           })}
         </ul>
