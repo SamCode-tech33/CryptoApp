@@ -2,19 +2,13 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { addCommas } from "../Utility";
-feature/the-carousel-of-coins
 import { handleImageError } from "../Utility";
-=======
- main
 import Link from "next/link";
 
 export default function Navcoin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-feature/the-carousel-of-coins
   const [coins, setCoins] = useState<any>([]);
-=======
- main
 
   const getCoins = async () => {
     setLoading(true);
