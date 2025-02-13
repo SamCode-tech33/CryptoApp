@@ -75,7 +75,7 @@ export default function Navcoin() {
             const circSupply = addCommas(coin.circulating_supply);
             const maxSupply = addCommas(coin.max_supply);
             return (
-              <Link href={`coins/${coin.name}`} key={coin.id}>
+              <Link href={`coins/${coin.id}`} key={coin.id}>
                 <li className="dark:bg-gray-800 text-black dark:text-white bg-slate-200 h-14 flex items-center rounded-sm">
                   <div className="w-8 flex justify-center mr-4">
                     <span>{index + 1}</span>
@@ -96,13 +96,115 @@ export default function Navcoin() {
                     <span>${coinPrice}</span>
                   </div>
                   <div className="w-24 flex justify-left">
-                    <span>{coin.quote.USD.percent_change_1h.toFixed(2)}%</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill={
+                        coin.quote.USD.percent_change_1h > 0
+                          ? "#11D861"
+                          : "#E9190F"
+                      }
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke={
+                        coin.quote.USD.percent_change_1h > 0
+                          ? "#11D861"
+                          : "#E9190F"
+                      }
+                      className="h-4 mr-1"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d={
+                          coin.quote.USD.percent_change_1h > 0
+                            ? "m4.5 15.75 7.5-7.5 7.5 7.5"
+                            : "m19.5 8.25-7.5 7.5-7.5-7.5"
+                        }
+                      />
+                    </svg>
+                    <span
+                      className={
+                        coin.quote.USD.percent_change_1h > 0
+                          ? "text-green-500"
+                          : "text-red-600"
+                      }
+                    >
+                      {Math.abs(coin.quote.USD.percent_change_1h.toFixed(2))}%
+                    </span>
                   </div>
                   <div className="w-24 flex justify-left">
-                    <span>{coin.quote.USD.percent_change_24h.toFixed(2)}%</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill={
+                        coin.quote.USD.percent_change_1h > 0
+                          ? "#11D861"
+                          : "#E9190F"
+                      }
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke={
+                        coin.quote.USD.percent_change_1h > 0
+                          ? "#11D861"
+                          : "#E9190F"
+                      }
+                      className="h-4 mr-1"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d={
+                          coin.quote.USD.percent_change_1h > 0
+                            ? "m4.5 15.75 7.5-7.5 7.5 7.5"
+                            : "m19.5 8.25-7.5 7.5-7.5-7.5"
+                        }
+                      />
+                    </svg>
+                    <span
+                      className={
+                        coin.quote.USD.percent_change_1h > 0
+                          ? "text-green-500"
+                          : "text-red-600"
+                      }
+                    >
+                      {Math.abs(coin.quote.USD.percent_change_24h.toFixed(2))}%
+                    </span>
                   </div>
                   <div className="w-24 flex justify-left">
-                    <span>{coin.quote.USD.percent_change_7d.toFixed(2)}%</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill={
+                        coin.quote.USD.percent_change_1h > 0
+                          ? "#11D861"
+                          : "#E9190F"
+                      }
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke={
+                        coin.quote.USD.percent_change_1h > 0
+                          ? "#11D861"
+                          : "#E9190F"
+                      }
+                      className="h-4 mr-1"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d={
+                          coin.quote.USD.percent_change_1h > 0
+                            ? "m4.5 15.75 7.5-7.5 7.5 7.5"
+                            : "m19.5 8.25-7.5 7.5-7.5-7.5"
+                        }
+                      />
+                    </svg>
+                    <span
+                      className={
+                        coin.quote.USD.percent_change_1h > 0
+                          ? "text-green-500"
+                          : "text-red-600"
+                      }
+                    >
+                      {Math.abs(coin.quote.USD.percent_change_7d.toFixed(2))}%
+                    </span>
                   </div>
                   <div className="w-48 flex justify-left">
                     <span>${volume24}</span>

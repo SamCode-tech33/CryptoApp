@@ -10,12 +10,10 @@ export default function Coins() {
     <div>
       <div className="flex">
         <Link href="/coins" className="ml-16">
-feature/the-carousel-of-coins
           <Button className="mr-4">Coins</Button>
         </Link>
         <Link href="/convertor">
           <Button className="ml-4">Convertor</Button>
-=======
           <Button className="mr-4" asChild>
             Coins
           </Button>
@@ -24,7 +22,6 @@ feature/the-carousel-of-coins
           <Button className="ml-4" asChild>
             Convertor
           </Button>
-main
         </Link>
       </div>
       <div className="flex justify-self-end">
