@@ -18,3 +18,44 @@ export const addCommas = (num: number) => {
     return coinPriceCommas.join("") + coinDecimals;
   }
 };
+
+export const handleImageError = (
+  event: React.SyntheticEvent<HTMLImageElement, Event>
+) => {
+  event.currentTarget.src = "https://i.ibb.co/rKMFQPFM/pngaaa-com-3638314.png";
+};
+
+export const sliderSettings = {
+  dots: false,
+  infinite: false,
+  speed: 800,
+  slidesToShow: 6,
+  slidesToScroll: 6,
+  initialSlide: 0,
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 4,
+        slidesToScroll: 4,
+        infinite: false,
+        dots: false,
+      },
+    },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 2,
+        initialSlide: 2,
+      },
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+      },
+    },
+  ],
+};

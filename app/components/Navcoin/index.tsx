@@ -2,31 +2,30 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { addCommas } from "../Utility";
+feature/the-carousel-of-coins
+import { handleImageError } from "../Utility";
+=======
+ main
 import Link from "next/link";
 
 export default function Navcoin() {
-  const [coins, setCoins] = useState<any>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+feature/the-carousel-of-coins
+  const [coins, setCoins] = useState<any>([]);
+=======
+ main
 
   const getCoins = async () => {
-    setIsLoading(true);
+    setLoading(true);
     try {
       const { data } = await axios.get("/api/coins");
       setCoins(data.data);
-      setIsLoading(false);
       //eslint-disable-next-line
     } catch (error) {
       setError(true);
-      setIsLoading(false);
     }
-  };
-
-  const handleImageError = (
-    event: React.SyntheticEvent<HTMLImageElement, Event>
-  ) => {
-    event.currentTarget.src =
-      "https://i.ibb.co/rKMFQPFM/pngaaa-com-3638314.png";
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -36,7 +35,7 @@ export default function Navcoin() {
   return (
     <div className="mt-12">
       {error && <p>Something went wrong. Please try again later.</p>}
-      {isLoading ? (
+      {loading ? (
         <p>Loading...</p>
       ) : (
         <ul className="mx-16">

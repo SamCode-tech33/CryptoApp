@@ -5,10 +5,11 @@ import axios from "axios";
 
 export default function Coin({ params }: any) {
   const coinId: any = React.use(params);
-  const [coin, setCoin] = useState<any>({});
-  const [rendered, setRendered] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [coin, setCoin] = useState<any>({});
+  const [rendered, setRendered] = useState(false);
 
   const getCoin = async () => {
     setLoading(true);

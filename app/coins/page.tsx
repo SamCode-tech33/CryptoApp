@@ -1,5 +1,7 @@
 "use client";
+
 import Navcoin from "../components/Navcoin";
+import Slidercoin from "../components/Slidercoin";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -8,6 +10,12 @@ export default function Coins() {
     <div>
       <div className="flex">
         <Link href="/coins" className="ml-16">
+feature/the-carousel-of-coins
+          <Button className="mr-4">Coins</Button>
+        </Link>
+        <Link href="/convertor">
+          <Button className="ml-4">Convertor</Button>
+=======
           <Button className="mr-4" asChild>
             Coins
           </Button>
@@ -16,6 +24,7 @@ export default function Coins() {
           <Button className="ml-4" asChild>
             Convertor
           </Button>
+main
         </Link>
       </div>
       <div className="flex justify-self-end">
@@ -23,13 +32,7 @@ export default function Coins() {
           Compare
         </Button>
       </div>
-      <div
-        id="default-carousel"
-        className="h-32 flex my-8 mx-16 bg-slate-800"
-        data-carousel="slide"
-      >
-        <div>Carousel</div>
-      </div>
+      <Slidercoin />
       <div className="flex mx-16 justify-between justify-left mt-8">
         <div className="h-80 w-half bg-slate-800 rounded-md">Graph</div>
         <div className="w-half h-80 bg-slate-800 rounded-md">Volume Graph</div>
