@@ -5,6 +5,7 @@ import Link from "next/link";
 export default function Convertor() {
   return (
     <div>
+feature/the-carousel-of-coins
       <div className="flex">
         <Link href="/coins" className="ml-16">
           <Button className="mr-4">Coins</Button>
@@ -12,6 +13,17 @@ export default function Convertor() {
         <Link href="/convertor">
           <Button className="ml-4">Convertor</Button>
         </Link>
+=======
+      <div className="flex ml-16">
+        <div className="flex">
+          <Link href="/coins" className="ml-16">
+            <Button className="mr-4">Coins</Button>
+          </Link>
+          <Link href="/convertor">
+            <Button className="ml-4">Convertor</Button>
+          </Link>
+        </div>
+main
       </div>
     </div>
   );
