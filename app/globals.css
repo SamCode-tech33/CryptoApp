@@ -21,6 +21,15 @@ li {
   width: 45vw
 }
 
+svg {
+  stroke-width: 1.5;
+}
+
+path {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

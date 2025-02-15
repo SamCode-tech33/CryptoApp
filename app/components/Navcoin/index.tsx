@@ -1,8 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { addCommas } from "../Utility";
-import { handleImageError } from "../Utility";
+import { addCommas, Updownarrow, Defaulticon } from "../Utility";
 import Link from "next/link";
 
 export default function Navcoin() {
@@ -81,13 +80,7 @@ export default function Navcoin() {
                     <span>{index + 1}</span>
                   </div>
                   <div className="w-52 flex justify-left mr-4 items-center">
-                    <img
-                      id="currentPhoto"
-                      src={`https://assets.coincap.io/assets/icons/${coin.symbol.toLowerCase()}@2x.png`}
-                      alt=""
-                      onError={handleImageError}
-                      className="h-8 mr-4"
-                    />
+                    <Defaulticon coin={coin} />
                     <span>
                       {coin.name} ({coin.symbol})
                     </span>
@@ -96,32 +89,7 @@ export default function Navcoin() {
                     <span>${coinPrice}</span>
                   </div>
                   <div className="w-24 flex justify-left">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill={
-                        coin.quote.USD.percent_change_1h > 0
-                          ? "#11D861"
-                          : "#E9190F"
-                      }
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke={
-                        coin.quote.USD.percent_change_1h > 0
-                          ? "#11D861"
-                          : "#E9190F"
-                      }
-                      className="h-4 mr-1"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d={
-                          coin.quote.USD.percent_change_1h > 0
-                            ? "m4.5 15.75 7.5-7.5 7.5 7.5"
-                            : "m19.5 8.25-7.5 7.5-7.5-7.5"
-                        }
-                      />
-                    </svg>
+                    <Updownarrow coin={coin}/>
                     <span
                       className={
                         coin.quote.USD.percent_change_1h > 0
@@ -133,32 +101,7 @@ export default function Navcoin() {
                     </span>
                   </div>
                   <div className="w-24 flex justify-left">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill={
-                        coin.quote.USD.percent_change_1h > 0
-                          ? "#11D861"
-                          : "#E9190F"
-                      }
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke={
-                        coin.quote.USD.percent_change_1h > 0
-                          ? "#11D861"
-                          : "#E9190F"
-                      }
-                      className="h-4 mr-1"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d={
-                          coin.quote.USD.percent_change_1h > 0
-                            ? "m4.5 15.75 7.5-7.5 7.5 7.5"
-                            : "m19.5 8.25-7.5 7.5-7.5-7.5"
-                        }
-                      />
-                    </svg>
+                  <Updownarrow coin={coin}/>
                     <span
                       className={
                         coin.quote.USD.percent_change_1h > 0
@@ -170,32 +113,7 @@ export default function Navcoin() {
                     </span>
                   </div>
                   <div className="w-24 flex justify-left">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill={
-                        coin.quote.USD.percent_change_1h > 0
-                          ? "#11D861"
-                          : "#E9190F"
-                      }
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke={
-                        coin.quote.USD.percent_change_1h > 0
-                          ? "#11D861"
-                          : "#E9190F"
-                      }
-                      className="h-4 mr-1"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d={
-                          coin.quote.USD.percent_change_1h > 0
-                            ? "m4.5 15.75 7.5-7.5 7.5 7.5"
-                            : "m19.5 8.25-7.5 7.5-7.5-7.5"
-                        }
-                      />
-                    </svg>
+                  <Updownarrow coin={coin}/>
                     <span
                       className={
                         coin.quote.USD.percent_change_1h > 0

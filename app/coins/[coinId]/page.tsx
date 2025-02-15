@@ -2,7 +2,13 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { handleImageError, addCommas } from "@/app/components/Utility";
+import {
+  addCommas,
+  Updownarrow,
+  Staticarrow,
+  Plus,
+  Defaulticon,
+} from "@/app/components/Utility";
 import Link from "next/link";
 
 export default function Coin({ params }: any) {
@@ -62,13 +68,7 @@ export default function Coin({ params }: any) {
               <div className="flex">
                 <div className="p-6 bg-slate-800 rounded-lg w-1/3 mr-72">
                   <div className="flex items-center">
-                    <img
-                      id="currentPhoto"
-                      src={`https://assets.coincap.io/assets/icons/${coin.symbol.toLowerCase()}@2x.png`}
-                      alt=""
-                      onError={handleImageError}
-                      className="h-8 mr-4"
-                    />
+                    <Defaulticon coin={coin} />
                     <div>
                       <span className="text-xl">
                         {coin.name} ({coin.symbol})
@@ -88,32 +88,7 @@ export default function Coin({ params }: any) {
                     <span className="text-3xl mr-4">
                       ${addCommas(coin.quote.USD.price)}
                     </span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill={
-                        coin.quote.USD.percent_change_1h > 0
-                          ? "#11D861"
-                          : "#E9190F"
-                      }
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke={
-                        coin.quote.USD.percent_change_1h > 0
-                          ? "#11D861"
-                          : "#E9190F"
-                      }
-                      className="h-4 mr-1"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d={
-                          coin.quote.USD.percent_change_1h > 0
-                            ? "m4.5 15.75 7.5-7.5 7.5 7.5"
-                            : "m19.5 8.25-7.5 7.5-7.5-7.5"
-                        }
-                      />
-                    </svg>
+                    <Updownarrow coin={coin} />
                     <span
                       className={
                         coin.quote.USD.percent_change_1h > 0
@@ -145,20 +120,10 @@ export default function Coin({ params }: any) {
                     <div className="mb-4">
                       <div className="flex justify-between">
                         <div className="flex">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="#11D861"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="#11D861"
-                            className="h-4 mr-3"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="m4.5 15.75 7.5-7.5 7.5 7.5"
-                            />
-                          </svg>
+                          <Staticarrow
+                            color="#11D861"
+                            way="m4.5 15.75 7.5-7.5 7.5 7.5"
+                          />
                           <span>All time high:</span>
                         </div>
                         <span>$108,360</span>
@@ -167,20 +132,10 @@ export default function Coin({ params }: any) {
                     </div>
                     <div className="flex justify-between">
                       <div className="flex">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="#E9190F"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="#E9190F"
-                          className="h-4 mr-3"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="m19.5 8.25-7.5 7.5-7.5-7.5"
-                          />
-                        </svg>
+                        <Staticarrow
+                          color="#E9190F"
+                          way="m19.5 8.25-7.5 7.5-7.5-7.5"
+                        />
                         <span>All time low:</span>
                       </div>
                       <span>$88,420</span>
@@ -238,20 +193,7 @@ export default function Coin({ params }: any) {
                 <div className="p-6 bg-slate-800 rounded-lg w-half mt-12 mr-8">
                   <div className="flex justify-between mb-4">
                     <div className="flex">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-6 mr-3"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                        />
-                      </svg>
+                      <Plus />
                       <span>Total Volume:</span>
                     </div>
                     <span>
@@ -263,40 +205,14 @@ export default function Coin({ params }: any) {
                   </div>
                   <div className="flex justify-between mb-4">
                     <div className="flex">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-6 mr-3"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                        />
-                      </svg>
+                      <Plus />
                       <span>Volume 24h:</span>
                     </div>
                     <span>${addCommas(coin.quote.USD.volume_24h)}</span>
                   </div>
                   <div className="flex justify-between">
                     <div className="flex">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-6 mr-3"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                        />
-                      </svg>
+                      <Plus />
                       <span>Volume/Market:</span>
                     </div>
                     <span>
@@ -312,20 +228,7 @@ export default function Coin({ params }: any) {
                 <div className="p-6 bg-slate-800 rounded-lg w-half mt-12 mr-8">
                   <div className="flex justify-between mb-4">
                     <div className="flex">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-6 mr-3"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                        />
-                      </svg>
+                      <Plus />
                       <span>Max Supply:</span>
                     </div>{" "}
                     <span>
@@ -337,20 +240,7 @@ export default function Coin({ params }: any) {
                   </div>
                   <div className="flex justify-between mb-4">
                     <div className="flex">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-6 mr-3"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                        />
-                      </svg>
+                      <Plus />
                       <span>Circulating Supply:</span>
                     </div>
                     <span>
@@ -363,40 +253,14 @@ export default function Coin({ params }: any) {
                 <div className="p-6 bg-slate-800 rounded-lg w-half mt-12 mr-8">
                   <div className="flex justify-between mb-4">
                     <div className="flex">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-6 mr-3"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                        />
-                      </svg>
+                      <Plus />
                       <span>Market Cap:</span>
                     </div>
                     <span>${addCommas(coin.quote.USD.market_cap)}</span>
                   </div>
                   <div className="flex justify-between mb-4">
                     <div className="flex">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-6 mr-3"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                        />
-                      </svg>
+                      <Plus />
                       <span>Fully Diluted Valuation:</span>
                     </div>
                     <span>
