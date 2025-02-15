@@ -5,9 +5,7 @@ import axios from "axios";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { addCommas } from "../Utility";
-import { handleImageError } from "../Utility";
-import { sliderSettings } from "../Utility";
+import { addCommas, Updownarrow, sliderSettings, Defaulticon } from "../Utility";
 
 export default function Slidercoin() {
   const [loading, setLoading] = useState(false);
@@ -44,21 +42,28 @@ export default function Slidercoin() {
               return (
                 <div key={coin.id} className="h-24 rounded-md">
                   <div className="h-24 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-md mx-2 flex justify-left items-center cursor-pointer">
-                    <img
-                      id="currentPhoto"
-                      src={`https://assets.coincap.io/assets/icons/${coin.symbol.toLowerCase()}@2x.png`}
-                      alt=""
-                      onError={handleImageError}
-                      className="h-8 mx-4"
-                    />
+                    <Defaulticon coin={coin} />
                     <div>
-                      <h1>
-                        {coin.name} ({coin.symbol})
-                      </h1>
-                      <span className="mr-2">{coinPrice} USD</span>
-                      <span>
-                        {coin.quote.USD.percent_change_1h.toFixed(2)}%
-                      </span>
+                      <div>
+                        <span>{coin.name}</span>
+                        <span> ({coin.symbol})</span>
+                      </div>
+                      <div className="flex">
+                        <span className="mr-2">{coinPrice} USD</span>
+                        <Updownarrow coin={coin}/>
+                        <span
+                          className={
+                            coin.quote.USD.percent_change_1h > 0
+                              ? "text-green-500"
+                              : "text-red-600"
+                          }
+                        >
+                          {Math.abs(
+                            coin.quote.USD.percent_change_1h.toFixed(2)
+                          )}
+                          %
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
