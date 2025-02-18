@@ -3,7 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "./components/themeprovider";
 import { ModeToggle } from "./components/themeselector";
 import { DropdownMenu } from "@/components/ui/dropdown-menu";
-import StoreProvider from "./StoreProvider";
+import StoreProvider from "./storeProvider";
 
 export default function RootLayout({
   children,

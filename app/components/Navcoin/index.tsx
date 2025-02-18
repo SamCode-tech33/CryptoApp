@@ -1,28 +1,20 @@
 "use client";
-import { useState, useEffect } from "react";
-import axios from "axios";
+
+import { useEffect } from "react";
 import { addCommas, Updownarrow, Defaulticon } from "../Utility";
 import Link from "next/link";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchCoins } from "@/lib/coinsSlice";
+import { RootState, AppDispatch } from "@/lib/store";
 
 export default function Navcoin() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [coins, setCoins] = useState<any>([]);
-
-  const getCoins = async () => {
-    setLoading(true);
-    try {
-      const { data } = await axios.get("/api/coins");
-      setCoins(data.data);
-      //eslint-disable-next-line
-    } catch (error) {
-      setError(true);
-    }
-    setLoading(false);
-  };
+  const dispatch = useDispatch<AppDispatch>();
+  const { data, loading, error } = useSelector(
+    (state: RootState) => state.coins
+  );
 
   useEffect(() => {
-    getCoins();
+    dispatch(fetchCoins());
   }, []);
 
   return (
@@ -67,7 +59,7 @@ export default function Navcoin() {
               <span>Last 7d</span>
             </div>
           </li>
-          {coins.map((coin: any, index: number) => {
+          {data.map((coin: any, index: number) => {
             const coinPrice = addCommas(coin.quote.USD.price);
             const volume24 = addCommas(coin.quote.USD.volume_24h);
             const marketCap = addCommas(coin.quote.USD.market_cap);
@@ -89,7 +81,7 @@ export default function Navcoin() {
                     <span>${coinPrice}</span>
                   </div>
                   <div className="w-24 flex justify-left">
-                    <Updownarrow coin={coin}/>
+                    <Updownarrow coin={coin} />
                     <span
                       className={
                         coin.quote.USD.percent_change_1h > 0
@@ -101,7 +93,7 @@ export default function Navcoin() {
                     </span>
                   </div>
                   <div className="w-24 flex justify-left">
-                  <Updownarrow coin={coin}/>
+                    <Updownarrow coin={coin} />
                     <span
                       className={
                         coin.quote.USD.percent_change_1h > 0
@@ -113,7 +105,7 @@ export default function Navcoin() {
                     </span>
                   </div>
                   <div className="w-24 flex justify-left">
-                  <Updownarrow coin={coin}/>
+                    <Updownarrow coin={coin} />
                     <span
                       className={
                         coin.quote.USD.percent_change_1h > 0
