@@ -1,7 +1,9 @@
 "use client";
-import React from "react";
-import { useEffect, useState } from "react";
-import axios from "axios";
+
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCoins } from "@/lib/coinsSlice";
+import { RootState, AppDispatch } from "@/lib/store";
 import {
   addCommas,
   Updownarrow,
@@ -10,48 +12,35 @@ import {
   Defaulticon,
 } from "@/app/components/Utility";
 import Link from "next/link";
+import axios from "axios";
 
 export default function Coin({ params }: any) {
-  const coinId: any = React.use(params);
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [coin, setCoin] = useState<any>({});
-  const [coinInfo, setCoinInfo] = useState<any>({});
+  const [coinsInfo, setCoinsInfo] = useState<any>({});
   const [rendered, setRendered] = useState(false);
 
-  const getCoin = async () => {
-    setLoading(true);
-    try {
-      const { data } = await axios.get("/api/coins");
-      const selectedCoin = data.data.find(
-        (coin: any) => coin.id.toString() === coinId.coinId
-      );
-      if (selectedCoin) {
-        setCoin(selectedCoin);
-        getCoinInfo(selectedCoin.id);
-      }
-      //eslint-disable-next-line
-    } catch (error) {
-      setError(true);
-    } finally {
-      setLoading(false);
-      setRendered(true);
-    }
-  };
+  const coinId: any = React.use(params);
+  const coinSite = coinsInfo[coinId.coinId];
 
-  const getCoinInfo = async (coinId: number) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { data, loading, error } = useSelector(
+    (state: RootState) => state.coins
+  );
+  const coin = data.find((coin: any) => coin.id.toString() === coinId.coinId);
+
+  const getCoinsInfo = async (coinId: number) => {
     try {
       const { data } = await axios.get(`/api/coinsInfo?id=${coinId}`);
-      setCoinInfo(data.data);
+      setCoinsInfo(data.data);
+      setRendered(true);
       //eslint-disable-next-line
-    } catch (error) {
-      setError(true);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
-    getCoin();
+    dispatch(fetchCoins());
+    if (coin) {
+      getCoinsInfo(coin.id);
+    }
   }, [params]);
 
   return (
@@ -75,12 +64,10 @@ export default function Coin({ params }: any) {
                       </span>
                       <Link
                         href={{
-                          pathname: coinInfo[coinId.coinId]?.urls.website[0],
+                          pathname: coinSite?.urls.website[0],
                         }}
                       >
-                        <p className="text-sm">
-                          {coinInfo[coinId.coinId]?.urls.website}
-                        </p>
+                        <p className="text-sm">{coinSite?.urls.website}</p>
                       </Link>
                     </div>
                   </div>
@@ -116,7 +103,7 @@ export default function Coin({ params }: any) {
                       ).toFixed(2)}
                     </span>
                   </div>
-                  <div className="mt-8">
+                  <div className="mt-12 pt-12 border-t-2 border-slate-600">
                     <div className="mb-4">
                       <div className="flex justify-between">
                         <div className="flex">
@@ -144,47 +131,45 @@ export default function Coin({ params }: any) {
                   </div>
                 </div>
                 <div className="w-1/3">
-                  <p>{coinInfo[coinId.coinId]?.description}</p>
+                  <p>{coinSite?.description}</p>
                   <div className="mt-16 flex-col flex items-center">
                     <Link
                       href={{
-                        pathname:
-                          coinInfo[coinId.coinId]?.urls.technical_doc[0],
+                        pathname: coinSite?.urls.technical_doc[0],
                       }}
                       className={
-                        coinInfo[coinId.coinId]?.urls.technical_doc[0]
+                        coinSite?.urls.technical_doc[0]
                           ? "bg-slate-800 p-4 rounded-md mb-8"
                           : ""
                       }
                     >
                       <span className="bg-slate-800 p-4 rounded-md">
-                        {coinInfo[coinId.coinId]?.urls.technical_doc}
+                        {coinSite?.urls.technical_doc}
                       </span>
                     </Link>
                     <Link
                       href={{
-                        pathname:
-                          coinInfo[coinId.coinId]?.urls.message_board[0],
+                        pathname: coinSite?.urls.message_board[0],
                       }}
                       className={
-                        coinInfo[coinId.coinId]?.urls.message_board[0]
+                        coinSite?.urls.message_board[0]
                           ? "bg-slate-800 p-4 rounded-md mb-8"
                           : ""
                       }
                     >
-                      <span>{coinInfo[coinId.coinId]?.urls.message_board}</span>
+                      <span>{coinSite?.urls.message_board}</span>
                     </Link>
                     <Link
                       href={{
-                        pathname: coinInfo[coinId.coinId]?.urls.source_code[0],
+                        pathname: coinSite?.urls.source_code[0],
                       }}
                       className={
-                        coinInfo[coinId.coinId]?.urls.source_code[0]
+                        coinSite?.urls.source_code[0]
                           ? "bg-slate-800 p-4 rounded-md"
                           : ""
                       }
                     >
-                      <span>{coinInfo[coinId.coinId]?.urls.source_code}</span>
+                      <span>{coinSite?.urls.source_code}</span>
                     </Link>
                   </div>
                 </div>

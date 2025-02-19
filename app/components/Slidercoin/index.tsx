@@ -1,31 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { addCommas, Updownarrow, sliderSettings, Defaulticon } from "../Utility";
+import {
+  addCommas,
+  Updownarrow,
+  sliderSettings,
+  Defaulticon,
+} from "../Utility";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchCoins } from "@/lib/coinsSlice";
+import { RootState, AppDispatch } from "@/lib/store";
 
 export default function Slidercoin() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [sliderCoins, setSliderCoins] = useState<any>([]);
-
-  const getSliderCoins = async () => {
-    setLoading(true);
-    try {
-      const { data } = await axios.get("/api/coins");
-      setSliderCoins(data.data);
-      //eslint-disable-next-line
-    } catch (error) {
-      setError(true);
-    }
-    setLoading(false);
-  };
+  const dispatch = useDispatch<AppDispatch>();
+  const { data, loading, error } = useSelector(
+    (state: RootState) => state.coins
+  );
 
   useEffect(() => {
-    getSliderCoins();
+    dispatch(fetchCoins());
   }, []);
 
   return (
@@ -36,9 +32,8 @@ export default function Slidercoin() {
       ) : (
         <div className="my-8 mx-16">
           <Slider {...sliderSettings}>
-            {sliderCoins.map((coin: any) => {
+            {data.map((coin: any) => {
               const coinPrice = addCommas(coin.quote.USD.price);
-
               return (
                 <div key={coin.id} className="h-24 rounded-md">
                   <div className="h-24 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-md mx-2 flex justify-left items-center cursor-pointer">
@@ -50,7 +45,7 @@ export default function Slidercoin() {
                       </div>
                       <div className="flex">
                         <span className="mr-2">{coinPrice} USD</span>
-                        <Updownarrow coin={coin}/>
+                        <Updownarrow coin={coin} />
                         <span
                           className={
                             coin.quote.USD.percent_change_1h > 0
