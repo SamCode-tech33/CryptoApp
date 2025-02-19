@@ -67,7 +67,7 @@ export default function Navcoin() {
             const maxSupply = addCommas(coin.max_supply);
             return (
               <Link href={`coins/${coin.id}`} key={coin.id}>
-                <li className="dark:bg-gray-800 text-black dark:text-white bg-slate-200 h-14 flex items-center rounded-sm">
+                <li className="dark:bg-slate-800 text-black dark:text-white bg-slate-200 h-14 flex items-center rounded-sm dark:hover:bg-slate-700">
                   <div className="w-8 flex justify-center mr-4">
                     <span>{index + 1}</span>
                   </div>
