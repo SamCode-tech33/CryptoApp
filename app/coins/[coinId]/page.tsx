@@ -19,6 +19,7 @@ export default function Coin({ params }: any) {
   const [rendered, setRendered] = useState(false);
 
   const coinId: any = React.use(params);
+  const coinSite = coinsInfo[coinId.coinId];
 
   const dispatch = useDispatch<AppDispatch>();
   const { data, loading, error } = useSelector(
@@ -63,12 +64,10 @@ export default function Coin({ params }: any) {
                       </span>
                       <Link
                         href={{
-                          pathname: coinsInfo[coinId.coinId]?.urls.website[0],
+                          pathname: coinSite?.urls.website[0],
                         }}
                       >
-                        <p className="text-sm">
-                          {coinsInfo[coinId.coinId]?.urls.website}
-                        </p>
+                        <p className="text-sm">{coinSite?.urls.website}</p>
                       </Link>
                     </div>
                   </div>
@@ -132,49 +131,45 @@ export default function Coin({ params }: any) {
                   </div>
                 </div>
                 <div className="w-1/3">
-                  <p>{coinsInfo[coinId.coinId]?.description}</p>
+                  <p>{coinSite?.description}</p>
                   <div className="mt-16 flex-col flex items-center">
                     <Link
                       href={{
-                        pathname:
-                          coinsInfo[coinId.coinId]?.urls.technical_doc[0],
+                        pathname: coinSite?.urls.technical_doc[0],
                       }}
                       className={
-                        coinsInfo[coinId.coinId]?.urls.technical_doc[0]
+                        coinSite?.urls.technical_doc[0]
                           ? "bg-slate-800 p-4 rounded-md mb-8"
                           : ""
                       }
                     >
                       <span className="bg-slate-800 p-4 rounded-md">
-                        {coinsInfo[coinId.coinId]?.urls.technical_doc}
+                        {coinSite?.urls.technical_doc}
                       </span>
                     </Link>
                     <Link
                       href={{
-                        pathname:
-                          coinsInfo[coinId.coinId]?.urls.message_board[0],
+                        pathname: coinSite?.urls.message_board[0],
                       }}
                       className={
-                        coinsInfo[coinId.coinId]?.urls.message_board[0]
+                        coinSite?.urls.message_board[0]
                           ? "bg-slate-800 p-4 rounded-md mb-8"
                           : ""
                       }
                     >
-                      <span>
-                        {coinsInfo[coinId.coinId]?.urls.message_board}
-                      </span>
+                      <span>{coinSite?.urls.message_board}</span>
                     </Link>
                     <Link
                       href={{
-                        pathname: coinsInfo[coinId.coinId]?.urls.source_code[0],
+                        pathname: coinSite?.urls.source_code[0],
                       }}
                       className={
-                        coinsInfo[coinId.coinId]?.urls.source_code[0]
+                        coinSite?.urls.source_code[0]
                           ? "bg-slate-800 p-4 rounded-md"
                           : ""
                       }
                     >
-                      <span>{coinsInfo[coinId.coinId]?.urls.source_code}</span>
+                      <span>{coinSite?.urls.source_code}</span>
                     </Link>
                   </div>
                 </div>
