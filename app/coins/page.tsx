@@ -61,7 +61,7 @@ export default function Coins() {
         <Button className="mt-8 mr-16">Compare</Button>
       </div>
       <Slidercoin />
-      <div className="flex mx-16 justify-between justify-left mt-8">
+      <div className="flex justify-between justify-left mt-8 mx-18">
         {error && <p>Something went wrong. Please try again later.</p>}
         {loading ? (
           <div className="h-80 w-half bg-slate-800 rounded-md flex justify-end flex-col">
@@ -120,7 +120,7 @@ export default function Coins() {
         )}
         <div className="w-half h-80 bg-slate-800 rounded-md">Volume Graph</div>
       </div>
-      <div className="flex ml-16 mt-12 justify-between bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4">
+      <div className="flex ml-16 mt-8 justify-between bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4">
         <div className="bg-violet-800 py-1 rounded-md px-5">1D</div>
         <div className="py-1 rounded-md px-5">7D</div>
         <div className="py-1 rounded-md px-5">14D</div>

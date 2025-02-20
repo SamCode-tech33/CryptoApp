@@ -13,7 +13,11 @@ li {
 }
 
 .w-half {
-  width: 45vw
+  width: 45.3vw
+}
+
+.mx-18 {
+  margin: 0 72px;
 }
 
 svg {
