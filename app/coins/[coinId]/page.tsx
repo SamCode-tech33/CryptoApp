@@ -37,17 +37,12 @@ export default function Coin({ params }: any) {
 
   useEffect(() => {
     dispatch(fetchCoins());
+    getCoinsInfo(coinId.coinId);
   }, [params]);
 
   useEffect(() => {
     setCoin(data.find((coin: any) => coin.id.toString() === coinId.coinId));
   }, [data]);
-
-  useEffect(() => {
-    if (coin?.id) {
-      getCoinsInfo(coin.id);
-    }
-  }, [coin]);
 
   return (
     <div>
