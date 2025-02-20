@@ -16,7 +16,9 @@ import axios from "axios";
 
 export default function Coin({ params }: any) {
   const [coinsInfo, setCoinsInfo] = useState<any>({});
-  const [coin, setCoin] = useState<any>({});
+  const [coin, setCoin] = useState<any>(null);
+  const [loading1, setLoading1] = useState(false);
+  const [error1, setError1] = useState(false);
   const [rendered, setRendered] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -27,12 +29,15 @@ export default function Coin({ params }: any) {
   const coinSite = coinsInfo[coinId.coinId];
 
   const getCoinsInfo = async (coinId: number) => {
+    setLoading1(true);
     try {
       const { data } = await axios.get(`/api/coinsInfo?id=${coinId}`);
       setCoinsInfo(data.data);
-      setRendered(true);
       //eslint-disable-next-line
-    } catch (error) {}
+    } catch (error) {
+      setError1(true);
+    }
+    setLoading1(false);
   };
 
   useEffect(() => {
@@ -42,6 +47,9 @@ export default function Coin({ params }: any) {
 
   useEffect(() => {
     setCoin(data.find((coin: any) => coin.id.toString() === coinId.coinId));
+    if (coin !== null) {
+      setRendered(true);
+    }
   }, [data]);
 
   return (
@@ -131,49 +139,57 @@ export default function Coin({ params }: any) {
                     <span className="text-sm ml-7">Input date here</span>
                   </div>
                 </div>
-                <div className="w-1/3">
-                  <p>{coinSite?.description}</p>
-                  <div className="mt-16 flex-col flex items-center">
-                    <Link
-                      href={{
-                        pathname: coinSite?.urls.technical_doc[0],
-                      }}
-                      className={
-                        coinSite?.urls.technical_doc[0]
-                          ? "bg-slate-800 p-4 rounded-md mb-8"
-                          : ""
-                      }
-                    >
-                      <span className="bg-slate-800 p-4 rounded-md">
-                        {coinSite?.urls.technical_doc}
-                      </span>
-                    </Link>
-                    <Link
-                      href={{
-                        pathname: coinSite?.urls.message_board[0],
-                      }}
-                      className={
-                        coinSite?.urls.message_board[0]
-                          ? "bg-slate-800 p-4 rounded-md mb-8"
-                          : ""
-                      }
-                    >
-                      <span>{coinSite?.urls.message_board}</span>
-                    </Link>
-                    <Link
-                      href={{
-                        pathname: coinSite?.urls.source_code[0],
-                      }}
-                      className={
-                        coinSite?.urls.source_code[0]
-                          ? "bg-slate-800 p-4 rounded-md"
-                          : ""
-                      }
-                    >
-                      <span>{coinSite?.urls.source_code}</span>
-                    </Link>
+                {loading1 && <div>loading. . .</div>}
+                {error ? (
+                  <p>
+                    The following error has occured: {error1}, please check
+                    again later
+                  </p>
+                ) : (
+                  <div className="w-1/3">
+                    <p>{coinSite?.description}</p>
+                    <div className="mt-16 flex-col flex items-center">
+                      <Link
+                        href={{
+                          pathname: coinSite?.urls.technical_doc[0],
+                        }}
+                        className={
+                          coinSite?.urls.technical_doc[0]
+                            ? "bg-slate-800 p-4 rounded-md mb-8"
+                            : ""
+                        }
+                      >
+                        <span className="bg-slate-800 p-4 rounded-md">
+                          {coinSite?.urls.technical_doc}
+                        </span>
+                      </Link>
+                      <Link
+                        href={{
+                          pathname: coinSite?.urls.message_board[0],
+                        }}
+                        className={
+                          coinSite?.urls.message_board[0]
+                            ? "bg-slate-800 p-4 rounded-md mb-8"
+                            : ""
+                        }
+                      >
+                        <span>{coinSite?.urls.message_board}</span>
+                      </Link>
+                      <Link
+                        href={{
+                          pathname: coinSite?.urls.source_code[0],
+                        }}
+                        className={
+                          coinSite?.urls.source_code[0]
+                            ? "bg-slate-800 p-4 rounded-md"
+                            : ""
+                        }
+                      >
+                        <span>{coinSite?.urls.source_code}</span>
+                      </Link>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
               <div className="flex">
                 <div className="p-6 bg-slate-800 rounded-lg w-half mt-12 mr-8">

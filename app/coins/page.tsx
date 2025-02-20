@@ -62,10 +62,10 @@ export default function Coins() {
       </div>
       <Slidercoin />
       <div className="flex justify-between justify-left mt-8 mx-18">
-        {error && <p>Something went wrong. Please try again later.</p>}
-        {loading ? (
+        {loading && <p>Loading. . .</p>}
+        {error ? (
           <div className="h-80 w-half bg-slate-800 rounded-md flex justify-end flex-col">
-            Loading. . .
+            the following error has occured: {error}, please check again later.
           </div>
         ) : (
           <div className="h-80 w-half bg-slate-800 rounded-md flex justify-end flex-col">
