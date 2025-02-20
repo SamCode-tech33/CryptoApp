@@ -16,16 +16,15 @@ import axios from "axios";
 
 export default function Coin({ params }: any) {
   const [coinsInfo, setCoinsInfo] = useState<any>({});
+  const [coin, setCoin] = useState<any>({});
   const [rendered, setRendered] = useState(false);
-
-  const coinId: any = React.use(params);
-  const coinSite = coinsInfo[coinId.coinId];
 
   const dispatch = useDispatch<AppDispatch>();
   const { data, loading, error } = useSelector(
     (state: RootState) => state.coins
   );
-  const coin = data.find((coin: any) => coin.id.toString() === coinId.coinId);
+  const coinId: any = React.use(params);
+  const coinSite = coinsInfo[coinId.coinId];
 
   const getCoinsInfo = async (coinId: number) => {
     try {
@@ -38,10 +37,12 @@ export default function Coin({ params }: any) {
 
   useEffect(() => {
     dispatch(fetchCoins());
-    if (coin) {
-      getCoinsInfo(coin.id);
-    }
+    getCoinsInfo(coinId.coinId);
   }, [params]);
+
+  useEffect(() => {
+    setCoin(data.find((coin: any) => coin.id.toString() === coinId.coinId));
+  }, [data]);
 
   return (
     <div>

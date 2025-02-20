@@ -12,13 +12,12 @@ li {
   cursor: pointer;
 }
 
-.coin-wrapper {
-  margin-top: 48px;
-  margin-left: 48px;
+.w-half {
+  width: 45.3vw
 }
 
-.w-half {
-  width: 45vw
+.mx-18 {
+  margin: 0 72px;
 }
 
 svg {
