@@ -2,10 +2,17 @@
 
 import Navcoin from "../components/Navcoin";
 import Slidercoin from "../components/Slidercoin";
+import {
+  addCommas,
+  CustomTooltip,
+  CustomizedLabel,
+} from "../components/Utility";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
 import {
   ResponsiveContainer,
   Tooltip,
@@ -13,39 +20,75 @@ import {
   YAxis,
   Area,
   AreaChart,
+  BarChart,
+  Bar,
 } from "recharts";
 
 export default function Coins() {
   const [coinHistory, setCoinHistory] = useState<any>([]);
+  const [coinHistoryHour, setCoinHistoryHour] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
 
-  const getCoinsHistory = async () => {
+  const symbol = useSelector((state: RootState) => state.symbol.sym);
+
+  const getCoinsHistory = async (symbol: string) => {
     setLoading(true);
     try {
-      const { data } = await axios.get("/api/historical");
+      const { data } = await axios.get(`/api/historical?instrument=${symbol}`);
       setCoinHistory(data.Data);
+      getCoinsHistoryHour(symbol);
       //eslint-disable-next-line
     } catch (error) {
       setError(true);
+      setLoading(false);
+    }
+  };
+
+  const getCoinsHistoryHour = async (symbol: string) => {
+    try {
+      const { data } = await axios.get(
+        `/api/historicalHour?instrument=${symbol}`
+      );
+      setCoinHistoryHour(data.Data);
+      //eslint-disable-next-line
+    } catch (error) {
+      setError(true);
+      setLoading(false);
     }
     setLoading(false);
   };
 
   const today = new Date().toDateString();
-  const pdata = coinHistory.map((day: any, i: number) => {
-    const value = ((day.HIGH + day.LOW) / 2).toFixed(2);
+  const pdata = coinHistory.map((minute: any, i: number) => {
+    const value = (minute.HIGH + minute.LOW) / 2;
+    const valueProper = addCommas(value);
     return {
-      name: new Date(Date.now() + i * 300000 - 86400000)
+      name: new Date(Date.now() + i * 300000 - 86400000 + 300000)
         .toString()
         .split("G")[0],
-      $: value,
+      value: value,
+      valueProper: valueProper,
+    };
+  });
+
+  let totalVolume = 0;
+  const pdata1 = coinHistoryHour.map((hour: any, i: number) => {
+    const value = hour.QUOTE_VOLUME;
+    totalVolume = totalVolume + value;
+    const valueProper = addCommas(value);
+    return {
+      name: new Date(Date.now() + i * 3600000 - 86400000 + 3600000)
+        .toString()
+        .split("G")[0],
+      value: value,
+      valueProper: valueProper,
     };
   });
 
   useEffect(() => {
-    getCoinsHistory();
-  }, []);
+    getCoinsHistory(symbol);
+  }, [symbol]);
 
   return (
     <div>
@@ -62,17 +105,17 @@ export default function Coins() {
       </div>
       <Slidercoin />
       <div className="flex justify-between justify-left mt-8 mx-18">
-        {loading && <p>Loading. . .</p>}
         {error ? (
           <div className="h-80 w-half bg-slate-800 rounded-md flex justify-end flex-col">
             the following error has occured: {error}, please check again later.
           </div>
         ) : (
           <div className="h-80 w-half bg-slate-800 rounded-md flex justify-end flex-col">
-            <h1 className="text-3xl ml-8 mb-2 text-violet-300">
+            {loading && <p>Loading. . .</p>}
+            <h1 className="text-3xl ml-8 mb-2 text-violet-500">
               {coinHistory[0]?.INSTRUMENT}
             </h1>
-            <h1 className="text-2xl ml-8 text-violet-300">{today}</h1>
+            <h1 className="text-2xl ml-8 text-violet-500">{today}</h1>
             <ResponsiveContainer height="70%">
               <AreaChart data={pdata}>
                 <defs>
@@ -90,37 +133,65 @@ export default function Coins() {
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="name" hide={true} />
-                <YAxis domain={["dataMin-500", "dataMax+500"]} hide={true} />
+                <YAxis domain={["dataMin-5", "dataMax+5"]} hide={true} />
                 <Tooltip
-                  offset={2}
+                  offset={10}
                   separator=""
-                  position={{ x: 225, y: -90 }}
-                  itemStyle={{
-                    color: "rgb(196 181 253)",
-                    fontSize: 30,
-                    marginLeft: 460,
-                  }}
-                  contentStyle={{ background: "none", border: "none" }}
-                  labelStyle={{
-                    color: "rgb(196 181 253)",
-                    marginLeft: 362,
-                    fontSize: 20,
-                  }}
+                  content={<CustomTooltip />}
+                  position={{ x: 555, y: -90 }}
                 />
                 <Area
                   type="monotone"
-                  dataKey="$"
+                  dataKey="value"
                   stroke="#8884d8"
                   fillOpacity={1}
                   fill="url(#color)"
+                  name="$"
                 />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         )}
-        <div className="w-half h-80 bg-slate-800 rounded-md">Volume Graph</div>
+        {error ? (
+          <div className="h-80 w-half bg-slate-800 rounded-md flex justify-end flex-col">
+            the following error has occured: {error}, please check again later.
+          </div>
+        ) : (
+          <div className="h-80 w-half bg-slate-800 rounded-md flex justify-end flex-col">
+            {loading && <p>Loading. . .</p>}
+            <div className="flex">
+              <h1 className="text-3xl ml-8 mb-1 text-violet-500">
+                Volume 24h:
+              </h1>
+              <h1 className="text-3xl ml-8 mb-1 text-violet-500">
+                ${addCommas(totalVolume)}
+              </h1>
+            </div>
+            <h1 className="text-2xl ml-8 text-violet-500">{today}</h1>
+            <ResponsiveContainer height="70%">
+              <BarChart data={pdata1}>
+                <XAxis dataKey="name" hide={true} />
+                <YAxis hide={true} />
+                <Tooltip
+                  offset={10}
+                  separator=""
+                  content={<CustomTooltip />}
+                  position={{ x: 555, y: -90 }}
+                  cursor={{ fill: "transparent" }}
+                />
+                <Bar
+                  dataKey="value"
+                  fill="#007674"
+                  activeBar={{ stroke: "white", strokeWidth: 3 }}
+                  name="$"
+                  label={<CustomizedLabel />}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </div>
-      <div className="flex ml-16 mt-8 justify-between bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4">
+      <div className="flex ml-18 mt-8 justify-between bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4">
         <div className="bg-violet-800 py-1 rounded-md px-5">1D</div>
         <div className="py-1 rounded-md px-5">7D</div>
         <div className="py-1 rounded-md px-5">14D</div>
