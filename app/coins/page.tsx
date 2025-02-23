@@ -11,8 +11,9 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@/lib/store";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/lib/store";
+import { changeTimePeriod } from "@/lib/timeSlice";
 import {
   ResponsiveContainer,
   Tooltip,
@@ -27,15 +28,22 @@ import {
 export default function Coins() {
   const [coinHistory, setCoinHistory] = useState<any>([]);
   const [coinHistoryHour, setCoinHistoryHour] = useState<any>([]);
+  const [selectedTime, setSelectedTime] = useState<string>("minutes 5 288");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
 
+  const dispatch = useDispatch<AppDispatch>();
   const symbol = useSelector((state: RootState) => state.symbol.sym);
+  const time = useSelector((state: RootState) => state.timePeriod.time);
+  const aggre = useSelector((state: RootState) => state.timePeriod.aggre);
+  const limit = useSelector((state: RootState) => state.timePeriod.limit);
 
   const getCoinsHistory = async (symbol: string) => {
     setLoading(true);
     try {
-      const { data } = await axios.get(`/api/historical?instrument=${symbol}`);
+      const { data } = await axios.get(
+        `/api/historical?instrument=${symbol}&timeperiod=${time}&aggre=${aggre}&limit=${limit}`
+      );
       setCoinHistory(data.Data);
       getCoinsHistoryHour(symbol);
       //eslint-disable-next-line
@@ -60,11 +68,32 @@ export default function Coins() {
   };
 
   const today = new Date().toDateString();
+  let graphTime = 0;
+  let graphPeriod = 0;
   const pdata = coinHistory.map((minute: any, i: number) => {
     const value = (minute.HIGH + minute.LOW) / 2;
     const valueProper = addCommas(value);
+    if (selectedTime === "minutes 5 288") {
+      graphTime = 300000;
+      graphPeriod = 86400000;
+    } else if (selectedTime === "hours 1 168") {
+      graphTime = 3600000;
+      graphPeriod = 604800000;
+    } else if (selectedTime === "hours 1 336") {
+      graphTime = 3600000;
+      graphPeriod = 1209600000;
+    } else if (selectedTime === "hours 2 360") {
+      graphTime = 7200000;
+      graphPeriod = 2592000000;
+    } else if (selectedTime === "days 1 365") {
+      graphTime = 86400000;
+      graphPeriod = 31557600000;
+    } else if (selectedTime === "days 4 457") {
+      graphTime = 345600000;
+      graphPeriod = 157939200000;
+    }
     return {
-      name: new Date(Date.now() + i * 300000 - 86400000 + 300000)
+      name: new Date(Date.now() + i * graphTime - graphPeriod + graphTime)
         .toString()
         .split("G")[0],
       value: value,
@@ -86,9 +115,22 @@ export default function Coins() {
     };
   });
 
+  const handleTime = (e: any) => {
+    const time = e.target.id.split(" ")[0];
+    const aggre = e.target.id.split(" ")[1];
+    const limit = e.target.id.split(" ")[2];
+    setSelectedTime(e.target.id);
+    const newPeriod = {
+      time: time,
+      aggre: aggre,
+      limit: limit,
+    };
+    dispatch(changeTimePeriod(newPeriod));
+  };
+
   useEffect(() => {
     getCoinsHistory(symbol);
-  }, [symbol]);
+  }, [symbol, selectedTime]);
 
   return (
     <div>
@@ -192,13 +234,72 @@ export default function Coins() {
         )}
       </div>
       <div className="flex ml-18 mt-8 justify-between bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4">
-        <div className="bg-violet-800 py-1 rounded-md px-5">1D</div>
-        <div className="py-1 rounded-md px-5">7D</div>
-        <div className="py-1 rounded-md px-5">14D</div>
-        <div className="py-1 rounded-md px-5">1M</div>
-        <div className="py-1 rounded-md px-5">1W</div>
-        <div className="py-1 rounded-md px-5">1Y</div>
-        <div className="py-1 rounded-md px-5">5Y</div>
+        <button
+          onClick={(e) => handleTime(e)}
+          id="minutes 5 288"
+          className={
+            selectedTime === "minutes 5 288"
+              ? "py-1 rounded-md px-5 bg-violet-800"
+              : "py-1 rounded-md px-5"
+          }
+        >
+          1D
+        </button>
+        <button
+          onClick={(e) => handleTime(e)}
+          id="hours 1 168"
+          className={
+            selectedTime === "hours 1 168"
+              ? "py-1 rounded-md px-5 bg-violet-800"
+              : "py-1 rounded-md px-5"
+          }
+        >
+          7D
+        </button>
+        <button
+          onClick={(e) => handleTime(e)}
+          id="hours 1 336"
+          className={
+            selectedTime === "hours 1 336"
+              ? "py-1 rounded-md px-5 bg-violet-800"
+              : "py-1 rounded-md px-5"
+          }
+        >
+          14D
+        </button>
+        <button
+          onClick={(e) => handleTime(e)}
+          id="hours 2 360"
+          className={
+            selectedTime === "hours 2 360"
+              ? "py-1 rounded-md px-5 bg-violet-800"
+              : "py-1 rounded-md px-5"
+          }
+        >
+          30D
+        </button>
+        <button
+          onClick={(e) => handleTime(e)}
+          id="days 1 365"
+          className={
+            selectedTime === "days 1 365"
+              ? "py-1 rounded-md px-5 bg-violet-800"
+              : "py-1 rounded-md px-5"
+          }
+        >
+          1Y
+        </button>
+        <button
+          onClick={(e) => handleTime(e)}
+          id="days 4 457"
+          className={
+            selectedTime === "days 4 457"
+              ? "py-1 rounded-md px-5 bg-violet-800"
+              : "py-1 rounded-md px-5"
+          }
+        >
+          5Y
+        </button>
       </div>
       <Navcoin />
     </div>
