@@ -23,7 +23,7 @@ export default function Navcoin() {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <ul className="mx-16">
+        <ul className="mx-18">
           <li className="text-black dark:text-white h-12 flex items-center">
             <div className="w-8 flex justify-center mr-4">
               <span>#</span>

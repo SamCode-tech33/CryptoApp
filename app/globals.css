@@ -20,6 +20,10 @@ li {
   margin: 0 72px;
 }
 
+.ml-18 {
+  margin-left: 72px;
+}
+
 svg {
   stroke-width: 1.5;
 }

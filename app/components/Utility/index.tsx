@@ -119,3 +119,32 @@ export const Defaulticon = ({ coin }: { coin: any }) => {
     />
   );
 };
+
+export const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const valueProper = payload[0].payload.valueProper;
+    const name = payload[0].payload.name;
+    return (
+      <div className="text-violet-500 text-2xl mt-3 flex flex-col items-end">
+        <p>{name}</p>
+        <p>${valueProper}</p>
+      </div>
+    );
+  }
+};
+
+export const CustomizedLabel = (props: any) => {
+  const { x, y, height, width, index } = props;
+  return (
+    <text
+      x={x + width / 2}
+      y={y + height - 13}
+      dy={11}
+      fill="white"
+      fontSize={13}
+      textAnchor="middle"
+    >
+      {index + 1}
+    </text>
+  );
+};
