@@ -13,12 +13,19 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCoins } from "@/lib/coinsSlice";
 import { RootState, AppDispatch } from "@/lib/store";
+import { changeGraph } from "@/lib/symbolSlice";
 
 export default function Slidercoin() {
   const dispatch = useDispatch<AppDispatch>();
   const { data, loading, error } = useSelector(
     (state: RootState) => state.coins
   );
+
+  const symbol = useSelector((state: RootState) => state.symbol.sym);
+
+  const handleClick = (e: any) => {
+    dispatch(changeGraph(e.currentTarget.id));
+  };
 
   useEffect(() => {
     dispatch(fetchCoins());
@@ -35,8 +42,19 @@ export default function Slidercoin() {
             {data.map((coin: any) => {
               const coinPrice = addCommas(coin.quote.USD.price);
               return (
-                <div key={coin.id} className="h-24 rounded-md">
-                  <div className="h-24 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-md mx-2 flex justify-left items-center cursor-pointer">
+                <div
+                  key={coin.id}
+                  id={coin.symbol}
+                  className="h-24 rounded-md"
+                  onClick={handleClick}
+                >
+                  <div
+                    className={
+                      coin.symbol === symbol
+                        ? "h-24 dark:bg-slate-600 dark:hover:bg-slate-600 rounded-md mx-2 flex justify-left items-center"
+                        : "h-24 dark:bg-slate-800 dark:hover:bg-slate-600 rounded-md mx-2 flex justify-left items-center cursor-pointer"
+                    }
+                  >
                     <Defaulticon coin={coin} />
                     <div>
                       <div>
