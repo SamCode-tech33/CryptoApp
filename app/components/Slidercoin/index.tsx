@@ -46,7 +46,7 @@ export default function Slidercoin() {
                   key={coin.id}
                   id={coin.symbol}
                   className="h-24 rounded-md"
-                  onClick={(e) => handleClick(e)}
+                  onClick={handleClick}
                 >
                   <div
                     className={

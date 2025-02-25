@@ -128,6 +128,16 @@ export default function Coins() {
     dispatch(changeTimePeriod(newPeriod));
   };
 
+  const isSelected = (id: string) => {
+    let style = "";
+    if (selectedTime === id) {
+      style = "py-1 rounded-md px-5 bg-violet-800";
+    } else {
+      style = "py-1 rounded-md px-5";
+    }
+    return style;
+  };
+
   useEffect(() => {
     getCoinsHistory(symbol);
   }, [symbol, selectedTime]);
@@ -237,66 +247,42 @@ export default function Coins() {
         <button
           onClick={(e) => handleTime(e)}
           id="minutes 5 288"
-          className={
-            selectedTime === "minutes 5 288"
-              ? "py-1 rounded-md px-5 bg-violet-800"
-              : "py-1 rounded-md px-5"
-          }
+          className={isSelected("minutes 5 288")}
         >
           1D
         </button>
         <button
           onClick={(e) => handleTime(e)}
           id="hours 1 168"
-          className={
-            selectedTime === "hours 1 168"
-              ? "py-1 rounded-md px-5 bg-violet-800"
-              : "py-1 rounded-md px-5"
-          }
+          className={isSelected("hours 1 168")}
         >
           7D
         </button>
         <button
           onClick={(e) => handleTime(e)}
           id="hours 1 336"
-          className={
-            selectedTime === "hours 1 336"
-              ? "py-1 rounded-md px-5 bg-violet-800"
-              : "py-1 rounded-md px-5"
-          }
+          className={isSelected("hours 1 336")}
         >
           14D
         </button>
         <button
           onClick={(e) => handleTime(e)}
           id="hours 2 360"
-          className={
-            selectedTime === "hours 2 360"
-              ? "py-1 rounded-md px-5 bg-violet-800"
-              : "py-1 rounded-md px-5"
-          }
+          className={isSelected("hours 2 360")}
         >
           30D
         </button>
         <button
           onClick={(e) => handleTime(e)}
           id="days 1 365"
-          className={
-            selectedTime === "days 1 365"
-              ? "py-1 rounded-md px-5 bg-violet-800"
-              : "py-1 rounded-md px-5"
-          }
+          className={isSelected("days 1 365")}
         >
           1Y
         </button>
         <button
           onClick={(e) => handleTime(e)}
           id="days 4 457"
-          className={
-            selectedTime === "days 4 457"
-              ? "py-1 rounded-md px-5 bg-violet-800"
-              : "py-1 rounded-md px-5"
-          }
+          className={isSelected("days 4 457")}
         >
           5Y
         </button>
