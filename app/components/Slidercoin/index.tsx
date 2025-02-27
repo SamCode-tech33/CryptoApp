@@ -63,7 +63,7 @@ export default function Slidercoin() {
                       </div>
                       <div className="flex">
                         <span className="mr-2">{coinPrice} USD</span>
-                        <Updownarrow coin={coin} />
+                        <Updownarrow coin={coin.quote.USD.percent_change_1h} />
                         <span
                           className={
                             coin.quote.USD.percent_change_1h > 0

@@ -31,9 +31,13 @@ export default function Coins() {
   const [selectedTime, setSelectedTime] = useState<string>("minutes 5 288");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
+  const [load, setLoad] = useState<boolean>(false);
+  const [err, setErr] = useState<boolean>(false);
 
   const dispatch = useDispatch<AppDispatch>();
-  const symbol = useSelector((state: RootState) => state.symbol.sym);
+  const symbol = useSelector(
+    (state: RootState) => state.symbol.sym
+  ).toUpperCase();
   const time = useSelector((state: RootState) => state.timePeriod.time);
   const aggre = useSelector((state: RootState) => state.timePeriod.aggre);
   const limit = useSelector((state: RootState) => state.timePeriod.limit);
@@ -51,9 +55,11 @@ export default function Coins() {
       setError(true);
       setLoading(false);
     }
+    setLoading(false);
   };
 
   const getCoinsHistoryHour = async (symbol: string) => {
+    setLoad(true);
     try {
       const { data } = await axios.get(
         `/api/historicalHour?instrument=${symbol}`
@@ -61,17 +67,25 @@ export default function Coins() {
       setCoinHistoryHour(data.Data);
       //eslint-disable-next-line
     } catch (error) {
-      setError(true);
-      setLoading(false);
+      setErr(true);
+      setLoad(false);
     }
-    setLoading(false);
+    setLoad(false);
   };
 
   const today = new Date().toDateString();
   let graphTime = 0;
   let graphPeriod = 0;
-  const pdata = coinHistory.map((minute: any, i: number) => {
-    const value = (minute.HIGH + minute.LOW) / 2;
+  let max = 0;
+  let min = 0;
+  const pdata = coinHistory.map((interval: any, i: number) => {
+    if (i !== 0 && interval.HIGH > coinHistory[i - 1].HIGH) {
+      max = interval.HIGH;
+    }
+    if (i !== 0 && interval.LOW < coinHistory[i - 1].LOW) {
+      min = interval.LOW;
+    }
+    const value = (interval.HIGH + interval.LOW) / 2;
     const valueProper = addCommas(value);
     if (selectedTime === "minutes 5 288") {
       graphTime = 300000;
@@ -87,7 +101,7 @@ export default function Coins() {
       graphPeriod = 2592000000;
     } else if (selectedTime === "days 1 365") {
       graphTime = 86400000;
-      graphPeriod = 31557600000;
+      graphPeriod = 31579200000;
     } else if (selectedTime === "days 4 457") {
       graphTime = 345600000;
       graphPeriod = 157939200000;
@@ -144,48 +158,51 @@ export default function Coins() {
 
   return (
     <div>
-      <div className="flex">
-        <Link href="/coins" className="ml-16">
+      <div className="flex mx-18">
+        <Link href="/coins">
           <Button className="mr-4">Coins</Button>
         </Link>
         <Link href="/convertor">
           <Button className="ml-4">Convertor</Button>
         </Link>
       </div>
-      <div className="flex justify-self-end">
-        <Button className="mt-8 mr-16">Compare</Button>
+      <div className="flex justify-self-end mx-18">
+        <Button className="mt-4">Compare</Button>
       </div>
       <Slidercoin />
       <div className="flex justify-between justify-left mt-8 mx-18">
         {error ? (
-          <div className="h-80 w-half bg-slate-800 rounded-md flex justify-end flex-col">
+          <div className="h-82 w-half bg-slate-800 rounded-md flex justify-end flex-col">
             the following error has occured: {error}, please check again later.
           </div>
         ) : (
-          <div className="h-80 w-half bg-slate-800 rounded-md flex justify-end flex-col">
+          <div className="h-82 w-half bg-slate-800 rounded-md flex justify-end flex-col">
             {loading && <p>Loading. . .</p>}
             <h1 className="text-3xl ml-8 mb-2 text-violet-500">
               {coinHistory[0]?.INSTRUMENT}
             </h1>
             <h1 className="text-2xl ml-8 text-violet-500">{today}</h1>
-            <ResponsiveContainer height="70%">
+            <ResponsiveContainer height="75%">
               <AreaChart data={pdata}>
                 <defs>
-                  <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient id="color" x1="0" y1="0" x2="0" y2="0.8">
                     <stop
                       offset="0%"
-                      stopColor="rgb(139 92 246 / var(--tw-bg-opacity, 1))"
-                      stopOpacity={0.9}
+                      stopColor="rgb(139 92 246)"
+                      stopOpacity={0.8}
                     />
                     <stop
                       offset="100%"
-                      stopColor="rgb(124 58 237 / var(--tw-bg-opacity, 1))"
+                      stopColor="rgb(124 58 237)"
                       stopOpacity={0.1}
                     />
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="name" hide={true} />
-                <YAxis domain={["dataMin-5", "dataMax+5"]} hide={true} />
+                <YAxis
+                  domain={[`dataMin-${max - min}`, `dataMax+${max - min}`]}
+                  hide={true}
+                />
                 <Tooltip
                   offset={10}
                   separator=""
@@ -195,7 +212,7 @@ export default function Coins() {
                 <Area
                   type="monotone"
                   dataKey="value"
-                  stroke="#8884d8"
+                  stroke="rgb(139 92 246)"
                   fillOpacity={1}
                   fill="url(#color)"
                   name="$"
@@ -204,13 +221,13 @@ export default function Coins() {
             </ResponsiveContainer>
           </div>
         )}
-        {error ? (
-          <div className="h-80 w-half bg-slate-800 rounded-md flex justify-end flex-col">
-            the following error has occured: {error}, please check again later.
+        {err ? (
+          <div className="h-82 w-half bg-slate-800 rounded-md flex justify-end flex-col">
+            the following error has occured: {err}, please check again later.
           </div>
         ) : (
-          <div className="h-80 w-half bg-slate-800 rounded-md flex justify-end flex-col">
-            {loading && <p>Loading. . .</p>}
+          <div className="h-82 w-half bg-slate-800 rounded-md flex justify-end flex-col">
+            {load && <p>Loading. . .</p>}
             <div className="flex">
               <h1 className="text-3xl ml-8 mb-1 text-violet-500">
                 Volume 24h:
@@ -220,7 +237,7 @@ export default function Coins() {
               </h1>
             </div>
             <h1 className="text-2xl ml-8 text-violet-500">{today}</h1>
-            <ResponsiveContainer height="70%">
+            <ResponsiveContainer height="75%">
               <BarChart data={pdata1}>
                 <XAxis dataKey="name" hide={true} />
                 <YAxis hide={true} />
@@ -245,42 +262,42 @@ export default function Coins() {
       </div>
       <div className="flex ml-18 mt-8 justify-between bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4">
         <button
-          onClick={(e) => handleTime(e)}
+          onClick={handleTime}
           id="minutes 5 288"
           className={isSelected("minutes 5 288")}
         >
           1D
         </button>
         <button
-          onClick={(e) => handleTime(e)}
+          onClick={handleTime}
           id="hours 1 168"
           className={isSelected("hours 1 168")}
         >
           7D
         </button>
         <button
-          onClick={(e) => handleTime(e)}
+          onClick={handleTime}
           id="hours 1 336"
           className={isSelected("hours 1 336")}
         >
           14D
         </button>
         <button
-          onClick={(e) => handleTime(e)}
+          onClick={handleTime}
           id="hours 2 360"
           className={isSelected("hours 2 360")}
         >
           30D
         </button>
         <button
-          onClick={(e) => handleTime(e)}
+          onClick={handleTime}
           id="days 1 365"
           className={isSelected("days 1 365")}
         >
           1Y
         </button>
         <button
-          onClick={(e) => handleTime(e)}
+          onClick={handleTime}
           id="days 4 457"
           className={isSelected("days 4 457")}
         >

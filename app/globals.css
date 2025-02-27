@@ -12,6 +12,15 @@ li {
   cursor: pointer;
 }
 
+svg {
+  stroke-width: 1.5;
+}
+
+path {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .w-half {
   width: 45.3vw
 }
@@ -24,13 +33,12 @@ li {
   margin-left: 72px;
 }
 
-svg {
-  stroke-width: 1.5;
+.h-82 {
+  height: 22rem;
 }
 
-path {
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.opaque-orange {
+  background: rgba(249 115 22 0.5);
 }
 
 @layer base {

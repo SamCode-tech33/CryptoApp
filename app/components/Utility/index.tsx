@@ -19,7 +19,7 @@ export const addCommas = (num: number) => {
     return num;
   });
   if (num === 0) {
-    return "Infinite";
+    return 0;
   } else {
     return coinPriceCommas.join("") + coinDecimals;
   }
@@ -64,16 +64,14 @@ export const Updownarrow = ({ coin }: { coin: any }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      fill={coin.quote.USD.percent_change_1h > 0 ? "#11D861" : "#E9190F"}
+      fill={coin > 0 ? "#11D861" : "#E9190F"}
       viewBox="0 0 24 24"
-      stroke={coin.quote.USD.percent_change_1h > 0 ? "#11D861" : "#E9190F"}
+      stroke={coin > 0 ? "#11D861" : "#E9190F"}
       className="h-4 mr-1"
     >
       <path
         d={
-          coin.quote.USD.percent_change_1h > 0
-            ? "m4.5 15.75 7.5-7.5 7.5 7.5"
-            : "m19.5 8.25-7.5 7.5-7.5-7.5"
+          coin > 0 ? "m4.5 15.75 7.5-7.5 7.5 7.5" : "m19.5 8.25-7.5 7.5-7.5-7.5"
         }
       />
     </svg>
@@ -126,6 +124,28 @@ export const CustomTooltip = ({ active, payload }: any) => {
     const name = payload[0].payload.name;
     return (
       <div className="text-violet-500 text-2xl mt-3 flex flex-col items-end">
+        <p>{name}</p>
+        <p>${valueProper}</p>
+      </div>
+    );
+  }
+};
+
+const formatDate = (date: any) => {
+  const formattedDate = new Date(date);
+  const month = formattedDate.getMonth() + 1;
+  const day = formattedDate.getDate();
+  const hours = formattedDate.getHours();
+  const minutes = formattedDate.getMinutes();
+  return `${month}/${day} ${hours}:${minutes}`;
+};
+
+export const CustomTooltip1 = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const valueProper = payload[0].payload.valueProper;
+    const name = formatDate(payload[0].payload.name);
+    return (
+      <div className="text-white text-sm mt-2 flex flex-col items-end">
         <p>{name}</p>
         <p>${valueProper}</p>
       </div>
