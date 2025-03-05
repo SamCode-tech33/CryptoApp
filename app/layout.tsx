@@ -20,23 +20,25 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <StoreProvider>
-            <div className="flex mt-4 items-center justify-around mb-8">
-              <h3>ZenCoin</h3>
-              <div>
-                <Link href="/" className="mx-4">
-                  Home
-                </Link>
-                <Link href="/portfolio" className="mx-4">
-                  Portfolio
-                </Link>
+            <div className="mb-8 mt-2">
+              <div className="flex items-center justify-between mx-18">
+                <h3>ZenCoin</h3>
+                <div>
+                  <Link href="/" className="mx-4">
+                    Home
+                  </Link>
+                  <Link href="/portfolio" className="mx-4">
+                    Portfolio
+                  </Link>
+                </div>
+                <input
+                  type="text"
+                  placeholder="search..."
+                  className="mx-4 p-2 rounded-sm"
+                />
+                <DropdownMenu>USD</DropdownMenu>
+                <ModeToggle />
               </div>
-              <input
-                type="text"
-                placeholder="search..."
-                className="mx-4 p-2 rounded-sm"
-              />
-              <DropdownMenu>USD</DropdownMenu>
-              <ModeToggle />
             </div>
             {children}
           </StoreProvider>
