@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
+import Image from "next/image";
 
 const handleImageError = (
   event: React.SyntheticEvent<HTMLImageElement, Event>
@@ -111,7 +112,7 @@ export const Plus = () => {
 
 export const Defaulticon = ({ coin }: { coin: any }) => {
   return (
-    <img
+    <Image
       id="currentPhoto"
       src={`https://assets.coincap.io/assets/icons/${coin.symbol.toLowerCase()}@2x.png`}
       alt=""

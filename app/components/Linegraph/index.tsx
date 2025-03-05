@@ -20,7 +20,7 @@ export const Linegraph = ({
   today,
 }: any) => {
   if (coinHistory.length !== limit && rendered) {
-    let timeInsufficientArray = coinHistory;
+    const timeInsufficientArray = coinHistory;
     for (let i = limit - coinHistory.length; i > 0; i--) {
       timeInsufficientArray.unshift({
         HIGH: 0,
@@ -28,11 +28,10 @@ export const Linegraph = ({
         LOW: 0,
       });
     }
-    console.log(coinHistory);
   }
 
   if (coinCompare.length !== limit && rendered) {
-    let timeInsufficientArray = coinCompare;
+    const timeInsufficientArray = coinCompare;
     for (let i = limit - coinCompare.length; i > 0; i--) {
       timeInsufficientArray.unshift({
         HIGH: 0,
@@ -40,7 +39,6 @@ export const Linegraph = ({
         LOW: 0,
       });
     }
-    console.log(coinCompare);
   }
 
   let graphTime = 0;

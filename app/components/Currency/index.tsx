@@ -14,7 +14,6 @@ export function Currency() {
 
   const changeCurrency = (e: any) => {
     setCurrency(e.target.innerText);
-    console.log(e.target.innerText);
   };
 
   return (
