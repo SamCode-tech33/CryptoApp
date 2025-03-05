@@ -1,3 +1,6 @@
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
+
 const handleImageError = (
   event: React.SyntheticEvent<HTMLImageElement, Event>
 ) => {
@@ -119,13 +122,18 @@ export const Defaulticon = ({ coin }: { coin: any }) => {
 };
 
 export const CustomTooltip = ({ active, payload }: any) => {
+  const compare = useSelector((state: RootState) => state.symbol.compare);
   if (active && payload && payload.length) {
     const valueProper = payload[0].payload.valueProper;
+    const valueCompProper = payload[0].payload.valueCompProper;
     const name = payload[0].payload.name;
     return (
       <div className="text-violet-500 text-2xl mt-3 flex flex-col items-end">
         <p>{name}</p>
         <p>${valueProper}</p>
+        <p className={compare.length ? "value-comp-tool" : "hidden"}>
+          ${valueCompProper}
+        </p>
       </div>
     );
   }
@@ -141,13 +149,18 @@ const formatDate = (date: any) => {
 };
 
 export const CustomTooltip1 = ({ active, payload }: any) => {
+  const compare = useSelector((state: RootState) => state.symbol.compare);
   if (active && payload && payload.length) {
     const valueProper = payload[0].payload.valueProper;
+    const valueCompProper = payload[0].payload.valueCompProper;
     const name = formatDate(payload[0].payload.name);
     return (
       <div className="text-white text-sm mt-2 flex flex-col items-end">
         <p>{name}</p>
         <p>${valueProper}</p>
+        <p className={compare.length ? "value-comp-tool" : "hidden"}>
+          ${valueCompProper}
+        </p>
       </div>
     );
   }
@@ -158,7 +171,7 @@ export const CustomizedLabel = (props: any) => {
   return (
     <text
       x={x + width / 2}
-      y={y + height - 13}
+      y={y + height + 12}
       dy={11}
       fill="white"
       fontSize={13}
