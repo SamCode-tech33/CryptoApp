@@ -2,54 +2,65 @@
 
 import Navcoin from "../components/Navcoin";
 import Slidercoin from "../components/Slidercoin";
-import {
-  addCommas,
-  CustomTooltip,
-  CustomizedLabel,
-} from "../components/Utility";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/lib/store";
+import { setCompare } from "@/lib/symbolSlice";
 import { changeTimePeriod } from "@/lib/timeSlice";
-import {
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-  Area,
-  AreaChart,
-  BarChart,
-  Bar,
-} from "recharts";
+import { Linegraph } from "../components/Linegraph";
+import { Bargraph } from "../components/Bargraph";
 
 export default function Coins() {
   const [coinHistory, setCoinHistory] = useState<any>([]);
   const [coinHistoryHour, setCoinHistoryHour] = useState<any>([]);
+  const [coinCompare, setCoinCompare] = useState<any>([]);
+  const [coinCompareHour, setCoinCompareHour] = useState<any>([]);
   const [selectedTime, setSelectedTime] = useState<string>("minutes 5 288");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const [load, setLoad] = useState<boolean>(false);
   const [err, setErr] = useState<boolean>(false);
+  const [rendered, setRendered] = useState<boolean>(false);
+
+  const today = new Date().toDateString();
 
   const dispatch = useDispatch<AppDispatch>();
+
   const symbol = useSelector(
     (state: RootState) => state.symbol.sym
   ).toUpperCase();
+  const compare = useSelector(
+    (state: RootState) => state.symbol.compare
+  ).toUpperCase();
+  const isCompare = useSelector((state: RootState) => state.symbol.isCompare);
+
   const time = useSelector((state: RootState) => state.timePeriod.time);
   const aggre = useSelector((state: RootState) => state.timePeriod.aggre);
   const limit = useSelector((state: RootState) => state.timePeriod.limit);
 
+  const handleCompare = () => {
+    dispatch(setCompare());
+  };
+
   const getCoinsHistory = async (symbol: string) => {
     setLoading(true);
+    setRendered(false);
     try {
-      const { data } = await axios.get(
-        `/api/historical?instrument=${symbol}&timeperiod=${time}&aggre=${aggre}&limit=${limit}`
-      );
-      setCoinHistory(data.Data);
-      getCoinsHistoryHour(symbol);
+      if (symbol.length) {
+        const { data } = await axios.get(
+          `/api/historical?instrument=${symbol}&timeperiod=${time}&aggre=${aggre}&limit=${limit}`
+        );
+        setCoinHistory(data.Data);
+      }
+      if (compare.length) {
+        const { data } = await axios.get(
+          `/api/historical?instrument=${compare}&timeperiod=${time}&aggre=${aggre}&limit=${limit}`
+        );
+        setCoinCompare(data.Data);
+      }
+      getCoinsHistoryHour(symbol, compare);
       //eslint-disable-next-line
     } catch (error) {
       setError(true);
@@ -58,13 +69,21 @@ export default function Coins() {
     setLoading(false);
   };
 
-  const getCoinsHistoryHour = async (symbol: string) => {
+  const getCoinsHistoryHour = async (symbol: string, compare: string) => {
     setLoad(true);
     try {
-      const { data } = await axios.get(
-        `/api/historicalHour?instrument=${symbol}`
-      );
-      setCoinHistoryHour(data.Data);
+      if (symbol.length) {
+        const { data } = await axios.get(
+          `/api/historicalHour?instrument=${symbol}`
+        );
+        setCoinHistoryHour(data.Data);
+      }
+      if (compare.length) {
+        const { data } = await axios.get(
+          `/api/historicalHour?instrument=${compare}`
+        );
+        setCoinCompareHour(data.Data);
+      }
       //eslint-disable-next-line
     } catch (error) {
       setErr(true);
@@ -73,61 +92,10 @@ export default function Coins() {
     setLoad(false);
   };
 
-  const today = new Date().toDateString();
-  let graphTime = 0;
-  let graphPeriod = 0;
-  let max = 0;
-  let min = 0;
-  const pdata = coinHistory.map((interval: any, i: number) => {
-    if (i !== 0 && interval.HIGH > coinHistory[i - 1].HIGH) {
-      max = interval.HIGH;
-    }
-    if (i !== 0 && interval.LOW < coinHistory[i - 1].LOW) {
-      min = interval.LOW;
-    }
-    const value = (interval.HIGH + interval.LOW) / 2;
-    const valueProper = addCommas(value);
-    if (selectedTime === "minutes 5 288") {
-      graphTime = 300000;
-      graphPeriod = 86400000;
-    } else if (selectedTime === "hours 1 168") {
-      graphTime = 3600000;
-      graphPeriod = 604800000;
-    } else if (selectedTime === "hours 1 336") {
-      graphTime = 3600000;
-      graphPeriod = 1209600000;
-    } else if (selectedTime === "hours 2 360") {
-      graphTime = 7200000;
-      graphPeriod = 2592000000;
-    } else if (selectedTime === "days 1 365") {
-      graphTime = 86400000;
-      graphPeriod = 31579200000;
-    } else if (selectedTime === "days 4 457") {
-      graphTime = 345600000;
-      graphPeriod = 157939200000;
-    }
-    return {
-      name: new Date(Date.now() + i * graphTime - graphPeriod + graphTime)
-        .toString()
-        .split("G")[0],
-      value: value,
-      valueProper: valueProper,
-    };
-  });
-
-  let totalVolume = 0;
-  const pdata1 = coinHistoryHour.map((hour: any, i: number) => {
-    const value = hour.QUOTE_VOLUME;
-    totalVolume = totalVolume + value;
-    const valueProper = addCommas(value);
-    return {
-      name: new Date(Date.now() + i * 3600000 - 86400000 + 3600000)
-        .toString()
-        .split("G")[0],
-      value: value,
-      valueProper: valueProper,
-    };
-  });
+  const apiLoaded = async () => {
+    await getCoinsHistory(symbol);
+    setRendered(true);
+  };
 
   const handleTime = (e: any) => {
     const time = e.target.id.split(" ")[0];
@@ -154,71 +122,77 @@ export default function Coins() {
 
   useEffect(() => {
     getCoinsHistory(symbol);
-  }, [symbol, selectedTime]);
+    apiLoaded();
+  }, [symbol, selectedTime, compare]);
 
   return (
     <div>
       <div className="flex mx-18">
         <Link href="/coins">
-          <Button className="mr-4">Coins</Button>
+          <button className="p-3 rounded-sm bg-slate-600 w-72">Coins</button>
         </Link>
         <Link href="/convertor">
-          <Button className="ml-4">Convertor</Button>
+          <button className="bg-slate-800 p-3 rounded-sm hover:bg-slate-600 w-72">
+            Convertor
+          </button>
         </Link>
       </div>
       <div className="flex justify-self-end mx-18">
-        <Button className="mt-4">Compare</Button>
+        <button
+          onClick={handleCompare}
+          className="mt-4 bg-slate-800 p-3 rounded-md hover:bg-slate-600"
+        >
+          {isCompare ? (
+            <div className="flex items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                className="mr-4 h-5 mb-1"
+              >
+                <path d="M6 18 18 6M6 6l12 12" />
+              </svg>
+
+              <span>Exit Comparison</span>
+            </div>
+          ) : (
+            <div className="flex items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                className="mr-4 h-6"
+              >
+                <path d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5m.75-9 3-3 2.148 2.148A12.061 12.061 0 0 1 16.5 7.605" />
+              </svg>
+              <span>Compare</span>
+            </div>
+          )}
+        </button>
       </div>
       <Slidercoin />
       <div className="flex justify-between justify-left mt-8 mx-18">
         {error ? (
           <div className="h-82 w-half bg-slate-800 rounded-md flex justify-end flex-col">
-            the following error has occured: {error}, please check again later.
+            An error has occured, please check again later.
           </div>
         ) : (
           <div className="h-82 w-half bg-slate-800 rounded-md flex justify-end flex-col">
-            {loading && <p>Loading. . .</p>}
-            <h1 className="text-3xl ml-8 mb-2 text-violet-500">
-              {coinHistory[0]?.INSTRUMENT}
-            </h1>
-            <h1 className="text-2xl ml-8 text-violet-500">{today}</h1>
-            <ResponsiveContainer height="75%">
-              <AreaChart data={pdata}>
-                <defs>
-                  <linearGradient id="color" x1="0" y1="0" x2="0" y2="0.8">
-                    <stop
-                      offset="0%"
-                      stopColor="rgb(139 92 246)"
-                      stopOpacity={0.8}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="rgb(124 58 237)"
-                      stopOpacity={0.1}
-                    />
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey="name" hide={true} />
-                <YAxis
-                  domain={[`dataMin-${max - min}`, `dataMax+${max - min}`]}
-                  hide={true}
-                />
-                <Tooltip
-                  offset={10}
-                  separator=""
-                  content={<CustomTooltip />}
-                  position={{ x: 555, y: -90 }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="value"
-                  stroke="rgb(139 92 246)"
-                  fillOpacity={1}
-                  fill="url(#color)"
-                  name="$"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            <Linegraph
+              coinHistory={coinHistory}
+              limit={limit}
+              rendered={rendered}
+              symbol={symbol}
+              selectedTime={selectedTime}
+              coinCompare={coinCompare}
+              compare={compare}
+              loading={loading}
+              today={today}
+              currency={"USD"}
+              selectedPriceRight="1"
+            />
           </div>
         )}
         {err ? (
@@ -226,38 +200,15 @@ export default function Coins() {
             the following error has occured: {err}, please check again later.
           </div>
         ) : (
-          <div className="h-82 w-half bg-slate-800 rounded-md flex justify-end flex-col">
-            {load && <p>Loading. . .</p>}
-            <div className="flex">
-              <h1 className="text-3xl ml-8 mb-1 text-violet-500">
-                Volume 24h:
-              </h1>
-              <h1 className="text-3xl ml-8 mb-1 text-violet-500">
-                ${addCommas(totalVolume)}
-              </h1>
-            </div>
-            <h1 className="text-2xl ml-8 text-violet-500">{today}</h1>
-            <ResponsiveContainer height="75%">
-              <BarChart data={pdata1}>
-                <XAxis dataKey="name" hide={true} />
-                <YAxis hide={true} />
-                <Tooltip
-                  offset={10}
-                  separator=""
-                  content={<CustomTooltip />}
-                  position={{ x: 555, y: -90 }}
-                  cursor={{ fill: "transparent" }}
-                />
-                <Bar
-                  dataKey="value"
-                  fill="#007674"
-                  activeBar={{ stroke: "white", strokeWidth: 3 }}
-                  name="$"
-                  label={<CustomizedLabel />}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          <Bargraph
+            coinHistoryHour={coinHistoryHour}
+            coinCompareHour={coinCompareHour}
+            load={load}
+            coinCompare={coinCompare}
+            coinHistory={coinHistory}
+            compare={compare}
+            today={today}
+          />
         )}
       </div>
       <div className="flex ml-18 mt-8 justify-between bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4">

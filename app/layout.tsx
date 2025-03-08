@@ -1,9 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import "./globals.css";
 import { ThemeProvider } from "./components/themeprovider";
 import { ModeToggle } from "./components/themeselector";
-import { DropdownMenu } from "@/components/ui/dropdown-menu";
+import { Currency } from "./components/Currency";
 import StoreProvider from "./StoreProvider";
+import Logo from "./components/Logo";
+import { Navlinks, Navsearch } from "./components/svgComps";
 
 export default function RootLayout({
   children,
@@ -22,22 +26,18 @@ export default function RootLayout({
           <StoreProvider>
             <div className="mb-8 mt-2">
               <div className="flex items-center justify-between mx-18">
-                <h3>ZenCoin</h3>
-                <div>
-                  <Link href="/" className="mx-4">
-                    Home
-                  </Link>
-                  <Link href="/portfolio" className="mx-4">
-                    Portfolio
-                  </Link>
+                <Link href="/">
+                  <div className="flex h-4 items-center">
+                    <Logo />
+                    <h3 className="ml-2">ZenCoin</h3>
+                  </div>
+                </Link>
+                <Navlinks />
+                <Navsearch />
+                <div className="flex items-center">
+                  <Currency />
+                  <ModeToggle />
                 </div>
-                <input
-                  type="text"
-                  placeholder="search..."
-                  className="mx-4 p-2 rounded-sm"
-                />
-                <DropdownMenu>USD</DropdownMenu>
-                <ModeToggle />
               </div>
             </div>
             {children}

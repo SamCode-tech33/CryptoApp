@@ -93,7 +93,7 @@ export default function Navcoin() {
                     <span>{index + 1}</span>
                   </div>
                   <div className="w-64 flex justify-left mr-4 items-center">
-                    <Defaulticon coin={coin} />
+                    <Defaulticon coin={coin.symbol} />
                     <span>
                       {coin.name} ({coin.symbol})
                     </span>
@@ -197,16 +197,18 @@ export default function Navcoin() {
                       ></div>
                     </div>
                   </div>
-                  {data.length > 0 && colors.length === data.length * 2 && (
-                    <Sevendaygraph
-                      symbol={coin.symbol.toUpperCase()}
-                      sevenDay={
-                        coin.quote.USD.percent_change_7d < 0
-                          ? "rgb(220 38 38)"
-                          : "rgb(34 197 94)"
-                      }
-                    />
-                  )}
+                  {data.length > 0 &&
+                    colors.length === data.length * 2 &&
+                    coin.symbol === "BTC" && (
+                      <Sevendaygraph
+                        symbol={coin.symbol.toUpperCase()}
+                        sevenDay={
+                          coin.quote.USD.percent_change_7d < 0
+                            ? "rgb(220 38 38)"
+                            : "rgb(34 197 94)"
+                        }
+                      />
+                    )}
                 </li>
               </Link>
             );

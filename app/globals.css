@@ -41,6 +41,14 @@ path {
   background: rgba(249 115 22 0.5);
 }
 
+.value-comp-tool {
+  color: #DA5BA5;
+}
+
+.w-all {
+  width: 92.3vw;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
