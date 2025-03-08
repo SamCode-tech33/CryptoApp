@@ -8,7 +8,7 @@ import {
   Area,
   AreaChart,
 } from "recharts";
-import { addCommas, CustomTooltip1 } from "../Utility";
+import { addCommas, CustomToolTipMini } from "../Utility";
 
 export const Sevendaygraph = ({
   symbol,
@@ -88,7 +88,7 @@ export const Sevendaygraph = ({
             <Tooltip
               offset={10}
               separator=""
-              content={<CustomTooltip1 />}
+              content={<CustomToolTipMini />}
               position={{ x: 172, y: 0 }}
             />
             <Area
