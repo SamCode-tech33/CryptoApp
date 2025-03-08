@@ -1,6 +1,5 @@
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
-import Image from "next/image";
 
 const handleImageError = (
   event: React.SyntheticEvent<HTMLImageElement, Event>
@@ -112,17 +111,17 @@ export const Plus = () => {
 
 export const Defaulticon = ({ coin }: { coin: any }) => {
   return (
-    <Image
+    <img
       id="currentPhoto"
-      src={`https://assets.coincap.io/assets/icons/${coin.symbol.toLowerCase()}@2x.png`}
+      src={`https://assets.coincap.io/assets/icons/${coin.toLowerCase()}@2x.png`}
       alt=""
       onError={handleImageError}
-      className="h-8 mx-4"
+      className="h-8 mr-2"
     />
   );
 };
 
-export const CustomTooltip = ({ active, payload }: any) => {
+export const CustomTooltip = ({ active, payload, currency }: any) => {
   const compare = useSelector((state: RootState) => state.symbol.compare);
   if (active && payload && payload.length) {
     const valueProper = payload[0].payload.valueProper;
@@ -131,7 +130,7 @@ export const CustomTooltip = ({ active, payload }: any) => {
     return (
       <div className="text-violet-500 text-2xl mt-3 flex flex-col items-end">
         <p>{name}</p>
-        <p>${valueProper}</p>
+        <p>{currency === "USD" ? "$" : ""}{valueProper}</p>
         <p className={compare.length ? "value-comp-tool" : "hidden"}>
           ${valueCompProper}
         </p>
@@ -182,3 +181,116 @@ export const CustomizedLabel = (props: any) => {
     </text>
   );
 };
+
+export function getGraphData(
+  coinHistory: any,
+  selectedPriceRight: string,
+  currency: string,
+  selectedTime: string,
+  graphTime: number,
+  graphPeriod: number,
+  max: number,
+  min: number
+) {
+  const coinHist = coinHistory.map((interval: any, i: number) => {
+    if (i !== 0 && interval.HIGH > coinHistory[i - 1].HIGH) {
+      max = interval.HIGH / Number(selectedPriceRight.split(",").join(""));
+    }
+    if (i !== 0 && interval.LOW < coinHistory[i - 1].LOW) {
+      min = interval.LOW / Number(selectedPriceRight.split(",").join(""));
+    }
+    const value =
+      (interval.HIGH + interval.LOW) /
+      2 /
+      Number(selectedPriceRight.split(",").join(""));
+    const valueProper = addCommas(value) + " " + currency;
+    if (selectedTime === "minutes 5 288") {
+      graphTime = 300000;
+      graphPeriod = 86400000;
+    } else if (selectedTime === "hours 1 168") {
+      graphTime = 3600000;
+      graphPeriod = 604800000;
+    } else if (selectedTime === "hours 1 336") {
+      graphTime = 3600000;
+      graphPeriod = 1209600000;
+    } else if (selectedTime === "hours 2 360") {
+      graphTime = 7200000;
+      graphPeriod = 2592000000;
+    } else if (selectedTime === "days 1 365") {
+      graphTime = 86400000;
+      graphPeriod = 31579200000;
+    } else if (selectedTime === "days 4 457") {
+      graphTime = 345600000;
+      graphPeriod = 157939200000;
+    }
+    return {
+      coin: interval.INSTRUMENT,
+      name: new Date(Date.now() + i * graphTime - graphPeriod + graphTime)
+        .toString()
+        .split("G")[0],
+      value: value,
+      valueProper: valueProper,
+    };
+  });
+  return { max, min, coinHist };
+}
+
+export function getGraphComparison(
+  pdata: any,
+  pdataComp: any,
+  rendered: boolean
+) {
+  const histCompare = pdata.coinHist.map((data: any, index: number) => {
+    if (pdataComp.coinHist.length && rendered) {
+      let valueComp = 0;
+      let valueCompProper = 0;
+      if (pdataComp.coinHist[index]) {
+        valueComp = pdataComp.coinHist[index].value;
+        valueCompProper = pdataComp.coinHist[index].valueProper;
+      } else {
+        valueComp = 0;
+        valueCompProper = 0;
+      }
+      return {
+        ...data,
+        valueComp: valueComp,
+        valueCompProper: valueCompProper,
+      };
+    } else {
+      return data;
+    }
+  });
+  return histCompare;
+}
+
+export function getVolumeGraphData(coinPeriod: any, totalVolume: number) {
+  const coinHist = coinPeriod.map((hour: any, i: number) => {
+    const value = hour.QUOTE_VOLUME;
+    totalVolume = totalVolume + value;
+    const valueProper = addCommas(value);
+    return {
+      coin: hour.INSTRUMENT,
+      name: new Date(Date.now() + i * 3600000 - 86400000 + 3600000)
+        .toString()
+        .split("G")[0],
+      value: value,
+      valueProper: valueProper,
+    };
+  });
+  return { totalVolume, coinHist };
+}
+
+export function getVolumeGraphComparison(pdata: any, pdataComp: any) {
+  const histCompare = pdata.coinHist.map((data: any, index: number) => {
+    if (pdataComp.coinHist.length) {
+      return {
+        ...data,
+        valueComp: pdataComp.coinHist[index].value,
+        valueCompProper: pdataComp.coinHist[index].valueProper,
+      };
+    } else {
+      return data;
+    }
+  });
+  return histCompare;
+}

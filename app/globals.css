@@ -45,6 +45,10 @@ path {
   color: #DA5BA5;
 }
 
+.w-all {
+  width: 92.3vw;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

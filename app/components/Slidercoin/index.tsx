@@ -56,7 +56,8 @@ export default function Slidercoin() {
                         : "h-24 dark:bg-slate-800 dark:hover:bg-slate-600 rounded-md mx-2 flex justify-left items-center cursor-pointer"
                     }
                   >
-                    <Defaulticon coin={coin} />
+                    <div className="ml-4"></div>
+                    <Defaulticon coin={coin.symbol} />
                     <div>
                       <div>
                         <span>{coin.name}</span>

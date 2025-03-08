@@ -179,17 +179,21 @@ export default function Coins() {
             An error has occured, please check again later.
           </div>
         ) : (
-          <Linegraph
-            coinHistory={coinHistory}
-            limit={limit}
-            rendered={rendered}
-            symbol={symbol}
-            selectedTime={selectedTime}
-            coinCompare={coinCompare}
-            compare={compare}
-            loading={loading}
-            today={today}
-          />
+          <div className="h-82 w-half bg-slate-800 rounded-md flex justify-end flex-col">
+            <Linegraph
+              coinHistory={coinHistory}
+              limit={limit}
+              rendered={rendered}
+              symbol={symbol}
+              selectedTime={selectedTime}
+              coinCompare={coinCompare}
+              compare={compare}
+              loading={loading}
+              today={today}
+              currency={"USD"}
+              selectedPriceRight="1"
+            />
+          </div>
         )}
         {err ? (
           <div className="h-82 w-half bg-slate-800 rounded-md flex justify-end flex-col">

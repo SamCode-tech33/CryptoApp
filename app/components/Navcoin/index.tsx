@@ -93,7 +93,7 @@ export default function Navcoin() {
                     <span>{index + 1}</span>
                   </div>
                   <div className="w-64 flex justify-left mr-4 items-center">
-                    <Defaulticon coin={coin} />
+                    <Defaulticon coin={coin.symbol} />
                     <span>
                       {coin.name} ({coin.symbol})
                     </span>
