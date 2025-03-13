@@ -98,9 +98,7 @@ export default function Coins() {
   };
 
   const handleTime = (e: any) => {
-    const time = e.target.id.split(" ")[0];
-    const aggre = e.target.id.split(" ")[1];
-    const limit = e.target.id.split(" ")[2];
+    const [time, aggre, limit] = e.target.id.split(" ");
     setSelectedTime(e.target.id);
     const newPeriod = {
       time: time,

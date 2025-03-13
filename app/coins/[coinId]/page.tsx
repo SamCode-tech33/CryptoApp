@@ -19,7 +19,6 @@ export default function Coin({ params }: any) {
   const [coin, setCoin] = useState<any>(null);
   const [loading1, setLoading1] = useState(false);
   const [error1, setError1] = useState(false);
-  const [rendered, setRendered] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
   const { data, loading, error } = useSelector(
@@ -43,12 +42,11 @@ export default function Coin({ params }: any) {
   useEffect(() => {
     dispatch(fetchCoins());
     getCoinsInfo(coinId.coinId);
-  }, [params]);
+  }, [dispatch]);
 
   useEffect(() => {
-    setCoin(data.find((coin: any) => coin.id.toString() === coinId.coinId));
-    if (coin !== null) {
-      setRendered(true);
+    if (data.length) {
+      setCoin(data.find((coin: any) => coin.id.toString() === coinId.coinId));
     }
   }, [data]);
 
@@ -61,12 +59,12 @@ export default function Coin({ params }: any) {
         </p>
       ) : (
         <div>
-          {rendered && (
+          {coin && (
             <div className="mx-32 p-2">
               <div className="flex">
                 <div className="p-6 bg-slate-800 rounded-lg w-1/3 mr-72">
                   <div className="flex items-center">
-                    <Defaulticon coin={coin} />
+                    <Defaulticon coin={coin.symbol} />
                     <div>
                       <span className="text-xl">
                         {coin.name} ({coin.symbol})

@@ -121,7 +121,12 @@ export const Defaulticon = ({ coin }: { coin: any }) => {
   );
 };
 
-export const CustomTooltip = ({ active, payload, currency }: any) => {
+export const CustomTooltip = ({
+  active,
+  payload,
+  currency,
+  compHidden,
+}: any) => {
   const compare = useSelector((state: RootState) => state.symbol.compare);
   if (active && payload && payload.length) {
     const valueProper = payload[0].payload.valueProper;
@@ -130,10 +135,15 @@ export const CustomTooltip = ({ active, payload, currency }: any) => {
     return (
       <div className="text-violet-500 text-2xl mt-3 flex flex-col items-end">
         <p>{name}</p>
-        <p>{currency === "USD" ? "$" : ""}{valueProper}</p>
-        <p className={compare.length ? "value-comp-tool" : "hidden"}>
-          ${valueCompProper}
+        <p>
+          {currency === "USD" ? "$" : ""}
+          {valueProper}
         </p>
+        {compHidden && (
+          <p className={compare.length ? "value-comp-tool" : "hidden"}>
+            ${valueCompProper}
+          </p>
+        )}
       </div>
     );
   }
@@ -148,7 +158,7 @@ const formatDate = (date: any) => {
   return `${month}/${day} ${hours}:${minutes}`;
 };
 
-export const CustomTooltip1 = ({ active, payload }: any) => {
+export const CustomToolTipMini = ({ active, payload }: any) => {
   const compare = useSelector((state: RootState) => state.symbol.compare);
   if (active && payload && payload.length) {
     const valueProper = payload[0].payload.valueProper;
