@@ -95,9 +95,7 @@ export default function Convertor() {
   };
 
   const handleTime = (e: any) => {
-    const time = e.target.id.split(" ")[0];
-    const aggre = e.target.id.split(" ")[1];
-    const limit = e.target.id.split(" ")[2];
+    const [time, aggre, limit] = e.target.id.split(" ");
     setSelectedTime(e.target.id);
     const newPeriod = {
       time: time,
@@ -129,7 +127,7 @@ export default function Convertor() {
       setSelectedPriceLeft(priceLeft.toString());
       setSelectedPriceRight(priceRight.toString());
     }
-  }, [data.length]);
+  }, [data]);
 
   useEffect(() => {
     dispatch(fetchCoins());
@@ -316,7 +314,7 @@ export default function Convertor() {
                 today={today}
                 currency={menuIconRight}
                 selectedPriceRight={selectedPriceRight}
-                noCompare={true}
+                compareHidden={true}
               />
             )}
           </div>

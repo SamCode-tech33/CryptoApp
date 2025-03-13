@@ -20,7 +20,7 @@ export const Linegraph = ({
   today,
   currency,
   selectedPriceRight,
-  noCompare,
+  compareHidden,
 }: any) => {
   if (coinHistory.length !== limit && rendered) {
     const timeInsufficientArray = coinHistory;
@@ -112,7 +112,7 @@ export const Linegraph = ({
           <Tooltip
             offset={10}
             separator=""
-            content={<CustomTooltip currency={currency} compHidden={noCompare}/>}
+            content={<CustomTooltip currency={currency} compHidden={compareHidden}/>}
             position={{ x: currency === "USD" ? 555 : 1450, y: -110 }}
           />
           <Area
