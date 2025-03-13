@@ -139,7 +139,7 @@ export const CustomTooltip = ({
           {currency === "USD" ? "$" : ""}
           {valueProper}
         </p>
-        {compHidden && (
+        {compHidden ? "" : (
           <p className={compare.length ? "value-comp-tool" : "hidden"}>
             ${valueCompProper}
           </p>
