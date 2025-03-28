@@ -138,7 +138,7 @@ export default function Coins() {
       <div className="flex justify-self-end mx-18">
         <button
           onClick={handleCompare}
-          className="mt-4 bg-slate-800 p-3 rounded-md hover:bg-slate-600"
+          className="bg-slate-800 p-3 rounded-md hover:bg-slate-600"
         >
           {isCompare ? (
             <div className="flex items-center">
@@ -171,7 +171,7 @@ export default function Coins() {
         </button>
       </div>
       <Slidercoin />
-      <div className="flex justify-between justify-left mt-8 mx-18">
+      <div className="flex justify-between justify-left mx-18">
         {error ? (
           <div className="h-82 w-half bg-slate-800 rounded-md flex justify-end flex-col">
             An error has occured, please check again later.
@@ -209,7 +209,7 @@ export default function Coins() {
           />
         )}
       </div>
-      <div className="flex ml-18 mt-8 justify-between bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4">
+      <div className="flex ml-18 mt-4 justify-between bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4">
         <button
           onClick={handleTime}
           id="minutes 5 288"

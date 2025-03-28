@@ -9,11 +9,14 @@ body {
 li {
   margin: 16px 0;
   padding: 2px;
-  cursor: pointer;
 }
 
 svg {
   stroke-width: 1.5;
+}
+
+input {
+  caret-color: black;
 }
 
 path {
@@ -47,6 +50,18 @@ path {
 
 .w-all {
   width: 92.3vw;
+}
+
+.w-26 {
+  width: 110px;
+}
+
+.w-22 {
+  width: 88px;
+}
+
+.w-30 {
+  width: 120px
 }
 
 @layer base {

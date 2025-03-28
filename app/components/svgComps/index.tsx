@@ -1,5 +1,8 @@
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "@/lib/store";
+import { fetchCoins } from "@/lib/coinsSlice";
 
 export const Navlinks = () => {
   const [home, setHome] = useState(true);
@@ -44,12 +47,30 @@ export const Navlinks = () => {
 };
 
 export const Navsearch = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const dispatch = useDispatch<AppDispatch>();
+  const { data, error } = useSelector((state: RootState) => state.coins);
+
+  const handleInputChange = (e: any) => {
+    setSearchTerm(e.target.value);
+  };
+
+  useEffect(() => {
+    if (!data.length) dispatch(fetchCoins());
+  }, [dispatch]);
+
   return (
     <div className="relative w-full max-w-xs">
       <input
         type="text"
         placeholder="Search..."
-        className="w-full pl-10 pr-4 p-2 rounded-sm bg-slate-800 text-white focus:outline-none"
+        value={searchTerm}
+        onChange={handleInputChange}
+        onFocus={() => setIsOpen(true)}
+        onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+        className="w-full pl-10 pr-4 p-2 rounded-sm bg-slate-800 text-white dark:caret-white"
       />
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -63,6 +84,41 @@ export const Navsearch = () => {
           clipRule="evenodd"
         />
       </svg>
+      {error ? (
+        <p className="block p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+          An error has occured, please try again later...
+        </p>
+      ) : (
+        <div
+          className={
+            isOpen ? "border absolute z-10 bg-slate-900 w-full" : "hidden"
+          }
+        >
+          {data
+            .filter((coin) =>
+              coin.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((coin) => {
+              return (
+                <Link
+                  href={`coins/${coin.id}`}
+                  key={coin.id}
+                  className="block p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {coin.name} ({coin.symbol})
+                </Link>
+              );
+            })}
+          {data.filter((coin) =>
+            coin.name.toLowerCase().includes(searchTerm.toLowerCase())
+          ).length === 0 && (
+            <p className="block p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+              No coin found...
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 };

@@ -22,7 +22,7 @@ export const addCommas = (num: number) => {
     return num;
   });
   if (num === 0) {
-    return 0;
+    return "0";
   } else {
     return coinPriceCommas.join("") + coinDecimals;
   }
@@ -109,14 +109,14 @@ export const Plus = () => {
   );
 };
 
-export const Defaulticon = ({ coin }: { coin: any }) => {
+export const Defaulticon = ({ coin, height }: { coin: any, height: any }) => {
   return (
     <img
       id="currentPhoto"
       src={`https://assets.coincap.io/assets/icons/${coin.toLowerCase()}@2x.png`}
       alt=""
       onError={handleImageError}
-      className="h-8 mr-2"
+      className={`${height} mr-2`}
     />
   );
 };
