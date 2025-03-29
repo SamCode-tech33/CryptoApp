@@ -130,7 +130,7 @@ export default function Convertor() {
   }, [data]);
 
   useEffect(() => {
-    dispatch(fetchCoins());
+    if (!data.length) dispatch(fetchCoins());
     setToday(new Date().toString().split("G")[0]);
   }, [dispatch]);
 
@@ -171,7 +171,7 @@ export default function Convertor() {
                     <DropdownMenuTrigger asChild>
                       <button className="bg-slate-800 hover:bg-slate-600 p-2.5 rounded-md">
                         <div className="flex items-center">
-                          <Defaulticon coin={menuIconLeft} />
+                          <Defaulticon coin={menuIconLeft} height="h-8"/>
                           <span>{menuTriggerLeft}</span>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -241,7 +241,7 @@ export default function Convertor() {
                     <DropdownMenuTrigger asChild>
                       <button className="bg-slate-800 hover:bg-slate-600 p-2.5 rounded-md">
                         <div className="flex items-center">
-                          <Defaulticon coin={menuIconRight} />
+                          <Defaulticon coin={menuIconRight} height="h-8" />
                           <span>{menuTriggerRight}</span>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"

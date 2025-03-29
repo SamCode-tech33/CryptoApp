@@ -38,7 +38,7 @@ export default function Slidercoin() {
       {loading ? (
         <div>loading. . .</div>
       ) : (
-        <div className="my-8 mx-16">
+        <div className="my-6 mx-16">
           <Slider {...sliderSettings}>
             {data.map((coin: any) => {
               const coinPrice = addCommas(coin.quote.USD.price);
@@ -57,7 +57,7 @@ export default function Slidercoin() {
                     }
                   >
                     <div className="ml-4"></div>
-                    <Defaulticon coin={coin.symbol} />
+                    <Defaulticon coin={coin.symbol} height="h-8" />
                     <div>
                       <div>
                         <span>{coin.name}</span>

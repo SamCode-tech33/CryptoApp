@@ -62,9 +62,9 @@ export default function Coin({ params }: any) {
           {coin && (
             <div className="mx-32 p-2">
               <div className="flex">
-                <div className="p-6 bg-slate-800 rounded-lg w-1/3 mr-72">
+                <div className="p-7 bg-slate-800 rounded-lg w-1/3 mr-72">
                   <div className="flex items-center">
-                    <Defaulticon coin={coin.symbol} />
+                    <Defaulticon coin={coin.symbol} height="h-12" />
                     <div>
                       <span className="text-xl">
                         {coin.name} ({coin.symbol})
@@ -190,7 +190,7 @@ export default function Coin({ params }: any) {
                 )}
               </div>
               <div className="flex">
-                <div className="p-6 bg-slate-800 rounded-lg w-half mt-12 mr-8">
+                <div className="p-6 bg-slate-800 rounded-lg w-half mt-8 mr-8">
                   <div className="flex justify-between mb-4">
                     <div className="flex">
                       <Plus />
@@ -225,7 +225,7 @@ export default function Coin({ params }: any) {
                     </span>
                   </div>
                 </div>
-                <div className="p-6 bg-slate-800 rounded-lg w-half mt-12 mr-8">
+                <div className="p-6 bg-slate-800 rounded-lg w-half mt-8 mr-8">
                   <div className="flex justify-between mb-4">
                     <div className="flex">
                       <Plus />
@@ -250,7 +250,7 @@ export default function Coin({ params }: any) {
                 </div>
               </div>
               <div className="flex">
-                <div className="p-6 bg-slate-800 rounded-lg w-half mt-12 mr-8">
+                <div className="p-6 bg-slate-800 rounded-lg w-half mt-8 mr-8">
                   <div className="flex justify-between mb-4">
                     <div className="flex">
                       <Plus />
