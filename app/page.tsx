@@ -9,5 +9,5 @@ export default function Home() {
     router.push("/coins");
   }, [router]);
 
-  return <div>Redirecting. . .</div>;
+  return <div className="loading"></div>;
 }

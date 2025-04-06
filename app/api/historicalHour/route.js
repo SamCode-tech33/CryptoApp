@@ -2,10 +2,10 @@ import axios from "axios";
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
-  const symbol = searchParams.get("instrument");
+  const symbolToCurrency = searchParams.get("instrument");
   try {
     const { data } = await axios.get(
-      `https://data-api.coindesk.com/index/cc/v1/historical/hours?market=cadli&instrument=${symbol}-USD&limit=24&aggregate=1&fill=true&apply_mapping=true&response_format=JSON`,
+      `https://data-api.coindesk.com/index/cc/v1/historical/hours?market=cadli&instrument=${symbolToCurrency}&limit=24&aggregate=1&fill=true&apply_mapping=true&response_format=JSON`,
       {
         headers: {
           "x-api-key": process.env.CDC_API_KEY,

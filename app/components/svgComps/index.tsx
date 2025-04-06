@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/store";
 import { fetchCoins } from "@/lib/coinsSlice";
+import { changeSearch } from "@/lib/searchSlice";
+import { addCommas } from "../Utility";
 
 export const Navlinks = () => {
   const [home, setHome] = useState(true);
@@ -48,18 +50,28 @@ export const Navlinks = () => {
 
 export const Navsearch = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+
+  const searchTerm = useSelector((state: RootState) => state.search.searchTerm);
+  const currency = useSelector(
+    (state: RootState) => state.currency.currencyType
+  );
+  const currencySymbol = useSelector(
+    (state: RootState) => state.currency.currencySymbol
+  );
 
   const dispatch = useDispatch<AppDispatch>();
-  const { data, error } = useSelector((state: RootState) => state.coins);
+  const { data, loading, error } = useSelector(
+    (state: RootState) => state.coins
+  );
 
   const handleInputChange = (e: any) => {
-    setSearchTerm(e.target.value);
+    dispatch(changeSearch(e.target.value));
   };
 
   useEffect(() => {
-    if (!data.length) dispatch(fetchCoins());
-  }, [dispatch]);
+    if (!data)
+      dispatch(fetchCoins({ start: 1, limit: 1000, convert: currency }));
+  }, [currency]);
 
   return (
     <div className="relative w-full max-w-xs">
@@ -91,32 +103,51 @@ export const Navsearch = () => {
       ) : (
         <div
           className={
-            isOpen ? "border absolute z-10 bg-slate-900 w-full" : "hidden"
+            isOpen
+              ? "border absolute z-10 bg-slate-900 w-full overflow-y-scroll h-96"
+              : "hidden"
           }
         >
+          {loading && <div className="loading"></div>}
           {data
             .filter((coin) =>
               coin.name.toLowerCase().includes(searchTerm.toLowerCase())
             )
             .map((coin) => {
+              if (!coin.quote?.[currency]) {
+                return null;
+              }
+              let coinQuote;
+              if (coin.quote?.[currency]) {
+                coinQuote = coin.quote?.[currency];
+              } else {
+                coinQuote = coin.quote.USD;
+              }
+              const coinPrice = addCommas(coinQuote.price);
               return (
                 <Link
                   href={`coins/${coin.id}`}
                   key={coin.id}
-                  className="block p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded flex justify-between"
                   onClick={() => setIsOpen(false)}
                 >
-                  {coin.name} ({coin.symbol})
+                  <span>
+                    {coin.name} ({coin.symbol})
+                  </span>
+                  <span>
+                    {currencySymbol} {coinPrice}
+                  </span>
                 </Link>
               );
             })}
           {data.filter((coin) =>
             coin.name.toLowerCase().includes(searchTerm.toLowerCase())
-          ).length === 0 && (
-            <p className="block p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-              No coin found...
-            </p>
-          )}
+          ).length === 0 &&
+            !loading && (
+              <p className="block p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                No coin found...
+              </p>
+            )}
         </div>
       )}
     </div>

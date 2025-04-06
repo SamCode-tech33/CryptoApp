@@ -39,6 +39,9 @@ export default function Coins() {
   const time = useSelector((state: RootState) => state.timePeriod.time);
   const aggre = useSelector((state: RootState) => state.timePeriod.aggre);
   const limit = useSelector((state: RootState) => state.timePeriod.limit);
+  const currency = useSelector(
+    (state: RootState) => state.currency.currencyType
+  );
 
   const handleCompare = () => {
     dispatch(setCompare());
@@ -50,13 +53,13 @@ export default function Coins() {
     try {
       if (symbol.length) {
         const { data } = await axios.get(
-          `/api/historical?instrument=${symbol}&timeperiod=${time}&aggre=${aggre}&limit=${limit}`
+          `/api/historical?instrument=${symbol}-${currency}&timeperiod=${time}&aggre=${aggre}&limit=${limit}`
         );
         setCoinHistory(data.Data);
       }
       if (compare.length) {
         const { data } = await axios.get(
-          `/api/historical?instrument=${compare}&timeperiod=${time}&aggre=${aggre}&limit=${limit}`
+          `/api/historical?instrument=${compare}-${currency}&timeperiod=${time}&aggre=${aggre}&limit=${limit}`
         );
         setCoinCompare(data.Data);
       }
@@ -74,13 +77,13 @@ export default function Coins() {
     try {
       if (symbol.length) {
         const { data } = await axios.get(
-          `/api/historicalHour?instrument=${symbol}`
+          `/api/historicalHour?instrument=${symbol}-${currency}`
         );
         setCoinHistoryHour(data.Data);
       }
       if (compare.length) {
         const { data } = await axios.get(
-          `/api/historicalHour?instrument=${compare}`
+          `/api/historicalHour?instrument=${compare}-${currency}`
         );
         setCoinCompareHour(data.Data);
       }
@@ -121,10 +124,10 @@ export default function Coins() {
   useEffect(() => {
     getCoinsHistory(symbol);
     apiLoaded();
-  }, [symbol, selectedTime, compare]);
+  }, [symbol, selectedTime, compare, currency]);
 
   return (
-    <div>
+    <div className="mx-16">
       <div className="flex mx-18">
         <Link href="/coins">
           <button className="p-3 rounded-sm bg-slate-600 w-72">Coins</button>
@@ -171,30 +174,27 @@ export default function Coins() {
         </button>
       </div>
       <Slidercoin />
-      <div className="flex justify-between justify-left mx-18">
+      <div className="flex justify-between mx-18">
         {error ? (
-          <div className="h-82 w-half bg-slate-800 rounded-md flex justify-end flex-col">
+          <div className="h-72 w-half bg-slate-800 rounded-md flex justify-end flex-col mr-4">
             An error has occured, please check again later.
           </div>
         ) : (
-          <div className="h-82 w-half bg-slate-800 rounded-md flex justify-end flex-col">
-            <Linegraph
-              coinHistory={coinHistory}
-              limit={limit}
-              rendered={rendered}
-              symbol={symbol}
-              selectedTime={selectedTime}
-              coinCompare={coinCompare}
-              compare={compare}
-              loading={loading}
-              today={today}
-              currency={"USD"}
-              selectedPriceRight="1"
-            />
-          </div>
+          <Linegraph
+            coinHistory={coinHistory}
+            limit={limit}
+            rendered={rendered}
+            symbol={symbol}
+            selectedTime={selectedTime}
+            coinCompare={coinCompare}
+            compare={compare}
+            loading={loading}
+            today={today}
+            currency={currency}
+          />
         )}
         {err ? (
-          <div className="h-82 w-half bg-slate-800 rounded-md flex justify-end flex-col">
+          <div className="h-72 w-half bg-slate-800 rounded-md flex justify-end flex-col ml-4">
             the following error has occured: {err}, please check again later.
           </div>
         ) : (

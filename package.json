@@ -27,10 +27,12 @@
     "query-string": "^9.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-native-image-colors": "^2.4.0",
     "react-redux": "^9.2.0",
     "react-slick": "^0.30.3",
     "recharts": "^2.15.1",
+    "redux-persist": "^6.0.0",
     "slick-carousel": "^1.8.1",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7"

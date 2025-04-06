@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { addCommas, Updownarrow, Defaulticon } from "../Utility";
 import Link from "next/link";
-import { useSelector, useDispatch } from "react-redux";
-import { fetchCoins } from "@/lib/coinsSlice";
-import { RootState, AppDispatch } from "@/lib/store";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
 import { Sevendaygraph } from "../Sevendaygraph";
 import { prominent } from "color.js";
 import queryString from "query-string";
+import InfiniteScroll from "react-infinite-scroll-component";
+import axios from "axios";
 
 export default function Navcoin() {
   const [colors, setColors] = useState<any>([]);
@@ -18,27 +19,56 @@ export default function Navcoin() {
   const [lowerValue, setLowerValue] = useState<any>("");
   const [upperValue, setUpperValue] = useState<any>("");
   const [dataMap, setDataMap] = useState<any>([]);
+  const [colorLoad, setColorLoad] = useState<any>(false);
+  const [start, setStart] = useState<number>(1);
+  const [dataSet, setDataSet] = useState<any>([]);
+  const [loading, setLoading] = useState<any>(false);
+  const [error, setError] = useState<any>(false);
 
-  const dispatch = useDispatch<AppDispatch>();
-  const { data, loading, error } = useSelector(
-    (state: RootState) => state.coins
+  const currency = useSelector(
+    (state: RootState) => state.currency.currencyType
   );
+  const currencySymbol = useSelector(
+    (state: RootState) => state.currency.currencySymbol
+  );
+
+  const getCoins = async () => {
+    try {
+      setLoading(true);
+      const { data } = await axios.get(
+        `/api/coins?start=${start}&convert=${currency}`
+      );
+      if (start === 1) {
+        setDataSet(data.data);
+      } else {
+        setDataSet((prevDataSet: any) => [...prevDataSet, ...data.data]);
+      }
+      setLoading(false);
+      //eslint-disable-next-line
+    } catch (error) {
+      setError(true);
+      setLoading(false);
+    }
+  };
 
   const fetchImageColor = async (sym: string) => {
     try {
+      setColorLoad(true);
       const color = await prominent(`/api/icons?sym=${sym}`);
       const extractedColor = `${(color[2] as any[])[0] * 2}, ${
         (color[2] as any[])[1] * 2
       }, ${(color[2] as any[])[2] * 2}`;
       setColors((prevColors: string[]) => [...prevColors, extractedColor]);
+      setColorLoad(false);
       //eslint-disable-next-line
     } catch (error) {
       setColors((prevColors: string[]) => [...prevColors, "213 176 29"]);
+      setColorLoad(false);
     }
   };
 
   const allImageFetch = async () => {
-    data.map((coin) => fetchImageColor(coin.symbol.toLowerCase()));
+    dataSet.map((coin: any) => fetchImageColor(coin.symbol.toLowerCase()));
   };
 
   const handleFilter = (filter: string) => {
@@ -54,8 +84,12 @@ export default function Navcoin() {
   const handleFilterRender = (e: any) => {
     const newValue = e.target.value;
     setFilterValue(newValue);
-    if (!filterState || !newValue) return;
-    if (location.search && !Object.hasOwn(query, filterState)) {
+    if (!filterState) return;
+    if (!newValue) {
+      delete query["Name"];
+      const newSearch = queryString.stringify(query);
+      window.history.replaceState({}, "", `${location.pathname}?${newSearch}`);
+    } else if (location.search && !Object.hasOwn(query, filterState)) {
       window.history.replaceState(
         {},
         "",
@@ -68,9 +102,9 @@ export default function Navcoin() {
       ) as string;
       const urlRipper = location.search
         .split(foundValue)
-        .splice(1, 0, newValue);
-      const urlReplaced = urlRipper.join("");
-      window.history.replaceState({}, "", `${urlReplaced}`);
+        .toSpliced(1, 0, newValue)
+        .join("");
+      window.history.replaceState({}, "", `${urlRipper}`);
     } else {
       window.history.replaceState(
         {},
@@ -78,7 +112,7 @@ export default function Navcoin() {
         `${location.pathname}?${filterState}=${newValue}`
       );
     }
-    setDataMap(data);
+    setDataMap(dataSet);
     setQuery(queryString.parse(location.search));
   };
 
@@ -106,9 +140,9 @@ export default function Navcoin() {
       ) as string;
       const urlRipper = location.search
         .split(foundValue)
-        .splice(1, 0, `${lowerValue}_${upperValue}`);
-      const urlReplaced = urlRipper.join("");
-      window.history.replaceState({}, "", `${urlReplaced}`);
+        .toSpliced(1, 0, `${lowerValue}_${upperValue}`)
+        .join("");
+      window.history.replaceState({}, "", `${urlRipper}`);
     } else {
       window.history.replaceState(
         {},
@@ -116,7 +150,7 @@ export default function Navcoin() {
         `${location.pathname}?${filterState}=${lowerValue}_${upperValue}`
       );
     }
-    setDataMap(data);
+    setDataMap(dataSet);
     setQuery(queryString.parse(location.search));
   };
 
@@ -127,7 +161,8 @@ export default function Navcoin() {
       setUpperValue("");
       setFilterState("");
       setFilterValue("");
-      setDataMap(data);
+      setQuery({});
+      setDataMap(dataSet);
     } else {
       return;
     }
@@ -136,10 +171,12 @@ export default function Navcoin() {
   const handleRangeClear = (range: string) => {
     if (location.search) {
       delete query[range];
+      setLowerValue("");
+      setUpperValue("");
       const newSearch = queryString.stringify(query);
       window.history.replaceState({}, "", `${location.pathname}?${newSearch}`);
       setQuery(queryString.parse(location.search));
-      setDataMap(data);
+      setDataMap(dataSet);
       retainQuery();
     }
   };
@@ -154,76 +191,112 @@ export default function Navcoin() {
     }
     if (query.Price && dataMap.length) {
       setDataMap((prevDataMap: any) =>
-        prevDataMap.filter(
-          (coin: any) =>
-            coin.quote.USD.price > parseFloat(query.Price.split("_")[0]) &&
-            coin.quote.USD.price < parseFloat(query.Price.split("_")[1])
-        )
+        prevDataMap.filter((coin: any) => {
+          let coinQuote;
+          if (coin.quote?.[currency]) {
+            coinQuote = coin.quote?.[currency];
+          } else {
+            coinQuote = coin.quote.USD;
+          }
+          return (
+            coinQuote.price > parseFloat(query.Price.split("_")[0]) &&
+            coinQuote.price < parseFloat(query.Price.split("_")[1])
+          );
+        })
       );
     }
     if (query.Hour1 && dataMap.length) {
       setDataMap((prevDataMap: any) =>
-        prevDataMap.filter(
-          (coin: any) =>
-            coin.quote.USD.percent_change_1h >
+        prevDataMap.filter((coin: any) => {
+          let coinQuote;
+          if (coin.quote?.[currency]) {
+            coinQuote = coin.quote?.[currency];
+          } else {
+            coinQuote = coin.quote.USD;
+          }
+          return (
+            coinQuote.percent_change_1h >
               parseFloat(query.Hour1.split("_")[0]) &&
-            coin.quote.USD.percent_change_1h <
-              parseFloat(query.Hour1.split("_")[1])
-        )
+            coinQuote.percent_change_1h < parseFloat(query.Hour1.split("_")[1])
+          );
+        })
       );
     }
     if (query.Hour24 && dataMap.length) {
       setDataMap((prevDataMap: any) =>
-        prevDataMap.filter(
-          (coin: any) =>
-            coin.quote.USD.percent_change_24h >
+        prevDataMap.filter((coin: any) => {
+          let coinQuote;
+          if (coin.quote?.[currency]) {
+            coinQuote = coin.quote?.[currency];
+          } else {
+            coinQuote = coin.quote.USD;
+          }
+          return (
+            coinQuote.percent_change_24h >
               parseFloat(query.Hour24.split("_")[0]) &&
-            coin.quote.USD.percent_change_24h <
+            coinQuote.percent_change_24h <
               parseFloat(query.Hour24.split("_")[1])
-        )
+          );
+        })
       );
     }
     if (query.Day7 && dataMap.length) {
       setDataMap((prevDataMap: any) =>
-        prevDataMap.filter(
-          (coin: any) =>
-            coin.quote.USD.percent_change_7d >
+        prevDataMap.filter((coin: any) => {
+          let coinQuote;
+          if (coin.quote?.[currency]) {
+            coinQuote = coin.quote?.[currency];
+          } else {
+            coinQuote = coin.quote.USD;
+          }
+          return (
+            coinQuote.percent_change_7d >
               parseFloat(query.Day7.split("_")[0]) &&
-            coin.quote.USD.percent_change_7d <
-              parseFloat(query.Day7.split("_")[1])
-        )
+            coinQuote.percent_change_7d < parseFloat(query.Day7.split("_")[1])
+          );
+        })
       );
     }
   };
 
-  useEffect(() => {
-    if (!data.length) dispatch(fetchCoins());
-    setQuery(queryString.parse(location.search));
-  }, [dispatch]);
+  const fetchNext = () => {
+    setStart((prevStart) => prevStart + 100);
+  };
 
   useEffect(() => {
-    if (data.length > 99) {
+    getCoins();
+    setQuery(queryString.parse(location.search));
+  }, [start]);
+
+  useEffect(() => {
+    setStart(1);
+    setDataSet([]);
+    getCoins();
+  }, [currency]);
+
+  useEffect(() => {
+    if (!loading) {
       allImageFetch();
-      setDataMap(data);
+      setDataMap(dataSet);
     }
-  }, [data]);
+  }, [dataSet]);
 
   useEffect(() => {
     retainQuery();
-  }, [query, data]);
+  }, [query, dataSet]);
 
   return (
-    <div className="mt-12">
-      {error && <p>Something went wrong. Please try again later.</p>}
-      {loading ? (
-        <p>Loading...</p>
+    <div className="mt-12 relative">
+      {loading && <div className="loading"></div>}
+      {error ? (
+        <p>The following {error} occured. Please try again later.</p>
       ) : (
-        <ul className="mx-18">
+        <ul className="mx-32">
           <li className="text-black dark:text-white h-12 flex items-center">
-            <div className="w-8 flex justify-center mr-8">
+            <div className="w-8 flex justify-center mr-4">
               <span>#</span>
             </div>
-            <div className="w-56 mr-2">
+            <div className="w-52 mr-1">
               <div
                 className={
                   filterState === "Name"
@@ -259,11 +332,11 @@ export default function Navcoin() {
                 </form>
               </div>
             </div>
-            <div className="w-26 flex justify-left mr-2 flex-col relative h-10">
+            <div className="w-32 flex mr-4 justify-left flex-col relative h-10">
               <div
                 className={
                   filterState === "Price"
-                    ? "p-4 rounded-sm hover:bg-slate-600 absolute h-52 z-10 flex items-center flex-col"
+                    ? "p-4 rounded-sm hover:bg-slate-600 absolute h-52 z-10 flex items-center flex-col -left-10 -top-2"
                     : "p-2 rounded-sm hover:bg-slate-800"
                 }
                 onMouseEnter={() => handleFilter("Price")}
@@ -345,11 +418,11 @@ export default function Navcoin() {
                 </form>
               </div>
             </div>
-            <div className="w-22 flex justify-left mr-2 flex-col relative h-10">
+            <div className="w-22 flex justify-left flex-col relative h-10">
               <div
                 className={
                   filterState === "Hour1"
-                    ? "p-4 rounded-sm hover:bg-slate-600 absolute h-52 z-10 flex items-center flex-col"
+                    ? "p-4 rounded-sm hover:bg-slate-600 absolute h-52 z-10 flex items-center flex-col -left-10 -top-2"
                     : "p-2 rounded-sm hover:bg-slate-800"
                 }
                 onMouseEnter={() => handleFilter("Hour1")}
@@ -431,11 +504,11 @@ export default function Navcoin() {
                 </form>
               </div>
             </div>
-            <div className="w-22 flex justify-left mr-2 flex-col relative h-10">
+            <div className="w-22 flex justify-left flex-col relative h-10">
               <div
                 className={
                   filterState === "Hour24"
-                    ? "p-4 rounded-sm hover:bg-slate-600 absolute h-52 z-10 flex items-center flex-col"
+                    ? "p-4 rounded-sm hover:bg-slate-600 absolute h-52 z-10 flex items-center flex-col -left-10 -top-2"
                     : "p-2 rounded-sm hover:bg-slate-800"
                 }
                 onMouseEnter={() => handleFilter("Hour24")}
@@ -517,11 +590,11 @@ export default function Navcoin() {
                 </form>
               </div>
             </div>
-            <div className="w-30 flex justify-left mr-2 flex-col relative h-10">
+            <div className="w-24 flex justify-left mr-2 flex-col relative h-10">
               <div
                 className={
                   filterState === "Day7"
-                    ? "p-4 rounded-sm hover:bg-slate-600 absolute h-52 z-10 flex items-center flex-col"
+                    ? "p-4 rounded-sm hover:bg-slate-600 absolute h-52 z-10 flex items-center flex-col -left-10 -top-2"
                     : "p-2 rounded-sm hover:bg-slate-800"
                 }
                 onMouseEnter={() => handleFilter("Day7")}
@@ -603,13 +676,13 @@ export default function Navcoin() {
                 </form>
               </div>
             </div>
-            <div className="w-96 flex justify-left">
+            <div className="w-72 flex justify-left">
               <span>24h Volume / Market Cap</span>
             </div>
-            <div className="w-96 flex justify-left">
+            <div className="w-72 flex justify-left">
               <span>Circulating Coins / Total Supply</span>
             </div>
-            <div className="w-36 flex justify-left">
+            <div className="w-36 flex justify-left mr-1">
               <span>Last 7d</span>
             </div>
             <button
@@ -619,139 +692,187 @@ export default function Navcoin() {
               Clear Filters
             </button>
           </li>
-          {dataMap.map((coin: any, index: number) => {
-            const coinPrice = addCommas(coin.quote.USD.price);
-            const volume24 = addCommas(coin.quote.USD.volume_24h / 1000000000);
-            const marketCap = addCommas(coin.quote.USD.market_cap / 1000000000);
-            const circSupply = addCommas(coin.circulating_supply / 1000000);
-            const maxSupply = addCommas(coin.max_supply / 1000000);
-            return (
-              <Link href={`coins/${coin.id}`} key={coin.id}>
-                <li className="dark:bg-slate-800 text-black dark:text-white bg-slate-200 h-14 flex items-center rounded-sm dark:hover:bg-slate-700 bg">
-                  <div className="w-8 flex justify-center">
-                    <span>{index + 1}</span>
-                  </div>
-                  <div className="w-64 flex justify-left mr-4 items-center">
-                    <Defaulticon coin={coin.symbol} height="h-8" />
-                    <span>
-                      {coin.name} ({coin.symbol})
-                    </span>
-                  </div>
-                  <div className="w-28 flex justify-left">
-                    <span>${coinPrice}</span>
-                  </div>
-                  <div className="w-24 flex justify-left">
-                    <Updownarrow coin={coin.quote.USD.percent_change_1h} />
-                    <span
-                      className={
-                        coin.quote.USD.percent_change_1h > 0
-                          ? "text-green-500"
-                          : "text-red-600"
-                      }
-                    >
-                      {Math.abs(coin.quote.USD.percent_change_1h.toFixed(2))}%
-                    </span>
-                  </div>
-                  <div className="w-24 flex justify-left">
-                    <Updownarrow coin={coin.quote.USD.percent_change_24h} />
-                    <span
-                      className={
-                        coin.quote.USD.percent_change_24h > 0
-                          ? "text-green-500"
-                          : "text-red-600"
-                      }
-                    >
-                      {Math.abs(coin.quote.USD.percent_change_24h.toFixed(2))}%
-                    </span>
-                  </div>
-                  <div className="w-32 flex justify-left">
-                    <Updownarrow coin={coin.quote.USD.percent_change_7d} />
-                    <span
-                      className={
-                        coin.quote.USD.percent_change_7d > 0
-                          ? "text-green-500"
-                          : "text-red-600"
-                      }
-                    >
-                      {Math.abs(coin.quote.USD.percent_change_7d.toFixed(2))}%
-                    </span>
-                  </div>
-                  <div className="w-96 flex justify-left flex-col">
-                    <div className="flex w-80 justify-between">
-                      <span>${volume24}B</span>
-                      <span>${marketCap}B</span>
-                    </div>
-                    <div
-                      className="w-80 h-2 rounded-lg"
-                      style={{
-                        backgroundColor: `rgba(${colors[index + index]}, 0.5)`,
-                      }}
-                    >
-                      <div
-                        className="h-2 rounded-lg"
-                        style={{
-                          width:
-                            coin.quote.USD.volume_24h >
-                            coin.quote.USD.market_cap
-                              ? "20rem"
-                              : `${
-                                  (coin.quote.USD.volume_24h /
-                                    coin.quote.USD.market_cap) *
-                                  100
-                                }%`,
-                          backgroundColor: `rgba(${colors[index + index]}, 1)`,
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-                  <div className="w-96 flex justify-left flex-col">
-                    <div className="flex w-80 justify-between">
-                      <span>{circSupply}M</span>
-                      <span
-                        className={
-                          maxSupply === "0" ? "text-2xl" : maxSupply + ""
-                        }
-                      >
-                        {maxSupply === "0" ? "∞" : maxSupply + "M"}
-                      </span>
-                    </div>
-                    <div
-                      className="w-80 h-2 rounded-lg"
-                      style={{
-                        backgroundColor: `rgba(${colors[index + index]}, 0.5)`,
-                      }}
-                    >
-                      <div
-                        className="h-2 rounded-lg"
-                        style={{
-                          width:
-                            maxSupply === "0"
-                              ? "0px"
-                              : `${
-                                  (coin.circulating_supply / coin.max_supply) *
-                                  100
-                                }%`,
-                          backgroundColor: `rgba(${colors[index + index]}, 1)`,
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-                  {data.length > 0 &&
-                    colors.length === data.length * 2 &&
-                    coin.symbol === "BTC" && (
-                      <Sevendaygraph
-                        symbol={coin.symbol.toUpperCase()}
-                        sevenDay={
-                          coin.quote.USD.percent_change_7d < 0
-                            ? "rgb(220 38 38)"
-                            : "rgb(34 197 94)"
-                        }
-                      />
-                    )}
-                </li>
-              </Link>
-            );
-          })}
+          <div
+            id="scrollableDiv"
+            style={{
+              height: 800,
+              overflow: "auto",
+            }}
+          >
+            <InfiniteScroll
+              dataLength={dataMap.length}
+              next={fetchNext}
+              hasMore={true}
+              loader={<div className="loading"></div>}
+              scrollableTarget="scrollableDiv"
+              scrollThreshold={0.9}
+            >
+              {dataMap.map((coin: any, index: number) => {
+                if (!coin.quote?.[currency]) {
+                  return null;
+                }
+                let coinQuote;
+                if (coin.quote?.[currency]) {
+                  coinQuote = coin.quote?.[currency];
+                } else {
+                  coinQuote = coin.quote.USD;
+                }
+                const coinPrice = addCommas(coinQuote.price);
+                const volume24 = addCommas(coinQuote.volume_24h / 1e9);
+                const marketCap = addCommas(coinQuote.market_cap / 1e9);
+                const circSupply = addCommas(coin.circulating_supply / 1e6);
+                const maxSupply = addCommas(coin.max_supply / 1e6);
+                return (
+                  <Link href={`coins/${coin.id}`} key={coin.name + coin.id}>
+                    <li className="dark:bg-slate-800 text-black dark:text-white bg-slate-200 h-14 flex items-center rounded-md dark:hover:bg-slate-700 bg">
+                      <div className="w-8 flex justify-center mr-4">
+                        <span>{index + 1}</span>
+                      </div>
+                      <div className="w-52 flex justify-left mr-3 items-center">
+                        <Defaulticon coin={coin.symbol} height="h-8" />
+                        <span>
+                          {coin.name} ({coin.symbol})
+                        </span>
+                      </div>
+                      <div className="w-32 flex justify-left">
+                        <span>
+                          {currencySymbol} {coinPrice}
+                        </span>
+                      </div>
+                      <div className="w-22 flex justify-left">
+                        <Updownarrow coin={coinQuote.percent_change_1h} />
+                        <span
+                          className={
+                            coinQuote.percent_change_1h > 0
+                              ? "text-green-500"
+                              : "text-red-600"
+                          }
+                        >
+                          {Math.abs(coinQuote.percent_change_1h.toFixed(2))}%
+                        </span>
+                      </div>
+                      <div className="w-22 flex justify-left">
+                        <Updownarrow coin={coinQuote.percent_change_24h} />
+                        <span
+                          className={
+                            coinQuote.percent_change_24h > 0
+                              ? "text-green-500"
+                              : "text-red-600"
+                          }
+                        >
+                          {Math.abs(coinQuote.percent_change_24h.toFixed(2))}%
+                        </span>
+                      </div>
+                      <div className="w-28 flex justify-left">
+                        <Updownarrow coin={coinQuote.percent_change_7d} />
+                        <span
+                          className={
+                            coinQuote.percent_change_7d > 0
+                              ? "text-green-500"
+                              : "text-red-600"
+                          }
+                        >
+                          {Math.abs(coinQuote.percent_change_7d.toFixed(2))}%
+                        </span>
+                      </div>
+                      <div className="w-72 flex justify-left flex-col">
+                        <div className="flex w-64 justify-between">
+                          <span>
+                            {currencySymbol}
+                            {volume24}B
+                          </span>
+                          <span>
+                            {currencySymbol}
+                            {marketCap}B
+                          </span>
+                        </div>{" "}
+                        {colorLoad ? (
+                          <div className="loading"></div>
+                        ) : (
+                          <div
+                            className="w-64 h-2 rounded-lg"
+                            style={{
+                              backgroundColor: `rgba(${
+                                colors[index + index]
+                              }, 0.5)`,
+                            }}
+                          >
+                            <div
+                              className="h-2 rounded-lg"
+                              style={{
+                                width:
+                                  coinQuote.volume_24h > coinQuote.market_cap
+                                    ? "20rem"
+                                    : `${
+                                        (coinQuote.volume_24h /
+                                          coinQuote.market_cap) *
+                                        100
+                                      }%`,
+                                backgroundColor: `rgba(${
+                                  colors[index + index]
+                                }, 1)`,
+                              }}
+                            ></div>
+                          </div>
+                        )}
+                      </div>
+                      <div className="w-72 flex justify-left flex-col">
+                        <div className="flex w-64 justify-between">
+                          <span>{circSupply}M</span>
+                          <span
+                            className={
+                              maxSupply === "0" ? "text-2xl" : maxSupply + ""
+                            }
+                          >
+                            {maxSupply === "0" ? "∞" : maxSupply + "M"}
+                          </span>
+                        </div>
+                        {colorLoad ? (
+                          <div className="loading"></div>
+                        ) : (
+                          <div
+                            className="w-64 h-2 rounded-lg"
+                            style={{
+                              backgroundColor: `rgba(${
+                                colors[index + index]
+                              }, 0.5)`,
+                            }}
+                          >
+                            <div
+                              className="h-2 rounded-lg"
+                              style={{
+                                width:
+                                  maxSupply === "0"
+                                    ? "0px"
+                                    : `${
+                                        (coin.circulating_supply /
+                                          coin.max_supply) *
+                                        100
+                                      }%`,
+                                backgroundColor: `rgba(${
+                                  colors[index + index]
+                                }, 1)`,
+                              }}
+                            ></div>
+                          </div>
+                        )}
+                      </div>
+                      {dataSet.length > 0 && coin.symbol === "BTC" && (
+                        <Sevendaygraph
+                          symbol={coin.symbol.toUpperCase()}
+                          sevenDay={
+                            coinQuote.percent_change_7d < 0
+                              ? "rgb(220 38 38)"
+                              : "rgb(34 197 94)"
+                          }
+                        />
+                      )}
+                    </li>
+                  </Link>
+                );
+              })}
+            </InfiniteScroll>
+          </div>
         </ul>
       )}
     </div>
