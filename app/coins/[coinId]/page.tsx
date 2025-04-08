@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCoins } from "@/lib/coinsSlice";
 import { RootState, AppDispatch } from "@/lib/store";
@@ -19,10 +19,8 @@ export default function Coin({ params }: any) {
   const [coin, setCoin] = useState<any>(null);
   const [loading1, setLoading1] = useState(false);
   const [error1, setError1] = useState(false);
-  const [copy1, setCopy1] = useState(false);
-  const [copy2, setCopy2] = useState(false);
-  const [copy3, setCopy3] = useState(false);
-  const [copy4, setCopy4] = useState(false);
+  const [copy, setCopy] = useState("");
+  const copyNoteRef = useRef<any>(null);
 
   const dispatch = useDispatch<AppDispatch>();
   const { data, loading, error } = useSelector(
@@ -37,28 +35,13 @@ export default function Coin({ params }: any) {
     (state: RootState) => state.currency.currencySymbol
   );
 
-  const handleCopy1 = (e: any) => {
-    navigator.clipboard.writeText(e.target.id);
-    setCopy1(true);
-    setTimeout(() => setCopy1(false), 500);
-  };
-
-  const handleCopy2 = (e: any) => {
-    navigator.clipboard.writeText(e.target.id);
-    setCopy2(true);
-    setTimeout(() => setCopy2(false), 500);
-  };
-
-  const handleCopy3 = (e: any) => {
-    navigator.clipboard.writeText(e.target.id);
-    setCopy3(true);
-    setTimeout(() => setCopy3(false), 500);
-  };
-
-  const handleCopy4 = (e: any) => {
-    navigator.clipboard.writeText(e.target.id);
-    setCopy4(true);
-    setTimeout(() => setCopy4(false), 500);
+  const handleCopy = (id: string) => {
+    if (copyNoteRef.current) {
+      clearTimeout(copyNoteRef.current);
+    }
+    navigator.clipboard.writeText(id);
+    setCopy(id);
+    copyNoteRef.current = setTimeout(() => setCopy(""), 400);
   };
 
   const getCoinsInfo = async (coinId: number) => {
@@ -74,7 +57,7 @@ export default function Coin({ params }: any) {
   };
 
   useEffect(() => {
-    dispatch(fetchCoins({ start: 1, limit: 5000, convert: currency }));
+    dispatch(fetchCoins({ start: 1, limit: 400, convert: currency }));
     getCoinsInfo(coinId.coinId);
   }, [dispatch]);
 
@@ -112,21 +95,22 @@ export default function Coin({ params }: any) {
                           <p className="text-sm">{coinSite?.urls.website}</p>
                         </Link>
                         <button
-                          onClick={handleCopy1}
-                          id={coinSite?.urls.website}
+                          onClick={() => {
+                            const id = coinSite?.urls.website;
+                            handleCopy(id);
+                          }}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
                             className="h-6 ml-2 p-1 rounded-md hover:bg-slate-600"
-                            id={coinSite?.urls.website}
                           >
                             <path d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
                           </svg>
                           <div
                             className={
-                              copy1
+                              copy === coinSite?.urls.website
                                 ? " bg-slate-600 p-4 absolute z-10 rounded-lg"
                                 : "hidden"
                             }
@@ -238,19 +222,23 @@ export default function Coin({ params }: any) {
                             {coinSite?.urls.technical_doc}
                           </span>
                         </Link>
-                        <button onClick={handleCopy2}>
+                        <button
+                          onClick={() => {
+                            const id = coinSite?.urls.technical_doc;
+                            handleCopy(id);
+                          }}
+                        >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
                             className="h-6 ml-2 p-1 rounded-md hover:bg-slate-600"
-                            id={coinSite?.urls.technical_doc}
                           >
                             <path d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
                           </svg>
                           <div
                             className={
-                              copy2
+                              copy === coinSite?.urls.technical_doc
                                 ? " bg-slate-600 p-4 absolute z-10 rounded-lg"
                                 : "hidden"
                             }
@@ -273,19 +261,23 @@ export default function Coin({ params }: any) {
                         >
                           <span>{coinSite?.urls.message_board}</span>
                         </Link>
-                        <button onClick={handleCopy3}>
+                        <button
+                          onClick={() => {
+                            const id = coinSite?.urls.message_board;
+                            handleCopy(id);
+                          }}
+                        >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
                             className="h-6 ml-2 p-1 rounded-md hover:bg-slate-600"
-                            id={coinSite?.urls.message_board}
                           >
                             <path d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
                           </svg>
                           <div
                             className={
-                              copy3
+                              copy === coinSite?.urls.message_board
                                 ? " bg-slate-600 p-4 absolute z-10 rounded-lg"
                                 : "hidden"
                             }
@@ -308,19 +300,23 @@ export default function Coin({ params }: any) {
                         >
                           <span>{coinSite?.urls.source_code}</span>
                         </Link>
-                        <button onClick={handleCopy4}>
+                        <button
+                          onClick={() => {
+                            const id = coinSite?.urls.source_code[0];
+                            handleCopy(id);
+                          }}
+                        >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
                             className="h-6 ml-2 p-1 rounded-md hover:bg-slate-600"
-                            id={coinSite?.urls.source_code[0]}
                           >
                             <path d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
                           </svg>
                           <div
                             className={
-                              copy4
+                              copy === coinSite?.urls.source_code[0]
                                 ? " bg-slate-600 p-4 absolute z-10 rounded-lg"
                                 : "hidden"
                             }

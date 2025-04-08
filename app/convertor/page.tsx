@@ -10,6 +10,7 @@ import { Linegraph } from "../components/Linegraph";
 import axios from "axios";
 import { changeGraph } from "@/lib/symbolSlice";
 import { changeTimePeriod } from "@/lib/timeSlice";
+import { Uparrow } from "../components/svgComps";
 
 export default function Convertor() {
   const dispatch = useDispatch<AppDispatch>();
@@ -179,18 +180,7 @@ export default function Convertor() {
                       <Defaulticon coin={menuIconLeft} height="h-8" />
                       <div className="flex items-center">
                         <span>{menuTriggerLeft}</span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="ml-2 h-4"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
+                        <Uparrow isOpen={isOpenLeft} />
                       </div>
                     </div>
                     <span className="sr-only">Toggle theme</span>
@@ -278,18 +268,7 @@ export default function Convertor() {
                       <Defaulticon coin={menuIconRight} height="h-8" />
                       <div className="flex items-center">
                         <span>{menuTriggerRight}</span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="ml-2 h-4"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
+                        <Uparrow isOpen={isOpenRight} />
                       </div>
                     </div>
                     <span className="sr-only">Toggle theme</span>

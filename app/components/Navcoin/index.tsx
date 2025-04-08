@@ -10,6 +10,9 @@ import { prominent } from "color.js";
 import queryString from "query-string";
 import InfiniteScroll from "react-infinite-scroll-component";
 import axios from "axios";
+import { Filtericon } from "../svgComps";
+import { Rangefilter } from "../rangeFilter";
+import { Coinbar } from "../coinBarSlide";
 
 export default function Navcoin() {
   const [colors, setColors] = useState<any>([]);
@@ -55,10 +58,11 @@ export default function Navcoin() {
     try {
       setColorLoad(true);
       const color = await prominent(`/api/icons?sym=${sym}`);
-      const extractedColor = `${(color[2] as any[])[0] * 2}, ${
+      const extractedColor: string = `${(color[2] as any[])[0] * 2}, ${
         (color[2] as any[])[1] * 2
       }, ${(color[2] as any[])[2] * 2}`;
       setColors((prevColors: string[]) => [...prevColors, extractedColor]);
+
       setColorLoad(false);
       //eslint-disable-next-line
     } catch (error) {
@@ -307,15 +311,7 @@ export default function Navcoin() {
                 onMouseLeave={handleFilterExit}
               >
                 <span>Name</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="h-5 ml-1"
-                >
-                  <path d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
-                </svg>
+                <Filtericon />
                 <form
                   className={
                     filterState === "Name" ? "flex ml-2 h-8" : "hidden"
@@ -333,348 +329,64 @@ export default function Navcoin() {
               </div>
             </div>
             <div className="w-32 flex mr-4 justify-left flex-col relative h-10">
-              <div
-                className={
-                  filterState === "Price"
-                    ? "p-4 rounded-sm hover:bg-slate-600 absolute h-52 z-10 flex items-center flex-col -left-10 -top-2"
-                    : "p-2 rounded-sm hover:bg-slate-800"
-                }
-                onMouseEnter={() => handleFilter("Price")}
-                onMouseLeave={handleFilterExit}
-              >
-                <div className="flex items-center mb-4">
-                  <span>Price</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    className="h-5 ml-1"
-                  >
-                    <path d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
-                  </svg>
-                </div>
-                <form
-                  className={
-                    filterState === "Price"
-                      ? "ml-2 h-8 flex flex-col items-center"
-                      : "hidden"
-                  }
-                  action=""
-                  onSubmit={handleRangeRender}
-                >
-                  <input
-                    type="text"
-                    className="bg-slate-600 rounded-sm w-28 mr-1 p-1 dark:caret-white border-gray-300 border"
-                    onChange={handleLowerValue}
-                    value={lowerValue}
-                    placeholder="Lower Value"
-                  />
-                  <input
-                    type="text"
-                    className="bg-slate-600 rounded-sm w-28 mr-1 mt-4 p-1 dark:caret-white border-gray-300 border"
-                    onChange={handleUpperValue}
-                    value={upperValue}
-                    placeholder="Upper Value"
-                  />
-                  <div className="flex">
-                    <button
-                      className="hover:bg-white bg-gray-800 p-1 rounded-sm mt-6 hover:text-black mr-4"
-                      onClick={handleRangeRender}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="h-5"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      className="hover:bg-white bg-gray-800 p-1 rounded-sm mt-6 hover:text-black ml-4"
-                      onClick={() => handleRangeClear("Price")}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-6"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M6 18 18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </form>
-              </div>
+              <Rangefilter
+                filterState={filterState}
+                currentFilterState="Price"
+                handleFilter={handleFilter}
+                handleFilterExit={handleFilterExit}
+                name="Price"
+                handleRangeRender={handleRangeRender}
+                handleLowerValue={handleLowerValue}
+                lowerValue={lowerValue}
+                handleUpperValue={handleUpperValue}
+                upperValue={upperValue}
+                handleRangeClear={handleRangeClear}
+              />
             </div>
             <div className="w-22 flex justify-left flex-col relative h-10">
-              <div
-                className={
-                  filterState === "Hour1"
-                    ? "p-4 rounded-sm hover:bg-slate-600 absolute h-52 z-10 flex items-center flex-col -left-10 -top-2"
-                    : "p-2 rounded-sm hover:bg-slate-800"
-                }
-                onMouseEnter={() => handleFilter("Hour1")}
-                onMouseLeave={handleFilterExit}
-              >
-                <div className="flex items-center mb-4">
-                  <span>1h%</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    className="h-5 ml-1"
-                  >
-                    <path d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
-                  </svg>
-                </div>
-                <form
-                  className={
-                    filterState === "Hour1"
-                      ? "ml-2 h-8 flex flex-col items-center"
-                      : "hidden"
-                  }
-                  action=""
-                  onSubmit={handleRangeRender}
-                >
-                  <input
-                    type="text"
-                    className="bg-slate-600 rounded-sm w-28 mr-1 p-1 dark:caret-white border-gray-300 border"
-                    onChange={handleLowerValue}
-                    value={lowerValue}
-                    placeholder="Lower Value"
-                  />
-                  <input
-                    type="text"
-                    className="bg-slate-600 rounded-sm w-28 mr-1 mt-4 p-1 dark:caret-white border-gray-300 border"
-                    onChange={handleUpperValue}
-                    value={upperValue}
-                    placeholder="Upper Value"
-                  />
-                  <div className="flex">
-                    <button
-                      className="hover:bg-white bg-gray-800 p-1 rounded-sm mt-6 hover:text-black mr-4"
-                      onClick={handleRangeRender}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="h-5"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      className="hover:bg-white bg-gray-800 p-1 rounded-sm mt-6 hover:text-black ml-4"
-                      onClick={() => handleRangeClear("Hour1")}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-6"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M6 18 18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </form>
-              </div>
+              <Rangefilter
+                filterState={filterState}
+                currentFilterState="Hour1"
+                handleFilter={handleFilter}
+                handleFilterExit={handleFilterExit}
+                name="1h%"
+                handleRangeRender={handleRangeRender}
+                handleLowerValue={handleLowerValue}
+                lowerValue={lowerValue}
+                handleUpperValue={handleUpperValue}
+                upperValue={upperValue}
+                handleRangeClear={handleRangeClear}
+              />
             </div>
             <div className="w-22 flex justify-left flex-col relative h-10">
-              <div
-                className={
-                  filterState === "Hour24"
-                    ? "p-4 rounded-sm hover:bg-slate-600 absolute h-52 z-10 flex items-center flex-col -left-10 -top-2"
-                    : "p-2 rounded-sm hover:bg-slate-800"
-                }
-                onMouseEnter={() => handleFilter("Hour24")}
-                onMouseLeave={handleFilterExit}
-              >
-                <div className="flex items-center mb-4">
-                  <span>24h%</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    className="h-5 ml-1"
-                  >
-                    <path d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
-                  </svg>
-                </div>
-                <form
-                  className={
-                    filterState === "Hour24"
-                      ? "ml-2 h-8 flex flex-col items-center"
-                      : "hidden"
-                  }
-                  action=""
-                  onSubmit={handleRangeRender}
-                >
-                  <input
-                    type="text"
-                    className="bg-slate-600 rounded-sm w-28 mr-1 p-1 dark:caret-white border-gray-300 border"
-                    onChange={handleLowerValue}
-                    value={lowerValue}
-                    placeholder="Lower Value"
-                  />
-                  <input
-                    type="text"
-                    className="bg-slate-600 rounded-sm w-28 mr-1 mt-4 p-1 dark:caret-white border-gray-300 border"
-                    onChange={handleUpperValue}
-                    value={upperValue}
-                    placeholder="Upper Value"
-                  />
-                  <div className="flex">
-                    <button
-                      className="hover:bg-white bg-gray-800 p-1 rounded-sm mt-6 hover:text-black mr-4"
-                      onClick={handleRangeRender}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="h-5"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      className="hover:bg-white bg-gray-800 p-1 rounded-sm mt-6 hover:text-black ml-4"
-                      onClick={() => handleRangeClear("Hour24")}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-6"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M6 18 18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </form>
-              </div>
+              <Rangefilter
+                filterState={filterState}
+                currentFilterState="Hour24"
+                handleFilter={handleFilter}
+                handleFilterExit={handleFilterExit}
+                name="24h%"
+                handleRangeRender={handleRangeRender}
+                handleLowerValue={handleLowerValue}
+                lowerValue={lowerValue}
+                handleUpperValue={handleUpperValue}
+                upperValue={upperValue}
+                handleRangeClear={handleRangeClear}
+              />
             </div>
             <div className="w-24 flex justify-left mr-2 flex-col relative h-10">
-              <div
-                className={
-                  filterState === "Day7"
-                    ? "p-4 rounded-sm hover:bg-slate-600 absolute h-52 z-10 flex items-center flex-col -left-10 -top-2"
-                    : "p-2 rounded-sm hover:bg-slate-800"
-                }
-                onMouseEnter={() => handleFilter("Day7")}
-                onMouseLeave={handleFilterExit}
-              >
-                <div className="flex items-center mb-4">
-                  <span>7d%</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    className="h-5 ml-1"
-                  >
-                    <path d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
-                  </svg>
-                </div>
-                <form
-                  className={
-                    filterState === "Day7"
-                      ? "ml-2 h-8 flex flex-col items-center"
-                      : "hidden"
-                  }
-                  action=""
-                  onSubmit={handleRangeRender}
-                >
-                  <input
-                    type="text"
-                    className="bg-slate-600 rounded-sm w-28 mr-1 p-1 dark:caret-white border-gray-300 border"
-                    onChange={handleLowerValue}
-                    value={lowerValue}
-                    placeholder="Lower Value"
-                  />
-                  <input
-                    type="text"
-                    className="bg-slate-600 rounded-sm w-28 mr-1 mt-4 p-1 dark:caret-white border-gray-300 border"
-                    onChange={handleUpperValue}
-                    value={upperValue}
-                    placeholder="Upper Value"
-                  />
-                  <div className="flex">
-                    <button
-                      className="hover:bg-white bg-gray-800 p-1 rounded-sm mt-6 hover:text-black mr-4"
-                      onClick={handleRangeRender}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="h-5"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      className="hover:bg-white bg-gray-800 p-1 rounded-sm mt-6 hover:text-black ml-4"
-                      onClick={() => handleRangeClear("Day7")}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-6"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M6 18 18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </form>
-              </div>
+              <Rangefilter
+                filterState={filterState}
+                currentFilterState="Day7"
+                handleFilter={handleFilter}
+                handleFilterExit={handleFilterExit}
+                name="7d%"
+                handleRangeRender={handleRangeRender}
+                handleLowerValue={handleLowerValue}
+                lowerValue={lowerValue}
+                handleUpperValue={handleUpperValue}
+                upperValue={upperValue}
+                handleRangeClear={handleRangeClear}
+              />
             </div>
             <div className="w-72 flex justify-left">
               <span>24h Volume / Market Cap</span>
@@ -692,13 +404,7 @@ export default function Navcoin() {
               Clear Filters
             </button>
           </li>
-          <div
-            id="scrollableDiv"
-            style={{
-              height: 800,
-              overflow: "auto",
-            }}
-          >
+          <div id="scrollableDiv" className="h-150 overflow-auto">
             <InfiniteScroll
               dataLength={dataMap.length}
               next={fetchNext}
@@ -775,88 +481,26 @@ export default function Navcoin() {
                           {Math.abs(coinQuote.percent_change_7d.toFixed(2))}%
                         </span>
                       </div>
-                      <div className="w-72 flex justify-left flex-col">
-                        <div className="flex w-64 justify-between">
-                          <span>
-                            {currencySymbol}
-                            {volume24}B
-                          </span>
-                          <span>
-                            {currencySymbol}
-                            {marketCap}B
-                          </span>
-                        </div>{" "}
-                        {colorLoad ? (
-                          <div className="loading"></div>
-                        ) : (
-                          <div
-                            className="w-64 h-2 rounded-lg"
-                            style={{
-                              backgroundColor: `rgba(${
-                                colors[index + index]
-                              }, 0.5)`,
-                            }}
-                          >
-                            <div
-                              className="h-2 rounded-lg"
-                              style={{
-                                width:
-                                  coinQuote.volume_24h > coinQuote.market_cap
-                                    ? "20rem"
-                                    : `${
-                                        (coinQuote.volume_24h /
-                                          coinQuote.market_cap) *
-                                        100
-                                      }%`,
-                                backgroundColor: `rgba(${
-                                  colors[index + index]
-                                }, 1)`,
-                              }}
-                            ></div>
-                          </div>
-                        )}
-                      </div>
-                      <div className="w-72 flex justify-left flex-col">
-                        <div className="flex w-64 justify-between">
-                          <span>{circSupply}M</span>
-                          <span
-                            className={
-                              maxSupply === "0" ? "text-2xl" : maxSupply + ""
-                            }
-                          >
-                            {maxSupply === "0" ? "∞" : maxSupply + "M"}
-                          </span>
-                        </div>
-                        {colorLoad ? (
-                          <div className="loading"></div>
-                        ) : (
-                          <div
-                            className="w-64 h-2 rounded-lg"
-                            style={{
-                              backgroundColor: `rgba(${
-                                colors[index + index]
-                              }, 0.5)`,
-                            }}
-                          >
-                            <div
-                              className="h-2 rounded-lg"
-                              style={{
-                                width:
-                                  maxSupply === "0"
-                                    ? "0px"
-                                    : `${
-                                        (coin.circulating_supply /
-                                          coin.max_supply) *
-                                        100
-                                      }%`,
-                                backgroundColor: `rgba(${
-                                  colors[index + index]
-                                }, 1)`,
-                              }}
-                            ></div>
-                          </div>
-                        )}
-                      </div>
+                      <Coinbar
+                        currencySymbol={currencySymbol}
+                        value1={volume24}
+                        value2={marketCap}
+                        colorLoad={colorLoad}
+                        colors={colors}
+                        index={index}
+                        coinQuote={coinQuote}
+                        first={true}
+                      />
+                      <Coinbar
+                        currencySymbol={currencySymbol}
+                        value1={circSupply}
+                        value2={maxSupply}
+                        colorLoad={colorLoad}
+                        colors={colors}
+                        index={index}
+                        coinQuote={coinQuote}
+                        first={false}
+                      />
                       {dataSet.length > 0 && coin.symbol === "BTC" && (
                         <Sevendaygraph
                           symbol={coin.symbol.toUpperCase()}

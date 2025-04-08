@@ -11,6 +11,7 @@ import { setCompare } from "@/lib/symbolSlice";
 import { changeTimePeriod } from "@/lib/timeSlice";
 import { Linegraph } from "../components/Linegraph";
 import { Bargraph } from "../components/Bargraph";
+import { Comparegraph, Compexit } from "../components/svgComps";
 
 export default function Coins() {
   const [coinHistory, setCoinHistory] = useState<any>([]);
@@ -145,29 +146,12 @@ export default function Coins() {
         >
           {isCompare ? (
             <div className="flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="mr-4 h-5 mb-1"
-              >
-                <path d="M6 18 18 6M6 6l12 12" />
-              </svg>
-
+              <Comparegraph />
               <span>Exit Comparison</span>
             </div>
           ) : (
             <div className="flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="mr-4 h-6"
-              >
-                <path d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5m.75-9 3-3 2.148 2.148A12.061 12.061 0 0 1 16.5 7.605" />
-              </svg>
+              <Compexit />
               <span>Compare</span>
             </div>
           )}

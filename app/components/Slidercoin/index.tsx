@@ -36,7 +36,7 @@ export default function Slidercoin() {
   };
 
   useEffect(() => {
-    dispatch(fetchCoins({ start: 1, limit: 1000, convert: currency }));
+    dispatch(fetchCoins({ start: 1, limit: 400, convert: currency }));
   }, [currency]);
 
   return (

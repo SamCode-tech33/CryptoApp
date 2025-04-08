@@ -40,6 +40,10 @@ path {
   height: 22rem;
 }
 
+.h-150 {
+  height: 700px;
+}
+
 .opaque-orange {
   background: rgba(249 115 22 0.5);
 }
