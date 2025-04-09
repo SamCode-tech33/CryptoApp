@@ -9,6 +9,8 @@ import {
   AreaChart,
 } from "recharts";
 import { addCommas, CustomToolTipMini } from "../Utility";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
 
 export const Sevendaygraph = ({
   symbol,
@@ -21,11 +23,15 @@ export const Sevendaygraph = ({
   const [err, setErr] = useState<boolean>(false);
   const [load, setLoad] = useState<boolean>(false);
 
+  const currency = useSelector(
+    (state: RootState) => state.currency.currencyType
+  );
+
   const getCoinsHistory = async () => {
     setLoad(true);
     try {
       const { data } = await axios.get(
-        `/api/historical?instrument=${symbol}&timeperiod=hours&aggre=1&limit=168`
+        `/api/historical?instrument=${symbol}-${currency}&timeperiod=hours&aggre=1&limit=168`
       );
       setCoinHistory(data.Data);
       //eslint-disable-next-line
@@ -61,8 +67,8 @@ export const Sevendaygraph = ({
   }, []);
 
   return (
-    <div className="w-40 h-12 rounded-sm flex">
-      {load && <div className="text-red-800">Loading. . .</div>}
+    <div className="w-32 h-12 rounded-sm flex">
+      {load && <div className="loading"></div>}
       {err ? (
         <div className="text-red-800 m-auto">Insufficient Data</div>
       ) : (
@@ -89,7 +95,7 @@ export const Sevendaygraph = ({
               offset={10}
               separator=""
               content={<CustomToolTipMini />}
-              position={{ x: 172, y: 0 }}
+              position={{ x: 135, y: 0 }}
             />
             <Area
               type="monotone"

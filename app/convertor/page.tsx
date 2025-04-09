@@ -2,12 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/store";
 import { fetchCoins } from "@/lib/coinsSlice";
@@ -16,6 +10,7 @@ import { Linegraph } from "../components/Linegraph";
 import axios from "axios";
 import { changeGraph } from "@/lib/symbolSlice";
 import { changeTimePeriod } from "@/lib/timeSlice";
+import { Uparrow } from "../components/svgComps";
 
 export default function Convertor() {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,6 +20,12 @@ export default function Convertor() {
   const time = useSelector((state: RootState) => state.timePeriod.time);
   const aggre = useSelector((state: RootState) => state.timePeriod.aggre);
   const limit = useSelector((state: RootState) => state.timePeriod.limit);
+  const currency = useSelector(
+    (state: RootState) => state.currency.currencyType
+  );
+  const currencySymbol = useSelector(
+    (state: RootState) => state.currency.currencySymbol
+  );
 
   const [menuTriggerLeft, setMenuTriggerLeft] = useState("Bitcoin (BTC)");
   const [menuIconLeft, setMenuIconLeft] = useState("BTC");
@@ -40,6 +41,8 @@ export default function Convertor() {
   const [err, setErr] = useState(false);
   const [coinHistory, setCoinHistory] = useState<any>([]);
   const [conversionValue, setConversionValue] = useState("");
+  const [isOpenLeft, setIsOpenLeft] = useState<boolean>(false);
+  const [isOpenRight, setIsOpenRight] = useState<boolean>(false);
 
   const getCoinsHistory = async (symbol: string) => {
     setLoad(true);
@@ -47,7 +50,7 @@ export default function Convertor() {
     try {
       if (symbol.length) {
         const { data } = await axios.get(
-          `/api/historical?instrument=${menuIconLeft}&timeperiod=${time}&aggre=${aggre}&limit=${limit}`
+          `/api/historical?instrument=${menuIconLeft}-${menuIconRight}&timeperiod=${time}&aggre=${aggre}&limit=${limit}`
         );
         setCoinHistory(data.Data);
       }
@@ -59,18 +62,14 @@ export default function Convertor() {
     setLoad(false);
   };
 
-  const changeMenuTriggerLeft = (e: any) => {
-    setMenuTriggerLeft(e.target.innerText);
-    const symbolPara =
-      e.target.innerText.split(" ")[e.target.innerText.split(" ").length - 1];
-    setMenuIconLeft(symbolPara.slice(1, symbolPara.length - 1));
+  const changeMenuTriggerLeft = (id: string, name: string) => {
+    setMenuTriggerLeft(name);
+    setMenuIconLeft(id);
   };
 
-  const changeMenuTriggerRight = (e: any) => {
-    setMenuTriggerRight(e.target.innerText);
-    const symbolPara =
-      e.target.innerText.split(" ")[e.target.innerText.split(" ").length - 1];
-    setMenuIconRight(symbolPara.slice(1, symbolPara.length - 1));
+  const changeMenuTriggerRight = (id: string, name: string) => {
+    setMenuTriggerRight(name);
+    setMenuIconRight(id);
   };
 
   const changePriceLeft = (coinPrice: any) => {
@@ -121,27 +120,32 @@ export default function Convertor() {
   };
 
   useEffect(() => {
-    if (data.length > 2) {
-      const priceLeft = addCommas(data[0].quote.USD.price);
-      const priceRight = addCommas(data[1].quote.USD.price);
-      setSelectedPriceLeft(priceLeft.toString());
-      setSelectedPriceRight(priceRight.toString());
+    if (data.length > 0) {
+      const leftCoin = data.find((coin) => coin.symbol === menuIconLeft);
+      const rightCoin = data.find((coin) => coin.symbol === menuIconRight);
+      const leftPrice = leftCoin?.quote?.[currency]?.price;
+      const rightPrice = rightCoin?.quote?.[currency]?.price;
+
+      if (leftPrice && rightPrice) {
+        setSelectedPriceLeft(addCommas(leftPrice).toString());
+        setSelectedPriceRight(addCommas(rightPrice).toString());
+      }
     }
-  }, [data]);
+  }, [data, currency, menuIconLeft, menuIconRight]);
 
   useEffect(() => {
-    if (!data.length) dispatch(fetchCoins());
+    dispatch(fetchCoins({ start: 1, limit: 1000, convert: currency }));
     setToday(new Date().toString().split("G")[0]);
-  }, [dispatch]);
+  }, [currency]);
 
   useEffect(() => {
     getCoinsHistory(menuIconLeft);
     apiLoaded();
-  }, [menuIconLeft, selectedTime, selectedPriceRight]);
+  }, [menuIconLeft, selectedTime, menuIconRight, currency]);
 
   return (
     <div>
-      <div className="flex mx-18">
+      <div className="flex mx-32">
         <Link href="/coins" className="mb-6">
           <button className="bg-slate-800 p-3 rounded-sm hover:bg-slate-600 w-72">
             Coins
@@ -156,74 +160,92 @@ export default function Convertor() {
       {error ? (
         <span>There has been an error, please come back later</span>
       ) : (
-        <div>
-          <div className="mx-18">
+        <div className="relative">
+          <div className="mx-32">
             <h1>Crypto Currency Convertor</h1>
             <p className="text-gray-500">{today}</p>
           </div>
-          <div className="mx-18 flex">
-            {loading && <span>Loading...</span>}
+          <div className="mx-32 flex">
+            {loading && <div className="loading"></div>}
             <div className="w-half bg-slate-800 h-52 mr-4 rounded-md mt-6 mb-6">
               <p className="ml-10 mt-4 mb-8">You sell</p>
               <div className="border-b-2 border-gray-400 pb-4 mx-8 mb-4">
-                <DropdownMenu>
-                  <div className="flex justify-between">
-                    <DropdownMenuTrigger asChild>
-                      <button className="bg-slate-800 hover:bg-slate-600 p-2.5 rounded-md">
+                <div className="flex justify-between">
+                  <button
+                    className="bg-slate-800 hover:bg-slate-600 p-2.5 rounded-md"
+                    onClick={() => setIsOpenLeft(true)}
+                    onBlur={() => setTimeout(() => setIsOpenLeft(false), 200)}
+                  >
+                    <div className="flex items-center justify-between w-56">
+                      <Defaulticon coin={menuIconLeft} height="h-8" />
+                      <div className="flex items-center">
+                        <span>{menuTriggerLeft}</span>
+                        <Uparrow isOpen={isOpenLeft} />
+                      </div>
+                    </div>
+                    <span className="sr-only">Toggle theme</span>
+                  </button>
+                  <input
+                    type="text"
+                    value={conversionValue}
+                    className="bg-slate-600 rounded-md p-4 h-12 w-80 text-right caret-white"
+                    placeholder={menuIconLeft}
+                    onChange={handleCalculate}
+                  />
+                </div>
+                <div
+                  className={
+                    isOpenLeft
+                      ? "border absolute z-10 bg-slate-900 overflow-y-scroll h-96"
+                      : "hidden"
+                  }
+                >
+                  {data.map((coin) => {
+                    if (!coin.quote?.[currency]) {
+                      return null;
+                    }
+                    let coinQuote;
+                    if (coin.quote?.[currency]) {
+                      coinQuote = coin.quote?.[currency];
+                    } else {
+                      coinQuote = coin.quote.USD;
+                    }
+                    const coinPrice = addCommas(coinQuote.price);
+                    return (
+                      <div
+                        className="cursor-pointer hover:bg-slate-600 p-2 flex justify-between"
+                        key={coin.symbol + coin.id}
+                        id={coin.symbol}
+                        onClick={() => {
+                          const id = coin.symbol;
+                          const name =
+                            coin.name + " " + "(" + coin.symbol + ")";
+                          changeMenuTriggerLeft(id, name);
+                          changePriceLeft(coinPrice);
+                          handleClick(id);
+                        }}
+                      >
                         <div className="flex items-center">
-                          <Defaulticon coin={menuIconLeft} height="h-8"/>
-                          <span>{menuTriggerLeft}</span>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            className="ml-2 h-4"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
+                          <Defaulticon coin={coin.symbol} height="h-6" />
+                          <span>
+                            {coin.name} ({coin.symbol})
+                          </span>
                         </div>
-                        <span className="sr-only">Toggle theme</span>
-                      </button>
-                    </DropdownMenuTrigger>
-                    <input
-                      type="text"
-                      value={conversionValue}
-                      className="bg-slate-600 rounded-md p-4 h-12 w-80 text-right"
-                      placeholder={menuIconLeft}
-                      onChange={handleCalculate}
-                    />
-                  </div>
-                  <DropdownMenuContent align="end">
-                    {data.map((coin) => {
-                      return (
-                        <DropdownMenuItem
-                          key={coin.symbol}
-                          onClick={(e) => {
-                            const coinPrice = addCommas(coin.quote.USD.price);
-                            const id = coin.symbol;
-                            changeMenuTriggerLeft(e);
-                            changePriceLeft(coinPrice);
-                            handleClick(id);
-                          }}
-                        >
-                          {coin.name} ({coin.symbol})
-                        </DropdownMenuItem>
-                      );
-                    })}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                        <span>
+                          {currencySymbol} {coinPrice}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
               <div className="flex justify-between mx-8">
                 <span>
-                  1 {menuIconLeft} = ${selectedPriceLeft}
+                  1 {menuIconLeft} = {currencySymbol} {selectedPriceLeft}
                 </span>
                 <span>
                   {convertedNum.length
-                    ? "Value = $" +
+                    ? `Value = ${currencySymbol} ` +
                       addCommas(
                         Number(selectedPriceRight.split(",").join("")) *
                           Number(convertedNum)
@@ -233,61 +255,80 @@ export default function Convertor() {
               </div>
             </div>
             <div className="w-half bg-slate-800 h-52 ml-4 rounded-md  mt-6 mb-6">
-              {loading && <span>Loading...</span>}
+              {loading && <div className="loading"></div>}
               <p className="ml-8 mt-4 mb-8">You buy</p>
               <div className="border-b-2 border-gray-400 pb-4 mx-8 mb-4">
-                <DropdownMenu>
-                  <div className="flex justify-between">
-                    <DropdownMenuTrigger asChild>
-                      <button className="bg-slate-800 hover:bg-slate-600 p-2.5 rounded-md">
-                        <div className="flex items-center">
-                          <Defaulticon coin={menuIconRight} height="h-8" />
-                          <span>{menuTriggerRight}</span>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            className="ml-2 h-4"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </div>
-                        <span className="sr-only">Toggle theme</span>
-                      </button>
-                    </DropdownMenuTrigger>
-                    <div className="bg-slate-600 rounded-md p-4 h-12 w-80 text-right">
-                      {convertedNum} {menuIconRight}
+                <div className="flex justify-between">
+                  <button
+                    className="bg-slate-800 hover:bg-slate-600 p-2.5 rounded-md"
+                    onClick={() => setIsOpenRight(true)}
+                    onBlur={() => setTimeout(() => setIsOpenRight(false), 200)}
+                  >
+                    <div className="flex items-center justify-between w-56">
+                      <Defaulticon coin={menuIconRight} height="h-8" />
+                      <div className="flex items-center">
+                        <span>{menuTriggerRight}</span>
+                        <Uparrow isOpen={isOpenRight} />
+                      </div>
                     </div>
+                    <span className="sr-only">Toggle theme</span>
+                  </button>
+                  <div className="bg-slate-600 rounded-md p-4 h-12 w-80 text-right">
+                    {convertedNum} {menuIconRight}
                   </div>
-                  <DropdownMenuContent align="end">
-                    {data.map((coin) => {
-                      return (
-                        <DropdownMenuItem
-                          key={coin.symbol}
-                          onClick={(e) => {
-                            const coinPrice = addCommas(coin.quote.USD.price);
-                            changeMenuTriggerRight(e);
-                            changePriceRight(coinPrice);
-                          }}
-                        >
-                          {coin.name} ({coin.symbol})
-                        </DropdownMenuItem>
-                      );
-                    })}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                </div>
+                <div
+                  className={
+                    isOpenRight
+                      ? "border absolute z-10 bg-slate-900 overflow-y-scroll h-96"
+                      : "hidden"
+                  }
+                >
+                  {data.map((coin) => {
+                    if (!coin.quote?.[currency]) {
+                      return null;
+                    }
+                    let coinQuote;
+                    if (coin.quote?.[currency]) {
+                      coinQuote = coin.quote?.[currency];
+                    } else {
+                      coinQuote = coin.quote.USD;
+                    }
+                    const coinPrice = addCommas(coinQuote.price);
+                    return (
+                      <div
+                        className="cursor-pointer hover:bg-slate-600 p-2 flex justify-between"
+                        key={coin.symbol + coin.id}
+                        onClick={() => {
+                          const id = coin.symbol;
+                          const name =
+                            coin.name + " " + "(" + coin.symbol + ")";
+                          changeMenuTriggerRight(id, name);
+                          changePriceRight(coinPrice);
+                          handleClick(id);
+                        }}
+                      >
+                        <div className="flex items-center">
+                          <Defaulticon coin={coin.symbol} height="h-6" />
+                          <span>
+                            {coin.name} ({coin.symbol})
+                          </span>
+                        </div>
+                        <span>
+                          {currencySymbol} {coinPrice}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
               <div className="flex justify-between mx-8">
                 <span>
-                  1 {menuIconRight} = ${selectedPriceRight}
+                  1 {menuIconRight} = {currencySymbol} {selectedPriceRight}
                 </span>
                 <span>
                   {convertedNum.length
-                    ? "Value = $" +
+                    ? `Value = ${currencySymbol} ` +
                       addCommas(
                         Number(selectedPriceRight.split(",").join("")) *
                           Number(convertedNum)
@@ -297,8 +338,8 @@ export default function Convertor() {
               </div>
             </div>
           </div>
-          <div className="h-82 w-all bg-slate-800 rounded-md flex justify-end flex-col ml-18">
-            {load && <span>Loading...</span>}
+          <div className="h-72 bg-slate-800 rounded-md flex justify-end flex-col mx-32 w-all">
+            {load && <div className="loading"></div>}
             {err ? (
               <span>There has been an error, please come back later</span>
             ) : (
@@ -313,12 +354,13 @@ export default function Convertor() {
                 loading={load}
                 today={today}
                 currency={menuIconRight}
-                selectedPriceRight={selectedPriceRight}
                 compareHidden={true}
+                onConverter={true}
+                rightSym={menuIconRight}
               />
             )}
           </div>
-          <div className="flex ml-18 mt-6 justify-between bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4">
+          <div className="flex ml-32 mt-6 justify-between bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4">
             <button
               onClick={handleTime}
               id="minutes 5 288"

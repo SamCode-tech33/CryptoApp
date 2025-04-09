@@ -25,7 +25,7 @@ path {
 }
 
 .w-half {
-  width: 45.3vw
+  width: 41.5vw
 }
 
 .mx-18 {
@@ -40,6 +40,10 @@ path {
   height: 22rem;
 }
 
+.h-150 {
+  height: 700px;
+}
+
 .opaque-orange {
   background: rgba(249 115 22 0.5);
 }
@@ -49,7 +53,7 @@ path {
 }
 
 .w-all {
-  width: 92.3vw;
+  width: 84.7vw;
 }
 
 .w-26 {
@@ -62,6 +66,28 @@ path {
 
 .w-30 {
   width: 120px
+}
+
+.left-025 {
+  left: 1px;
+}
+
+.loading {
+  width: 32px;
+  height: 32px;
+  border: 2px solid grey;
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.3s ease-in-out infinite;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg)
+  }
 }
 
 @layer base {

@@ -109,7 +109,7 @@ export const Plus = () => {
   );
 };
 
-export const Defaulticon = ({ coin, height }: { coin: any, height: any }) => {
+export const Defaulticon = ({ coin, height }: { coin: any; height: any }) => {
   return (
     <img
       id="currentPhoto"
@@ -124,10 +124,14 @@ export const Defaulticon = ({ coin, height }: { coin: any, height: any }) => {
 export const CustomTooltip = ({
   active,
   payload,
-  currency,
   compHidden,
+  onConverter,
+  rightSym,
 }: any) => {
   const compare = useSelector((state: RootState) => state.symbol.compare);
+  const currencySymbol = useSelector(
+    (state: RootState) => state.currency.currencySymbol
+  );
   if (active && payload && payload.length) {
     const valueProper = payload[0].payload.valueProper;
     const valueCompProper = payload[0].payload.valueCompProper;
@@ -136,12 +140,21 @@ export const CustomTooltip = ({
       <div className="text-violet-500 text-2xl mt-3 flex flex-col items-end">
         <p>{name}</p>
         <p>
-          {currency === "USD" ? "$" : ""}
-          {valueProper}
+          {onConverter ? (
+            <span>
+              {valueProper} {rightSym}
+            </span>
+          ) : (
+            <span>
+              {currencySymbol} {valueProper}
+            </span>
+          )}
         </p>
-        {compHidden ? "" : (
+        {compHidden ? (
+          ""
+        ) : (
           <p className={compare.length ? "value-comp-tool" : "hidden"}>
-            ${valueCompProper}
+            {currencySymbol} {valueCompProper}
           </p>
         )}
       </div>
@@ -159,17 +172,17 @@ const formatDate = (date: any) => {
 };
 
 export const CustomToolTipMini = ({ active, payload }: any) => {
-  const compare = useSelector((state: RootState) => state.symbol.compare);
+  const currencySymbol = useSelector(
+    (state: RootState) => state.currency.currencySymbol
+  );
   if (active && payload && payload.length) {
     const valueProper = payload[0].payload.valueProper;
-    const valueCompProper = payload[0].payload.valueCompProper;
     const name = formatDate(payload[0].payload.name);
     return (
       <div className="text-white text-sm mt-2 flex flex-col items-end">
         <p>{name}</p>
-        <p>${valueProper}</p>
-        <p className={compare.length ? "value-comp-tool" : "hidden"}>
-          ${valueCompProper}
+        <p>
+          {currencySymbol} {valueProper}
         </p>
       </div>
     );
@@ -194,8 +207,6 @@ export const CustomizedLabel = (props: any) => {
 
 export function getGraphData(
   coinHistory: any,
-  selectedPriceRight: string,
-  currency: string,
   selectedTime: string,
   graphTime: number,
   graphPeriod: number,
@@ -204,16 +215,13 @@ export function getGraphData(
 ) {
   const coinHist = coinHistory.map((interval: any, i: number) => {
     if (i !== 0 && interval.HIGH > coinHistory[i - 1].HIGH) {
-      max = interval.HIGH / Number(selectedPriceRight.split(",").join(""));
+      max = interval.HIGH;
     }
     if (i !== 0 && interval.LOW < coinHistory[i - 1].LOW) {
-      min = interval.LOW / Number(selectedPriceRight.split(",").join(""));
+      min = interval.LOW;
     }
-    const value =
-      (interval.HIGH + interval.LOW) /
-      2 /
-      Number(selectedPriceRight.split(",").join(""));
-    const valueProper = addCommas(value) + " " + currency;
+    const value = (interval.HIGH + interval.LOW) / 2;
+    const valueProper = addCommas(value);
     if (selectedTime === "minutes 5 288") {
       graphTime = 300000;
       graphPeriod = 86400000;

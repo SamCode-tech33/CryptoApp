@@ -13,10 +13,23 @@ const initialState: CryptoState = {
   error: null,
 };
 
-export const fetchCoins = createAsyncThunk("coins/fetchData", async () => {
-  const { data } = await axios.get("/api/coins");
-  return data.data;
-});
+export const fetchCoins = createAsyncThunk(
+  "coins/fetchData",
+  async ({
+    start,
+    limit,
+    convert,
+  }: {
+    start?: number;
+    limit?: number;
+    convert?: string;
+  }) => {
+    const { data } = await axios.get(
+      `/api/coins?start=${start}&limit=${limit}&convert=${convert}`
+    );
+    return data.data;
+  }
+);
 
 const coinsSlice = createSlice({
   name: "coins",
@@ -40,4 +53,3 @@ const coinsSlice = createSlice({
 });
 
 export const coinsReducer = coinsSlice.reducer;
-
