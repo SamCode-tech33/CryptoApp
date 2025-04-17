@@ -25,9 +25,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 export default function Portfolio() {
   const dispatch = useDispatch<AppDispatch>();
-  const { data, loading, error } = useSelector(
-    (state: RootState) => state.coins
-  );
+  const { data, loading } = useSelector((state: RootState) => state.coins);
   const portfolio = useSelector(
     (state: RootState) => state.portfolio.portfolio
   );
@@ -581,12 +579,7 @@ export default function Portfolio() {
         {loading && <div className="loading"></div>}
         {data.length &&
           portfolio.map((asset) => {
-            let coin;
-            if (!asset.coinName === undefined) {
-              return null;
-            } else {
-              coin = data.find((coin) => coin.name === asset.coinName);
-            }
+            const coin = data.find((coin) => coin.name === asset.coinName);
             const capToVol = (
               (coin.quote?.[currency].volume_24h /
                 coin.quote?.[currency].market_cap) *
