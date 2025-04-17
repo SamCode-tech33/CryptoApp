@@ -43,6 +43,8 @@ export default function Convertor() {
   const [conversionValue, setConversionValue] = useState("");
   const [isOpenLeft, setIsOpenLeft] = useState<boolean>(false);
   const [isOpenRight, setIsOpenRight] = useState<boolean>(false);
+  const [searchTermLeft, setSearchTermLeft] = useState("");
+  const [searchTermRight, setSearchTermRight] = useState("");
 
   const getCoinsHistory = async (symbol: string) => {
     setLoad(true);
@@ -173,8 +175,7 @@ export default function Convertor() {
                 <div className="flex justify-between">
                   <button
                     className="bg-slate-800 hover:bg-slate-600 p-2.5 rounded-md"
-                    onClick={() => setIsOpenLeft(true)}
-                    onBlur={() => setTimeout(() => setIsOpenLeft(false), 200)}
+                    onClick={() => setIsOpenLeft(!isOpenLeft)}
                   >
                     <div className="flex items-center justify-between w-56">
                       <Defaulticon coin={menuIconLeft} height="h-8" />
@@ -200,43 +201,56 @@ export default function Convertor() {
                       : "hidden"
                   }
                 >
-                  {data.map((coin) => {
-                    if (!coin.quote?.[currency]) {
-                      return null;
-                    }
-                    let coinQuote;
-                    if (coin.quote?.[currency]) {
-                      coinQuote = coin.quote?.[currency];
-                    } else {
-                      coinQuote = coin.quote.USD;
-                    }
-                    const coinPrice = addCommas(coinQuote.price);
-                    return (
-                      <div
-                        className="cursor-pointer hover:bg-slate-600 p-2 flex justify-between"
-                        key={coin.symbol + coin.id}
-                        id={coin.symbol}
-                        onClick={() => {
-                          const id = coin.symbol;
-                          const name =
-                            coin.name + " " + "(" + coin.symbol + ")";
-                          changeMenuTriggerLeft(id, name);
-                          changePriceLeft(coinPrice);
-                          handleClick(id);
-                        }}
-                      >
-                        <div className="flex items-center">
-                          <Defaulticon coin={coin.symbol} height="h-6" />
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchTermLeft}
+                    onChange={(e) => setSearchTermLeft(e.target.value)}
+                    className="w-full pl-10 pr-4 p-2 rounded-sm bg-slate-800 text-white dark:caret-white"
+                  />
+                  {data
+                    .filter((coin) =>
+                      coin.name
+                        .toLowerCase()
+                        .includes(searchTermLeft.toLowerCase())
+                    )
+                    .map((coin) => {
+                      if (!coin.quote?.[currency]) {
+                        return null;
+                      }
+                      let coinQuote;
+                      if (coin.quote?.[currency]) {
+                        coinQuote = coin.quote?.[currency];
+                      } else {
+                        coinQuote = coin.quote.USD;
+                      }
+                      const coinPrice = addCommas(coinQuote.price);
+                      return (
+                        <div
+                          className="cursor-pointer hover:bg-slate-600 p-2 flex justify-between"
+                          key={coin.symbol + coin.id}
+                          id={coin.symbol}
+                          onClick={() => {
+                            const id = coin.symbol;
+                            const name =
+                              coin.name + " " + "(" + coin.symbol + ")";
+                            changeMenuTriggerLeft(id, name);
+                            changePriceLeft(coinPrice);
+                            handleClick(id);
+                          }}
+                        >
+                          <div className="flex items-center">
+                            <Defaulticon coin={coin.symbol} height="h-6" />
+                            <span>
+                              {coin.name} ({coin.symbol})
+                            </span>
+                          </div>
                           <span>
-                            {coin.name} ({coin.symbol})
+                            {currencySymbol} {coinPrice}
                           </span>
                         </div>
-                        <span>
-                          {currencySymbol} {coinPrice}
-                        </span>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
                 </div>
               </div>
               <div className="flex justify-between mx-8">
@@ -261,8 +275,7 @@ export default function Convertor() {
                 <div className="flex justify-between">
                   <button
                     className="bg-slate-800 hover:bg-slate-600 p-2.5 rounded-md"
-                    onClick={() => setIsOpenRight(true)}
-                    onBlur={() => setTimeout(() => setIsOpenRight(false), 200)}
+                    onClick={() => setIsOpenRight(!isOpenRight)}
                   >
                     <div className="flex items-center justify-between w-56">
                       <Defaulticon coin={menuIconRight} height="h-8" />
@@ -284,42 +297,55 @@ export default function Convertor() {
                       : "hidden"
                   }
                 >
-                  {data.map((coin) => {
-                    if (!coin.quote?.[currency]) {
-                      return null;
-                    }
-                    let coinQuote;
-                    if (coin.quote?.[currency]) {
-                      coinQuote = coin.quote?.[currency];
-                    } else {
-                      coinQuote = coin.quote.USD;
-                    }
-                    const coinPrice = addCommas(coinQuote.price);
-                    return (
-                      <div
-                        className="cursor-pointer hover:bg-slate-600 p-2 flex justify-between"
-                        key={coin.symbol + coin.id}
-                        onClick={() => {
-                          const id = coin.symbol;
-                          const name =
-                            coin.name + " " + "(" + coin.symbol + ")";
-                          changeMenuTriggerRight(id, name);
-                          changePriceRight(coinPrice);
-                          handleClick(id);
-                        }}
-                      >
-                        <div className="flex items-center">
-                          <Defaulticon coin={coin.symbol} height="h-6" />
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchTermRight}
+                    onChange={(e) => setSearchTermRight(e.target.value)}
+                    className="w-full pl-10 pr-4 p-2 rounded-sm bg-slate-800 text-white dark:caret-white"
+                  />
+                  {data
+                    .filter((coin) =>
+                      coin.name
+                        .toLowerCase()
+                        .includes(searchTermRight.toLowerCase())
+                    )
+                    .map((coin) => {
+                      if (!coin.quote?.[currency]) {
+                        return null;
+                      }
+                      let coinQuote;
+                      if (coin.quote?.[currency]) {
+                        coinQuote = coin.quote?.[currency];
+                      } else {
+                        coinQuote = coin.quote.USD;
+                      }
+                      const coinPrice = addCommas(coinQuote.price);
+                      return (
+                        <div
+                          className="cursor-pointer hover:bg-slate-600 p-2 flex justify-between"
+                          key={coin.symbol + coin.id}
+                          onClick={() => {
+                            const id = coin.symbol;
+                            const name =
+                              coin.name + " " + "(" + coin.symbol + ")";
+                            changeMenuTriggerRight(id, name);
+                            changePriceRight(coinPrice);
+                            handleClick(id);
+                          }}
+                        >
+                          <div className="flex items-center">
+                            <Defaulticon coin={coin.symbol} height="h-6" />
+                            <span>
+                              {coin.name} ({coin.symbol})
+                            </span>
+                          </div>
                           <span>
-                            {coin.name} ({coin.symbol})
+                            {currencySymbol} {coinPrice}
                           </span>
                         </div>
-                        <span>
-                          {currencySymbol} {coinPrice}
-                        </span>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
                 </div>
               </div>
               <div className="flex justify-between mx-8">

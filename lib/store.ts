@@ -6,14 +6,29 @@ import { symbolReducer } from "./symbolSlice";
 import { timeReducer } from "./timeSlice";
 import { searchReducer } from "./searchSlice";
 import { currencyReducer } from "./currencySlice";
+import { portfolioReducer } from "./portfolioSlice";
 
-const persistConfig = {
+const currencyPersistConfig = {
   key: "currency",
   storage,
   whitelist: ["currencyType", "currencySymbol"],
 };
 
-const persistedCurrencyReducer = persistReducer(persistConfig, currencyReducer);
+const portfolioPersistConfig = {
+  key: "portfolio",
+  storage,
+  whitelist: ["portfolio"],
+};
+
+const persistedCurrencyReducer = persistReducer(
+  currencyPersistConfig,
+  currencyReducer
+);
+
+const persistedPortfolioReducer = persistReducer(
+  portfolioPersistConfig,
+  portfolioReducer
+);
 
 export const store = configureStore({
   reducer: {
@@ -22,10 +37,11 @@ export const store = configureStore({
     timePeriod: timeReducer,
     search: searchReducer,
     currency: persistedCurrencyReducer,
+    portfolio: persistedPortfolioReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, // Needed for redux-persist
+      serializableCheck: false,
     }),
 });
 
