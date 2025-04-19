@@ -13,12 +13,10 @@ export const Coinbar = ({
       {first === true ? (
         <div className="flex w-64 justify-between">
           <span>
-            {currencySymbol}
-            {value1}B
+            {currencySymbol} {value1}B
           </span>
           <span>
-            {currencySymbol}
-            {value2}B
+            {currencySymbol} {value2}B
           </span>
         </div>
       ) : (

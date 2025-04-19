@@ -72,6 +72,70 @@ path {
   left: 1px;
 }
 
+.-left-30 {
+  left: -120px;
+}
+
+.-left-22 {
+  left: -86px
+}
+
+.date-cal {
+  padding: 3px;
+  text-align: center;
+  border-radius: 16px;
+  background: rgb(100 116 139);
+  caret-color: white;
+}
+
+.react-datepicker {
+  background-color: rgb(71 85 105) !important;
+  border: 1px solid #444 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+.react-datepicker__day--selected {
+  background-color: #0070f3 !important;
+  color: white !important;
+  border-radius: 8px !important;
+}
+
+/* Today’s date */
+.react-datepicker__day--today {
+  background: teal !important;
+  color: white !important;
+  border-radius: 8px !important;
+}
+
+/* Day hover */
+.react-datepicker__day:hover {
+  background-color: #0070f3 !important;
+  color: white !important;
+}
+
+.react-datepicker__day {
+  color: white !important;
+  border-radius: 8px !important;
+}
+
+.react-datepicker__current-month {
+  display: hidden !important;
+}
+
+.react-datepicker__day--disabled {
+  color: grey !important;
+}
+
+.react-datepicker__header {
+  background-color: rgb(148 163 184) !important;
+}
+
+.react-datepicker-popper {
+  z-index: 1000 !important;
+  position: absolute !important;
+}
+
 .loading {
   width: 32px;
   height: 32px;
