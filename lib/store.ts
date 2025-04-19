@@ -17,7 +17,7 @@ const currencyPersistConfig = {
 const portfolioPersistConfig = {
   key: "portfolio",
   storage,
-  whitelist: ["portfolio"],
+  whitelist: ["portfolio", "totalFunds", "assetValue"],
 };
 
 const persistedCurrencyReducer = persistReducer(

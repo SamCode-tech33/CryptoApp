@@ -226,7 +226,7 @@ export default function Portfolio() {
       <div
         className={
           isAddingAsset
-            ? "absolute bg-black w-1/2 h-2/5 left-1/4 top-1/3 rounded-md border border-white"
+            ? "absolute bg-black w-1/2 h-2/5 left-1/4 top-1/3 rounded-md border border-white z-10"
             : "hidden"
         }
       >
