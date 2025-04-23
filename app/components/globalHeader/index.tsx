@@ -28,9 +28,9 @@ export const Globalheader = () => {
   }, []);
 
   return (
-    <div className="bg-slate-800">
+    <div className="dark:bg-slate-950 bg-gray-200">
       <div className="flex items-center mx-96 justify-around p-1 mb-2">
-        <div className="border flex items-center">
+        <div className="flex items-center">
           <Lightningicon />
           <div>
             Coins{" "}

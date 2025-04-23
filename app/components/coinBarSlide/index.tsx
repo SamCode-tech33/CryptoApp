@@ -1,53 +1,48 @@
-export const Coinbar = ({
-  currencySymbol,
-  value1,
-  value2,
-  colorLoad,
-  colors,
-  index,
-  coinQuote,
-  first,
-}: any) => {
+import { addCommas } from "../Utility";
+
+export const Coinbar = ({ currencySymbol, value1, value2, first }: any) => {
   return (
     <div className="w-72 flex justify-left flex-col">
       {first === true ? (
         <div className="flex w-64 justify-between">
           <span>
-            {currencySymbol} {value1}B
+            {currencySymbol} {addCommas(value1)}B
           </span>
           <span>
-            {currencySymbol} {value2}B
+            {currencySymbol} {addCommas(value2)}B
           </span>
         </div>
       ) : (
         <div className="flex w-64 justify-between">
-          <span>{value1}M</span>
-          <span className={value2 === "0" ? "text-2xl" : value2 + ""}>
-            {value2 === "0" ? "∞" : value2 + "M"}
+          <span>
+            {value1 / 1000 > 1
+              ? `${addCommas(value1 / 1000)}B`
+              : `${addCommas(value1)}M`}
+          </span>
+          <span className={value2 === 0 ? "text-2xl" : value2 + ""}>
+            {value2 === 0
+              ? "∞"
+              : value2 / 1000 > 1
+              ? `${addCommas(value2 / 1000)}B`
+              : `${addCommas(value2)}M`}
           </span>
         </div>
       )}
-      {colorLoad ? (
-        <div className="loading"></div>
-      ) : (
+      <div className="w-64 h-2 rounded-lg dark:bg-slate-600 bg-gray-300">
         <div
-          className="w-64 h-2 rounded-lg"
+          className="h-2 rounded-lg bg-violet-500"
           style={{
-            backgroundColor: `rgba(${colors[index]}, 0.5)`,
+            width:
+              value2 === 0
+                ? "4%"
+                : Number(value1) / Number(value2) < 0.04
+                ? "4%"
+                : Number(value2) < Number(value1)
+                ? "100%"
+                : `${(Number(value1) / Number(value2)) * 100}%`,
           }}
-        >
-          <div
-            className="h-2 rounded-lg"
-            style={{
-              width:
-                coinQuote.volume_24h > coinQuote.market_cap
-                  ? "20rem"
-                  : `${(coinQuote.volume_24h / coinQuote.market_cap) * 100}%`,
-              backgroundColor: `rgba(${colors[index]}, 1)`,
-            }}
-          ></div>
-        </div>
-      )}
+        ></div>
+      </div>
     </div>
   );
 };

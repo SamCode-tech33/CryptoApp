@@ -29,6 +29,7 @@
     "react-datepicker": "^8.3.0",
     "react-dom": "^19.0.0",
     "react-infinite-scroll-component": "^6.1.0",
+    "react-lazyload": "^3.2.1",
     "react-native-image-colors": "^2.4.0",
     "react-redux": "^9.2.0",
     "react-slick": "^0.30.3",

@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
 import { Sevendaygraph } from "../Sevendaygraph";
-import { prominent } from "color.js";
 import queryString from "query-string";
 import InfiniteScroll from "react-infinite-scroll-component";
 import axios from "axios";
@@ -15,14 +14,12 @@ import { Rangefilter } from "../rangeFilter";
 import { Coinbar } from "../coinBarSlide";
 
 export default function Navcoin() {
-  const [colors, setColors] = useState<any>([]);
   const [filterState, setFilterState] = useState<any>("");
   const [filterValue, setFilterValue] = useState<any>("");
   const [query, setQuery] = useState<any>({});
   const [lowerValue, setLowerValue] = useState<any>("");
   const [upperValue, setUpperValue] = useState<any>("");
   const [dataMap, setDataMap] = useState<any>([]);
-  const [colorLoad, setColorLoad] = useState<any>(false);
   const [start, setStart] = useState<number>(1);
   const [dataSet, setDataSet] = useState<any>([]);
   const [loading, setLoading] = useState<any>(false);
@@ -52,27 +49,6 @@ export default function Navcoin() {
       setError(true);
       setLoading(false);
     }
-  };
-
-  const fetchImageColor = async (sym: string) => {
-    try {
-      setColorLoad(true);
-      const color = await prominent(`/api/icons?sym=${sym}`);
-      const extractedColor: string = `${(color[2] as any[])[0] * 2}, ${
-        (color[2] as any[])[1] * 2
-      }, ${(color[2] as any[])[2] * 2}`;
-      setColors((prevColors: string[]) => [...prevColors, extractedColor]);
-
-      setColorLoad(false);
-      //eslint-disable-next-line
-    } catch (error) {
-      setColors((prevColors: string[]) => [...prevColors, "213 176 29"]);
-      setColorLoad(false);
-    }
-  };
-
-  const allImageFetch = async () => {
-    dataSet.map((coin: any) => fetchImageColor(coin.symbol.toLowerCase()));
   };
 
   const handleFilter = (filter: string) => {
@@ -280,7 +256,6 @@ export default function Navcoin() {
 
   useEffect(() => {
     if (!loading) {
-      allImageFetch();
       setDataMap(dataSet);
     }
   }, [dataSet]);
@@ -304,8 +279,8 @@ export default function Navcoin() {
               <div
                 className={
                   filterState === "Name"
-                    ? "flex items-center p-2 rounded-sm hover:bg-slate-600 h-20"
-                    : "flex items-center p-2 rounded-sm hover:bg-slate-800"
+                    ? "flex items-center p-2 rounded-sm dark:hover:bg-slate-600 h-20 z-10 hover:bg-slate-300"
+                    : "flex items-center p-2 rounded-sm dark:hover:bg-slate-800"
                 }
                 onMouseEnter={() => handleFilter("Name")}
                 onMouseLeave={handleFilterExit}
@@ -314,13 +289,13 @@ export default function Navcoin() {
                 <Filtericon />
                 <form
                   className={
-                    filterState === "Name" ? "flex ml-2 h-8" : "hidden"
+                    filterState === "Name" ? "flex ml-2 h-8 z-10" : "hidden"
                   }
                   action=""
                 >
                   <input
                     type="text"
-                    className="bg-slate-600 rounded-sm w-32 mr-1 dark:caret-white border-gray-300 border p-1"
+                    className="dark:bg-slate-600 rounded-sm w-32 mr-1 dark:caret-white border-gray-300 border p-1"
                     value={filterValue}
                     onChange={handleFilterRender}
                     placeholder="Coin..."
@@ -398,7 +373,7 @@ export default function Navcoin() {
               <span>Last 7d</span>
             </div>
             <button
-              className="flex justify-left bg-slate-800 p-2.5 rounded-sm hover:bg-slate-600"
+              className="flex justify-left dark:bg-slate-800 p-2.5 rounded-sm dark:hover:bg-slate-600 bg-violet-300 hover:bg-violet-400"
               onClick={handleFullClear}
             >
               Clear Filters
@@ -424,13 +399,9 @@ export default function Navcoin() {
                   coinQuote = coin.quote.USD;
                 }
                 const coinPrice = addCommas(coinQuote.price);
-                const volume24 = addCommas(coinQuote.volume_24h / 1e9);
-                const marketCap = addCommas(coinQuote.market_cap / 1e9);
-                const circSupply = addCommas(coin.circulating_supply / 1e6);
-                const maxSupply = addCommas(coin.max_supply / 1e6);
                 return (
                   <Link href={`coins/${coin.id}`} key={coin.name + coin.id}>
-                    <li className="dark:bg-slate-800 text-black dark:text-white bg-slate-200 h-14 flex items-center rounded-md dark:hover:bg-slate-700 bg">
+                    <li className="dark:bg-slate-800 text-black dark:text-white bg-white h-14 flex items-center rounded-md dark:hover:bg-slate-700 bg">
                       <div className="w-8 flex justify-center mr-4">
                         <span>{index + 1}</span>
                       </div>
@@ -483,20 +454,16 @@ export default function Navcoin() {
                       </div>
                       <Coinbar
                         currencySymbol={currencySymbol}
-                        value1={volume24}
-                        value2={marketCap}
-                        colorLoad={colorLoad}
-                        colors={colors}
+                        value1={coinQuote.volume_24h / 1e9}
+                        value2={coinQuote.market_cap / 1e9}
                         index={index}
                         coinQuote={coinQuote}
                         first={true}
                       />
                       <Coinbar
                         currencySymbol={currencySymbol}
-                        value1={circSupply}
-                        value2={maxSupply}
-                        colorLoad={colorLoad}
-                        colors={colors}
+                        value1={coin.circulating_supply / 1e6}
+                        value2={coin.max_supply / 1e6}
                         index={index}
                         coinQuote={coinQuote}
                         first={false}

@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
+import { Arrowright } from "../svgComps";
 
 const handleImageError = (
   event: React.SyntheticEvent<HTMLImageElement, Event>
@@ -28,13 +29,38 @@ export const addCommas = (num: number) => {
   }
 };
 
+const SamplePrevArrow = (props: any) => {
+  const { onClick } = props;
+  return (
+    <div
+      onClick={onClick}
+      className="h-8 flex bg-slate-300 hover:bg-slate-400 absolute w-8 -left-8 top-1/3 items-center rounded-3xl justify-center cursor-pointer rotate-180 dark:bg-slate-700 dark:hover:bg-slate-500"
+    >
+      <Arrowright />
+    </div>
+  );
+};
+
+const SampleNextArrow = (props: any) => {
+  const { onClick } = props;
+  return (
+    <div
+      onClick={onClick}
+      className="h-8 flex bg-slate-300 hover:bg-slate-400 absolute w-8 left-full top-1/3 items-center rounded-3xl justify-center cursor-pointer dark:bg-slate-700 dark:hover:bg-slate-500"
+    >
+      <Arrowright />
+    </div>
+  );
+};
+
 export const sliderSettings = {
   dots: false,
   infinite: false,
   speed: 800,
   slidesToShow: 6,
   slidesToScroll: 6,
-  initialSlide: 0,
+  nextArrow: <SampleNextArrow />,
+  prevArrow: <SamplePrevArrow />,
   responsive: [
     {
       breakpoint: 1024,
@@ -179,7 +205,7 @@ export const CustomToolTipMini = ({ active, payload }: any) => {
     const valueProper = payload[0].payload.valueProper;
     const name = formatDate(payload[0].payload.name);
     return (
-      <div className="text-white text-sm mt-2 flex flex-col items-end">
+      <div className="dark:text-white text-sm mt-2 flex flex-col items-end">
         <p>{name}</p>
         <p>
           {currencySymbol} {valueProper}
@@ -196,7 +222,7 @@ export const CustomizedLabel = (props: any) => {
       x={x + width / 2}
       y={y + height + 12}
       dy={11}
-      fill="white"
+      fill="gray"
       fontSize={13}
       textAnchor="middle"
     >
@@ -256,10 +282,9 @@ export function getGraphData(
 export function getGraphComparison(
   pdata: any,
   pdataComp: any,
-  rendered: boolean
 ) {
   const histCompare = pdata.coinHist.map((data: any, index: number) => {
-    if (pdataComp.coinHist.length && rendered) {
+    if (pdataComp.coinHist.length) {
       let valueComp = 0;
       let valueCompProper = 0;
       if (pdataComp.coinHist[index]) {

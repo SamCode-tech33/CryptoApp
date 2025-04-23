@@ -19,11 +19,9 @@ const portfolioSlice = createSlice({
     buyAsset: (state, newState) => {
       state.portfolio = [...state.portfolio, newState.payload];
       state.totalFunds =
-        Number(state.totalFunds) -
-        Number(newState.payload.currencyAmount.split(",").join(""));
+        Number(state.totalFunds) - Number(newState.payload.currencyAmount);
       state.assetValue =
-        Number(state.assetValue) +
-        Number(newState.payload.currencyAmount.split(",").join(""));
+        Number(state.assetValue) + Number(newState.payload.currencyAmount);
     },
     sellAsset: (state, newState) => {
       state.portfolio = state.portfolio.map((asset) => {
@@ -40,20 +38,38 @@ const portfolioSlice = createSlice({
           return asset;
         } else {
           state.totalFunds =
-            Number(state.totalFunds) +
-            Number(newState.payload.currencyAmount.split(",").join(""));
+            Number(state.totalFunds) + Number(newState.payload.currencyAmount);
           state.assetValue =
-            Number(state.assetValue) -
-            Number(newState.payload.currencyAmount.split(",").join(""));
+            Number(state.assetValue) - Number(newState.payload.currencyAmount);
         }
       });
     },
     addFunds: (state, newState) => {
       state.totalFunds = Number(state.totalFunds) + Number(newState.payload);
     },
+    assetChange: (state, newState) => {
+      state.assetValue = Number(state.assetValue) - Number(newState.payload);
+    },
+    changeCurrency: (state, newState) => {
+      state.totalFunds =
+        state.totalFunds *
+        (newState.payload[0].currencyAmount /
+          state.portfolio[0].currencyAmount);
+      state.assetValue =
+        state.assetValue *
+        (newState.payload[0].currencyAmount /
+          state.portfolio[0].currencyAmount);
+      state.portfolio = newState.payload;
+    },
   },
 });
 
 export const portfolioReducer = portfolioSlice.reducer;
-export const { buyAsset, sellAsset, deleteAsset, addFunds } =
-  portfolioSlice.actions;
+export const {
+  buyAsset,
+  sellAsset,
+  deleteAsset,
+  addFunds,
+  changeCurrency,
+  assetChange,
+} = portfolioSlice.actions;

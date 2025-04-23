@@ -8,10 +8,9 @@ import {
 } from "recharts";
 import { CustomTooltip, getGraphComparison, getGraphData } from "../Utility";
 
-export const Linegraph = ({
+const Linegraph = ({
   coinHistory,
   limit,
-  rendered,
   symbol,
   selectedTime,
   coinCompare,
@@ -23,7 +22,7 @@ export const Linegraph = ({
   onConverter,
   rightSym,
 }: any) => {
-  if (coinHistory.length !== limit && rendered) {
+  if (coinHistory.length !== limit) {
     const timeInsufficientArray = coinHistory;
     for (let i = limit - coinHistory.length; i > 0; i--) {
       timeInsufficientArray.unshift({
@@ -34,7 +33,7 @@ export const Linegraph = ({
     }
   }
 
-  if (coinCompare.length !== limit && rendered) {
+  if (coinCompare.length !== limit) {
     const timeInsufficientArray = coinCompare;
     for (let i = limit - coinCompare.length; i > 0; i--) {
       timeInsufficientArray.unshift({
@@ -61,15 +60,15 @@ export const Linegraph = ({
     0,
     0
   );
-  const pdataCombination = getGraphComparison(pdata, pdataComp, rendered);
+  const pdataCombination = getGraphComparison(pdata, pdataComp);
   return (
     <div className="relative">
       {loading && <div className="loading"></div>}
       <div
         className={
           onConverter
-            ? "h-72 w-full bg-slate-800 rounded-md flex justify-end flex-col mr-4"
-            : "h-72 w-half bg-slate-800 rounded-md flex justify-end flex-col mr-4"
+            ? "h-72 w-full dark:bg-slate-800 rounded-md flex justify-end flex-col mr-4 bg-white"
+            : "h-72 w-half dark:bg-slate-800 rounded-md flex justify-end flex-col mr-4 bg-white"
         }
       >
         {compare.length ? (
@@ -153,3 +152,5 @@ export const Linegraph = ({
     </div>
   );
 };
+
+export default Linegraph;

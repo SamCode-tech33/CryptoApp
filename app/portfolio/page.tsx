@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import {
   Xmark,
@@ -17,11 +18,14 @@ import {
   addFunds,
   deleteAsset,
   sellAsset,
+  changeCurrency,
+  assetChange,
 } from "@/lib/portfolioSlice";
 import { Updownarrow } from "../components/Utility";
 import DatePicker from "react-datepicker";
 import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
+import { Notification } from "../components/notifications";
 
 export default function Portfolio() {
   const dispatch = useDispatch<AppDispatch>();
@@ -68,6 +72,9 @@ export default function Portfolio() {
   const [isSellWithSelect, setIsSellWithSelect] = useState(false);
   const [sellWith, setSellWith] = useState(currency);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [errNoti, setErrNoti] = useState(false);
+  const [noti, setNoti] = useState(false);
+  const [notiMessage, setNotiMessage] = useState("");
 
   const getCoinPriceOnDate = async () => {
     try {
@@ -76,6 +83,28 @@ export default function Portfolio() {
       );
       const dayPrice = (data.Data.Data[1].low + data.Data.Data[1].high) / 2;
       setCoinPrice(dayPrice);
+      //eslint-disable-next-line
+    } catch (error) {}
+  };
+
+  const currencyChange = async () => {
+    try {
+      const currencyChangePortfolio = await Promise.all(
+        portfolio.map(async (asset) => {
+          const { data } = await axios.get(
+            `/api/specificDay?fsym=${
+              asset.coinSymbol
+            }&tsym=${currency}&toTs=${Number(asset.dateUnix)}`
+          );
+          const newValue = {
+            ...asset,
+            currencyAmount:
+              (data.Data.Data[1].low + data.Data.Data[1].high) / 2,
+          };
+          return newValue;
+        })
+      );
+      dispatch(changeCurrency(currencyChangePortfolio));
       //eslint-disable-next-line
     } catch (error) {}
   };
@@ -135,8 +164,9 @@ export default function Portfolio() {
         coinName: coinName,
         coinSymbol: coinSymbol,
         coinAmount: Number(assetHeader.split(" ")[0]),
-        currencyAmount: assetHeader.split(" ")[1],
+        currencyAmount: Number(assetHeader.split(" ")[1].split(",").join("")),
         date: new Date(dateUnix).toString().split("GMT")[0],
+        dateUnix: dateUnix,
         id: Math.random() + Math.random(),
       };
       dispatch(buyAsset(portfolioItem));
@@ -145,8 +175,16 @@ export default function Portfolio() {
       setPurchaseAmount("");
       setPurchaseHeader("Purchase Amount");
       setBuyWith(currency);
+      setNoti(true);
+      setNotiMessage("Purchase Completed");
+      setTimeout(() => setNotiMessage(""), 2000);
+      setTimeout(() => setNoti(false), 2000);
     } else {
       setNoPurchase(true);
+      setErrNoti(true);
+      setNotiMessage("Cannot Complete Purchase");
+      setTimeout(() => setNotiMessage(""), 2000);
+      setTimeout(() => setErrNoti(false), 2000);
       setTimeout(() => setNoPurchase(false), 2000);
     }
   };
@@ -177,16 +215,29 @@ export default function Portfolio() {
         coinName: coinName,
         coinSymbol: coinSymbol,
         coinAmount: coinAmount - soldCoinAmount,
-        currencyAmount: addCommas(
-          Number(currencyAmount.split(",").join("")) - Number(soldAmount)
-        ),
+        currencyAmount: currencyAmount - soldAmount,
         date: date,
         id: id,
       };
       dispatch(sellAsset(alteredPortfolioItem));
       dispatch(addFunds(soldAmount));
+      dispatch(assetChange(soldAmount));
+      setIsSelling(false);
+      setNoti(true);
+      setNotiMessage("Sale Completed");
+      setTimeout(() => setNotiMessage(""), 2000);
+      setTimeout(() => setNoti(false), 2000);
+    } else if (soldAmount > currencyAmount) {
+      setErrNoti(true);
+      setNotiMessage("Cannot Complete Sale - Selling More Than Owned");
+      setTimeout(() => setNotiMessage(""), 2000);
+      setTimeout(() => setErrNoti(false), 2000);
+    } else {
+      setErrNoti(true);
+      setNotiMessage("Cannot Complete Sale - Input Number");
+      setTimeout(() => setNotiMessage(""), 2000);
+      setTimeout(() => setErrNoti(false), 2000);
     }
-    setIsSelling(false);
   };
 
   const handleDelete = (currencyAmount: any, id: any) => {
@@ -196,27 +247,39 @@ export default function Portfolio() {
     };
     dispatch(deleteAsset(deleteInfo));
     setIsDeleting(false);
+    setNoti(true);
+    setNotiMessage("Total Sale of Asset Completed");
+    setTimeout(() => setNotiMessage(""), 2000);
+    setTimeout(() => setNoti(false), 2000);
   };
 
   useEffect(() => {
+    if (portfolio.length) {
+      currencyChange();
+    }
     dispatch(fetchCoins({ start: 1, limit: 400, convert: currency }));
   }, [currency]);
 
   useEffect(() => {
     getCoinPriceOnDate();
-  }, [currency, coinSymbol, dateUnix]);
+  }, [coinSymbol, dateUnix]);
 
   useEffect(() => {
     handlePurchase();
   }, [coinPrice]);
 
   return (
-    <div>
+    <div className="bg-gray-200 pt-1 dark:bg-slate-950">
+      <Notification
+        noti={noti}
+        message={errNoti ? `Error: ${notiMessage}` : `Success: ${notiMessage}`}
+        error={errNoti}
+      />
       <div className="mb-8 mt-16">
         <div className="mx-32 flex justify-between">
           <h1 className="text-3xl">Portfolio</h1>
           <button
-            className="rounded-lg bg-slate-800 px-16 py-3 hover:bg-slate-600"
+            className="rounded-lg dark:bg-slate-800 px-16 py-3 dark:hover:bg-slate-600 bg-violet-300 hover:bg-violet-400"
             onClick={() => setIsAddingAsset(!isAddingAsset)}
           >
             Add Asset
@@ -226,7 +289,7 @@ export default function Portfolio() {
       <div
         className={
           isAddingAsset
-            ? "absolute bg-black w-1/2 h-2/5 left-1/4 top-1/3 rounded-md border border-white z-10"
+            ? "absolute dark:bg-black w-1/2 h-2/5 left-1/4 top-1/3 rounded-md border dark:border-white border-black z-10 bg-white"
             : "hidden"
         }
       >
@@ -241,8 +304,23 @@ export default function Portfolio() {
               .split(" ")
               .join(` ${coinSymbol} - - ${currencySymbol}`)}
           </p>
-          <p className={noPurchase ? "ml-6 text-lg text-red-500" : "hidden"}>
-            Select purchase amount before continuing
+          <p
+            className={
+              noPurchase && assetHeader === ""
+                ? "ml-6 text-lg text-red-500"
+                : "hidden"
+            }
+          >
+            Choose purchase amount before continuing
+          </p>
+          <p
+            className={
+              noPurchase && assetHeader !== ""
+                ? "ml-6 text-lg text-red-500"
+                : "hidden"
+            }
+          >
+            Not enough funds
           </p>
           <p
             className={
@@ -259,7 +337,7 @@ export default function Portfolio() {
           </button>
         </div>
         <div className="flex justify-between mx-16 h-full mt-8">
-          <div className="h-3/5 bg-slate-800 w-1/3 rounded-md mr-16 flex flex-col items-center justify-around">
+          <div className="h-3/5 dark:bg-slate-800  bg-violet-300  w-1/3 rounded-md mr-16 flex flex-col items-center justify-around">
             <div className="mt-10">
               <Defaulticon coin={coinSymbol} height="h-16" />
             </div>
@@ -273,7 +351,7 @@ export default function Portfolio() {
           </div>
           <div className="h-3/5 w-2/3 rounded-md ml-16 relative">
             <div
-              className="flex items-center justify-between bg-slate-800 p-2 rounded-md cursor-pointer hover:bg-slate-600"
+              className="flex items-center justify-between dark:bg-slate-800 p-2 rounded-md cursor-pointer dark:hover:bg-slate-600 bg-violet-300 hover:bg-violet-400"
               onClick={() => {
                 setIsCoinSelect(!isCoinSelect);
                 setIsPurchaseSelect(false);
@@ -290,7 +368,7 @@ export default function Portfolio() {
             <div
               className={
                 isCoinSelect
-                  ? "border absolute z-10 bg-slate-900 overflow-y-scroll h-96 w-full"
+                  ? "border absolute z-10 dark:bg-slate-900 overflow-y-scroll h-96 w-full bg-slate-300"
                   : "hidden"
               }
             >
@@ -299,7 +377,7 @@ export default function Portfolio() {
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 p-2 rounded-sm bg-slate-600 text-white dark:caret-white"
+                className="w-full pl-10 pr-4 p-2 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white"
               />
               {loading && <div className="loading"></div>}
               {data.length &&
@@ -311,7 +389,7 @@ export default function Portfolio() {
                     return (
                       <div
                         key={coin.symbol + coin.id}
-                        className="p-3 hover:bg-slate-600 cursor-pointer flex justify-between"
+                        className="p-3 dark:hover:bg-slate-600 cursor-pointer flex justify-between hover:bg-slate-400"
                         onClick={() => {
                           setCoinSymbol(coin.symbol);
                           setCoinName(coin.name);
@@ -326,14 +404,14 @@ export default function Portfolio() {
                           </span>
                         </div>
                         <span>
-                          {currencySymbol} {coinPrice}
+                          {currencySymbol} {addCommas(coinPrice)}
                         </span>
                       </div>
                     );
                   })}
             </div>
             <div
-              className="flex items-center justify-between bg-slate-800 p-2 rounded-md cursor-pointer hover:bg-slate-600 mt-4"
+              className="flex items-center justify-between dark:bg-slate-800 p-2 rounded-md cursor-pointer dark:hover:bg-slate-600 mt-4 bg-violet-300 hover:bg-violet-400"
               onClick={() => {
                 setIsPurchaseSelect(!isPurchaseSelect);
                 setIsCoinSelect(false);
@@ -345,7 +423,7 @@ export default function Portfolio() {
             <div
               className={
                 isPurchaseSelect && coinSymbol !== ""
-                  ? "border absolute z-10 bg-slate-900 h-32 w-full flex flex-col justify-around"
+                  ? "border absolute z-10 dark:bg-slate-900 h-32 w-full flex flex-col justify-around bg-slate-300"
                   : "hidden"
               }
             >
@@ -354,11 +432,11 @@ export default function Portfolio() {
                   type="text"
                   value={purchaseAmount}
                   placeholder="Purchase Amount. . ."
-                  className="w-1/2 p-2 rounded-sm bg-slate-700 text-white dark:caret-white ml-4 text-left"
+                  className="w-1/2 p-2 rounded-sm dark:bg-slate-700 dark:text-white dark:caret-white ml-4 text-left"
                   onChange={(e) => setPurchaseAmount(e.target.value)}
                 />
                 <button
-                  className="flex items-center bg-slate-700 rounded-md p-2"
+                  className="flex items-center dark:bg-slate-700 dark:hover:bg-slate-600 rounded-md p-2 bg-white hover:bg-violet-300"
                   onClick={() => setIsBuyWithSelect(!isBuyWithSelect)}
                 >
                   <span>{buyWith}</span> <Uparrow isOpen={isBuyWithSelect} />{" "}
@@ -367,12 +445,12 @@ export default function Portfolio() {
                   <div
                     className={
                       isBuyWithSelect
-                        ? "absolute z-10 bg-slate-800 -left-30 top-5 flex flex-col w-24"
+                        ? "absolute z-10 dark:bg-slate-800 -left-26 top-5 flex flex-col w-16 bg-white"
                         : "hidden"
                     }
                   >
                     <button
-                      className="p-2 hover:bg-slate-600"
+                      className="p-2 dark:hover:bg-slate-600 hover:bg-violet-300"
                       onClick={() => {
                         setBuyWith(currency);
                         setIsBuyWithSelect(false);
@@ -381,7 +459,7 @@ export default function Portfolio() {
                       {currency}
                     </button>
                     <button
-                      className=" p-2 hover:bg-slate-600"
+                      className=" p-2 dark:hover:bg-slate-600 hover:bg-violet-300"
                       onClick={() => {
                         setBuyWith(coinSymbol);
                         setIsBuyWithSelect(false);
@@ -392,7 +470,7 @@ export default function Portfolio() {
                   </div>
                 </div>
                 <button
-                  className="bg-slate-700 p-2 rounded-lg mr-4 hover:bg-slate-500"
+                  className="dark:bg-slate-700 p-2 rounded-lg mr-4 dark:hover:bg-slate-500 bg-white hover:bg-violet-300"
                   onClick={() => handlePurchase()}
                 >
                   <Arrowright />
@@ -430,14 +508,14 @@ export default function Portfolio() {
                 )}
               </div>
             </div>
-            <div className="flex items-center justify-between bg-slate-800 p-2 rounded-md cursor-pointer mt-4">
+            <div className="flex items-center justify-between dark:bg-slate-800 p-2 rounded-md cursor-pointer mt-4 bg-violet-300 hover:bg-violet-400">
               <span className="ml-2">Purchase Date</span>
               <div className="relative">
                 <DatePicker
                   selected={startDate}
                   onChange={(date: any) => setStartDate(date)}
                   maxDate={new Date()}
-                  className="date-cal"
+                  className="date-cal dark:bg-slate-600"
                   onSelect={(date: any) => {
                     setDateUnix(
                       Math.floor(
@@ -452,13 +530,13 @@ export default function Portfolio() {
             </div>
             <div className="flex justify-between mt-5">
               <button
-                className="bg-slate-800 w-56 p-3 rounded-md hover:bg-slate-600"
+                className="dark:bg-slate-800 w-56 p-3 rounded-md dark:hover:bg-slate-600 bg-violet-300 hover:bg-violet-400"
                 onClick={() => setIsAddingAsset(false)}
               >
                 Cancel
               </button>
               <button
-                className="bg-violet-800 w-56 p-3 rounded-md hover:bg-violet-950"
+                className="dark:bg-teal-800 w-56 p-3 rounded-md dark:hover:bg-teal-600 bg-teal-400 hover:bg-teal-500"
                 onClick={() =>
                   handlePortfolio(coinSymbol, assetHeader, dateUnix)
                 }
@@ -469,8 +547,8 @@ export default function Portfolio() {
           </div>
         </div>
       </div>
-      <div className="bg-slate-800 rounded-lg mb-6 flex justify-between p-5 mx-32 items-center">
-        <div className=" bg-slate-600 w-48 rounded-md flex flex-col items-center">
+      <div className="dark:bg-slate-800 rounded-lg mb-6 flex justify-between p-5 mx-32 items-center bg-white">
+        <div className=" dark:bg-slate-600 w-48 rounded-md flex flex-col items-center bg-violet-300">
           <div className="my-4">
             <Bankicon />
           </div>
@@ -499,7 +577,7 @@ export default function Portfolio() {
         </div>
         <div>
           <div
-            className="flex items-center justify-between bg-slate-600 p-4 rounded-md cursor-pointer hover:bg-slate-400"
+            className="flex items-center justify-between dark:bg-slate-600 p-4 rounded-md cursor-pointer dark:hover:bg-slate-400 bg-violet-300 hover:bg-violet-400"
             onClick={() => {
               setIsCoinAssetsSelect(!isCoinAssetsSelect);
             }}
@@ -510,13 +588,13 @@ export default function Portfolio() {
             <Uparrow isOpen={isCoinAssetsSelect} />
           </div>
           {isCoinAssetsSelect && (
-            <div className="border absolute z-10 bg-slate-900 overflow-y-scroll h-80">
+            <div className="border absolute z-10 dark:bg-slate-900 overflow-y-scroll h-80 border-black dark:border-white bg-slate-300">
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setAssetSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 p-2 rounded-sm bg-slate-600 text-white dark:caret-white"
+                className="w-full pl-10 pr-4 p-2 rounded-sm dark:bg-slate-600 text-white dark:caret-white border-black border"
               />
               {portfolio.length &&
                 portfolio
@@ -529,7 +607,7 @@ export default function Portfolio() {
                     return (
                       <div
                         key={asset.date + asset.coinSymbol}
-                        className="p-3 hover:bg-slate-600 cursor-pointer flex justify-between"
+                        className="p-3 dark:hover:bg-slate-600 cursor-pointer flex justify-between hover:bg-slate-400"
                       >
                         <div className="flex items-center">
                           <Defaulticon coin={asset.coinSymbol} height="h-4" />
@@ -539,7 +617,7 @@ export default function Portfolio() {
                         </div>
                         <span>
                           {currencySymbol}
-                          {asset.currencyAmount}
+                          {addCommas(asset.currencyAmount)}
                         </span>
                       </div>
                     );
@@ -550,24 +628,24 @@ export default function Portfolio() {
         <div>
           {!openFundsAdd ? (
             <button
-              className="flex items-center bg-slate-600 hover:bg-slate-400 p-4 rounded-md mr-4"
+              className="flex items-center dark:bg-slate-600 dark:hover:bg-slate-400 p-4 rounded-md mr-4 bg-violet-300 hover:bg-violet-400"
               onClick={() => setOpenFundsAdd(true)}
             >
               <span className="mr-3">Add Funds</span>
               <Sellicon />
             </button>
           ) : (
-            <div className="p-4 bg-slate-900 flex w-64">
+            <div className="p-4 dark:bg-slate-900 flex w-64 rounded-md bg-slate-300">
               <input
                 type="text"
                 placeholder="Add Funds..."
                 value={addFundsAmount}
                 onChange={(e) => setAddFundsAmount(e.target.value)}
-                className="w-full p-2 rounded-sm bg-slate-600 text-white dark:caret-white"
+                className="w-full p-2 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white"
               />
               <button
                 onClick={handleAddFunds}
-                className="p-2 ml-3 rounded-md bg-slate-600"
+                className="p-2 ml-3 rounded-md dark:bg-slate-600"
               >
                 <Arrowright />
               </button>
@@ -580,21 +658,21 @@ export default function Portfolio() {
         {data.length &&
           portfolio.map((asset) => {
             const coin = data.find((coin) => coin.name === asset.coinName);
+            const coinQuote = coin.quote?.[currency];
+            if (!coin || !coinQuote) return null;
             const capToVol = (
-              (coin.quote?.[currency].volume_24h /
-                coin.quote?.[currency].market_cap) *
+              (coinQuote.volume_24h / coinQuote.market_cap) *
               100
             ).toFixed(3);
             const circToMax = coin.circulating_supply / coin.max_supply;
             const priceChange24 =
-              (coin.quote?.[currency].percent_change_24h / 100) *
-              coin.quote?.[currency].price;
+              (coinQuote.percent_change_24h / 100) * coinQuote.price;
             return (
               <div
-                className="bg-slate-800 rounded-lg mb-6 flex justify-between p-5 relative"
+                className="dark:bg-slate-800 rounded-lg mb-6 flex justify-between p-5 relative bg-white"
                 key={asset.coinSymbol}
               >
-                <div className=" bg-slate-600 w-72 rounded-md flex flex-col items-center justify-center">
+                <div className=" dark:bg-slate-600 w-72 rounded-md flex flex-col items-center justify-center bg-violet-300">
                   <div className="mb-12">
                     <Defaulticon coin={asset.coinSymbol} height="h-16" />
                   </div>
@@ -612,18 +690,18 @@ export default function Portfolio() {
                       <h1 className="text-2xl">Market Price</h1>
                       <div>
                         {isSelling && (
-                          <div className="absolute z-10 bg-slate-900 p-3 rounded-md left-1/2 top-1/3 flex flex-col items-center">
+                          <div className="absolute z-10 dark:bg-slate-900 p-3 rounded-md left-1/2 top-1/3 flex flex-col items-center bg-slate-300">
                             <span>Amount to sell?</span>
                             <div className="flex items-center my-4">
                               <input
                                 type="text"
                                 value={sellAmount}
                                 placeholder="Sale Amount. . ."
-                                className="w-2/3 p-2 rounded-sm bg-slate-700 text-white dark:caret-white ml-4 text-left"
+                                className="w-2/3 p-2 rounded-sm dark:bg-slate-700 dark:text-white dark:caret-white ml-4 text-left bg-white"
                                 onChange={(e) => setSellAmount(e.target.value)}
                               />
                               <button
-                                className="flex items-center bg-slate-700 rounded-md p-2 mx-4 hover:bg-slate-400"
+                                className="flex items-center dark:bg-slate-700 rounded-md p-2 mx-4 dark:hover:bg-slate-400 bg-white hover:bg-violet-300"
                                 onClick={() =>
                                   setIsSellWithSelect(!isSellWithSelect)
                                 }
@@ -635,12 +713,12 @@ export default function Portfolio() {
                                 <div
                                   className={
                                     isSellWithSelect
-                                      ? "absolute z-10 bg-slate-600 top-5 -left-22 flex flex-col rounded-md"
+                                      ? "absolute z-10 dark:bg-slate-600 top-5 -left-22 flex flex-col bg-white"
                                       : "hidden"
                                   }
                                 >
                                   <button
-                                    className="py-2 px-4 hover:bg-slate-400"
+                                    className="py-2 px-4 dark:hover:bg-slate-400 hover:bg-violet-300"
                                     onClick={() => {
                                       setSellWith(currency);
                                       setIsSellWithSelect(false);
@@ -649,7 +727,7 @@ export default function Portfolio() {
                                     {currency}
                                   </button>
                                   <button
-                                    className=" py-2 px-4 hover:bg-slate-400"
+                                    className=" py-2 px-4 dark:hover:bg-slate-400 hover:bg-violet-300"
                                     onClick={() => {
                                       setSellWith(coinSymbol);
                                       setIsSellWithSelect(false);
@@ -660,7 +738,7 @@ export default function Portfolio() {
                                 </div>
                               </div>
                               <button
-                                className="p-3 rounded-md bg-slate-600 hover:bg-slate-400"
+                                className="p-3 rounded-md dark:bg-slate-600 bg-white dark:hover:bg-slate-400 hover:bg-violet-300"
                                 onClick={() => {
                                   let soldAmount;
                                   let soldCoinAmount;
@@ -670,9 +748,7 @@ export default function Portfolio() {
                                       (Number(sellAmount) / coinPrice) *
                                       asset.coinAmount;
                                   } else {
-                                    soldAmount = addCommas(
-                                      Number(sellAmount) * coinPrice
-                                    );
+                                    soldAmount = Number(sellAmount) * coinPrice;
                                     soldCoinAmount = sellAmount;
                                   }
                                   handleSale(
@@ -727,13 +803,13 @@ export default function Portfolio() {
                           </div>
                         )}
                         {isDeleting && (
-                          <div className="absolute z-10 bg-slate-900 p-4 rounded-md flex flex-col items-center left-1/2 top-1/3">
+                          <div className="absolute z-10 dark:bg-slate-900 p-4 rounded-md flex flex-col items-center left-1/2 top-1/3 bg-slate-300">
                             <span>
                               By deleting this, you agree to sell the entire
                               asset
                             </span>
                             <button
-                              className="p-3 bg-slate-600 hover:bg-slate-400 my-4 rounded-lg"
+                              className="p-3 dark:bg-slate-600 dark:hover:bg-slate-400 my-4 rounded-lg bg-violet-300 hover:bg-violet-400"
                               onClick={() =>
                                 handleDelete(asset.currencyAmount, asset.id)
                               }
@@ -743,13 +819,13 @@ export default function Portfolio() {
                           </div>
                         )}
                         <button
-                          className="p-2 bg-slate-600 rounded-md hover:bg-slate-400 mr-2"
+                          className="p-2 dark:bg-slate-600 rounded-md dark:hover:bg-slate-400 mr-2 bg-violet-300 hover:bg-violet-400"
                           onClick={() => setIsSelling(!isSelling)}
                         >
                           <Sellicon />
                         </button>
                         <button
-                          className="p-2 bg-slate-600 rounded-md hover:bg-slate-400 ml-2"
+                          className="p-2 dark:bg-slate-600 rounded-md dark:hover:bg-slate-400 ml-2 bg-violet-300 hover:bg-violet-400"
                           onClick={() => setIsDeleting(!isDeleting)}
                         >
                           <Trashicon />
@@ -760,8 +836,7 @@ export default function Portfolio() {
                       <div className="flex flex-col items-center">
                         <span className="mb-2 underline">Current Price</span>
                         <span>
-                          {currencySymbol}{" "}
-                          {addCommas(coin.quote?.[currency].price)}
+                          {currencySymbol} {addCommas(coinQuote.price)}
                         </span>
                       </div>
                       <div className="flex flex-col items-center">
@@ -808,7 +883,7 @@ export default function Portfolio() {
                         <div className="my-2">
                           <div className="bg-gray-400 w-40 h-3 rounded-lg">
                             <div
-                              className="bg-teal-400 h-3 rounded-lg"
+                              className="dark:bg-teal-400 bg-teal-500 h-3 rounded-lg"
                               style={{
                                 width:
                                   Number(circToMax * 100) > 8
@@ -841,7 +916,7 @@ export default function Portfolio() {
                         <div className="flex items-center">
                           <span>
                             {currencySymbol}
-                            {asset.currencyAmount}
+                            {addCommas(asset.currencyAmount)}
                           </span>
                         </div>
                       </div>
@@ -852,22 +927,20 @@ export default function Portfolio() {
                         <div className="flex items-center">
                           <Updownarrow
                             coin={
-                              Number(coin.quote?.[currency].price) -
-                              Number(asset.currencyAmount.split(",").join(""))
+                              Number(coinQuote.price) -
+                              Number(asset.currencyAmount)
                             }
                           />
                           <span
                             className={
-                              Number(coin.quote?.[currency].price) >
-                              Number(asset.currencyAmount.split(",").join(""))
-                                ? "text-green-400"
+                              Number(coinQuote.price) >
+                              Number(asset.currencyAmount)
+                                ? "text-green-500"
                                 : "text-red-500"
                             }
                           >
                             {currencySymbol}
-                            {addCommas(
-                              coin.quote?.[currency].price * asset.coinAmount
-                            )}
+                            {addCommas(coinQuote.price * asset.coinAmount)}
                           </span>
                         </div>
                       </div>
@@ -878,17 +951,17 @@ export default function Portfolio() {
                         <div className="my-2 flex items-center">
                           <Updownarrow
                             coin={
-                              Number(coin.quote?.[currency].price) *
+                              Number(coinQuote.price) *
                                 Number(asset.coinAmount) -
-                              Number(asset.currencyAmount.split(",").join(""))
+                              Number(asset.currencyAmount)
                             }
                           />
                           <span
                             className={
-                              Number(coin.quote?.[currency].price) *
+                              Number(coinQuote.price) *
                                 Number(asset.coinAmount) >
-                              Number(asset.currencyAmount.split(",").join(""))
-                                ? "text-green-400 mr-3"
+                              Number(asset.currencyAmount)
+                                ? "text-green-500 mr-3"
                                 : "text-red-500 mr-3"
                             }
                           >
@@ -896,41 +969,35 @@ export default function Portfolio() {
                             {currencySymbol}
                             {addCommas(
                               Math.abs(
-                                Number(coin.quote?.[currency].price) *
+                                Number(coinQuote.price) *
                                   Number(asset.coinAmount) -
-                                  Number(
-                                    asset.currencyAmount.split(",").join("")
-                                  )
+                                  Number(asset.currencyAmount)
                               )
                             )}
                           </span>
                           <Updownarrow
                             coin={
-                              Number(coin.quote?.[currency].price) *
+                              Number(coinQuote.price) *
                                 Number(asset.coinAmount) -
-                              Number(asset.currencyAmount.split(",").join(""))
+                              Number(asset.currencyAmount)
                             }
                           />
                           <span
                             className={
-                              Number(coin.quote?.[currency].price) *
+                              Number(coinQuote.price) *
                                 Number(asset.coinAmount) >
-                              Number(asset.currencyAmount.split(",").join(""))
-                                ? "text-green-400"
+                              Number(asset.currencyAmount)
+                                ? "text-green-500"
                                 : "text-red-500"
                             }
                           >
                             {(
                               (Math.abs(
-                                Number(coin.quote?.[currency].price) *
+                                Number(coinQuote.price) *
                                   Number(asset.coinAmount) -
-                                  Number(
-                                    asset.currencyAmount.split(",").join("")
-                                  )
+                                  Number(asset.currencyAmount)
                               ) /
-                                Number(
-                                  asset.currencyAmount.split(",").join("")
-                                )) *
+                                Number(asset.currencyAmount)) *
                               100
                             ).toFixed(3)}
                             %
