@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/store";
 import { fetchCoins } from "@/lib/coinsSlice";
 import { Defaulticon, addCommas } from "../components/Utility";
-import { Linegraph } from "../components/Linegraph";
+import Linegraph from "../components/Linegraph";
 import axios from "axios";
 import { changeGraph } from "@/lib/symbolSlice";
 import { changeTimePeriod } from "@/lib/timeSlice";
@@ -109,9 +109,10 @@ export default function Convertor() {
   const isSelected = (id: string) => {
     let style = "";
     if (selectedTime === id) {
-      style = "py-1 rounded-md px-5 bg-violet-800";
+      style = "py-1 rounded-md px-5 dark:bg-violet-800 bg-violet-300";
     } else {
-      style = "py-1 rounded-md px-5";
+      style =
+        "py-1 rounded-md px-5 hover:bg-violet-300 dark:hover:bg-violet-800";
     }
     return style;
   };
@@ -149,14 +150,14 @@ export default function Convertor() {
     <div>
       <div className="flex mx-32">
         <Link href="/coins" className="mb-6">
-          <button className="bg-slate-800 p-3 rounded-sm hover:bg-slate-600 w-72">
+          <button className="dark:bg-slate-800 p-3 rounded-sm dark:hover:bg-slate-600 w-72 bg-violet-300 hover:bg-violet-400">
             Coins
           </button>
         </Link>
         <Link href="/convertor">
-          <button className="p-3 rounded-sm bg-slate-600 w-72">
+          <div className="p-3 rounded-sm dark:bg-slate-600 w-72 bg-violet-400 text-center">
             Convertor
-          </button>
+          </div>
         </Link>
       </div>
       {error ? (
@@ -169,12 +170,12 @@ export default function Convertor() {
           </div>
           <div className="mx-32 flex">
             {loading && <div className="loading"></div>}
-            <div className="w-half bg-slate-800 h-52 mr-4 rounded-md mt-6 mb-6">
+            <div className="w-half dark:bg-slate-800 h-52 mr-4 rounded-md mt-6 mb-6 bg-white">
               <p className="ml-10 mt-4 mb-8">You sell</p>
               <div className="border-b-2 border-gray-400 pb-4 mx-8 mb-4">
                 <div className="flex justify-between">
                   <button
-                    className="bg-slate-800 hover:bg-slate-600 p-2.5 rounded-md"
+                    className="dark:bg-slate-800 dark:hover:bg-slate-600 p-2.5 rounded-md bg-violet-300 hover:bg-violet-400"
                     onClick={() => setIsOpenLeft(!isOpenLeft)}
                   >
                     <div className="flex items-center justify-between w-56">
@@ -189,7 +190,7 @@ export default function Convertor() {
                   <input
                     type="text"
                     value={conversionValue}
-                    className="bg-slate-600 rounded-md p-4 h-12 w-80 text-right caret-white"
+                    className="dark:bg-slate-600 rounded-md p-4 h-12 w-80 text-right dark:caret-white bg-white border-gray-600 border"
                     placeholder={menuIconLeft}
                     onChange={handleCalculate}
                   />
@@ -197,7 +198,7 @@ export default function Convertor() {
                 <div
                   className={
                     isOpenLeft
-                      ? "border absolute z-10 bg-slate-900 overflow-y-scroll h-96"
+                      ? "border absolute z-10 dark:bg-slate-900 overflow-y-scroll h-96 bg-slate-300"
                       : "hidden"
                   }
                 >
@@ -206,7 +207,7 @@ export default function Convertor() {
                     placeholder="Search..."
                     value={searchTermLeft}
                     onChange={(e) => setSearchTermLeft(e.target.value)}
-                    className="w-full pl-10 pr-4 p-2 rounded-sm bg-slate-800 text-white dark:caret-white"
+                    className="w-full pl-10 pr-4 p-2 rounded-sm dark:bg-slate-800 dark:text-white dark:caret-white bg-white"
                   />
                   {data
                     .filter((coin) =>
@@ -227,7 +228,7 @@ export default function Convertor() {
                       const coinPrice = addCommas(coinQuote.price);
                       return (
                         <div
-                          className="cursor-pointer hover:bg-slate-600 p-2 flex justify-between"
+                          className="cursor-pointer dark:hover:bg-slate-600 p-2 flex justify-between hover:bg-slate-400"
                           key={coin.symbol + coin.id}
                           id={coin.symbol}
                           onClick={() => {
@@ -268,13 +269,13 @@ export default function Convertor() {
                 </span>
               </div>
             </div>
-            <div className="w-half bg-slate-800 h-52 ml-4 rounded-md  mt-6 mb-6">
+            <div className="w-half dark:bg-slate-800 h-52 ml-4 rounded-md  mt-6 mb-6 bg-white">
               {loading && <div className="loading"></div>}
               <p className="ml-8 mt-4 mb-8">You buy</p>
               <div className="border-b-2 border-gray-400 pb-4 mx-8 mb-4">
                 <div className="flex justify-between">
                   <button
-                    className="bg-slate-800 hover:bg-slate-600 p-2.5 rounded-md"
+                    className="dark:bg-slate-800 dark:hover:bg-slate-600 p-2.5 rounded-md bg-violet-300 hover:bg-violet-400"
                     onClick={() => setIsOpenRight(!isOpenRight)}
                   >
                     <div className="flex items-center justify-between w-56">
@@ -286,14 +287,16 @@ export default function Convertor() {
                     </div>
                     <span className="sr-only">Toggle theme</span>
                   </button>
-                  <div className="bg-slate-600 rounded-md p-4 h-12 w-80 text-right">
-                    {convertedNum} {menuIconRight}
+                  <div className="dark:bg-slate-600 rounded-md p-4 h-12 w-80 text-right border border-gray-600 flex items-center justify-end">
+                    <span>
+                      {convertedNum} {menuIconRight}
+                    </span>
                   </div>
                 </div>
                 <div
                   className={
                     isOpenRight
-                      ? "border absolute z-10 bg-slate-900 overflow-y-scroll h-96"
+                      ? "border absolute z-10 dark:bg-slate-900 overflow-y-scroll h-96 bg-slate-300"
                       : "hidden"
                   }
                 >
@@ -302,7 +305,7 @@ export default function Convertor() {
                     placeholder="Search..."
                     value={searchTermRight}
                     onChange={(e) => setSearchTermRight(e.target.value)}
-                    className="w-full pl-10 pr-4 p-2 rounded-sm bg-slate-800 text-white dark:caret-white"
+                    className="w-full pl-10 pr-4 p-2 rounded-sm dark:bg-slate-800 dark:text-white dark:caret-white bg-white"
                   />
                   {data
                     .filter((coin) =>
@@ -323,7 +326,7 @@ export default function Convertor() {
                       const coinPrice = addCommas(coinQuote.price);
                       return (
                         <div
-                          className="cursor-pointer hover:bg-slate-600 p-2 flex justify-between"
+                          className="cursor-pointer dark:hover:bg-slate-600 p-2 flex justify-between hover:bg-slate-400"
                           key={coin.symbol + coin.id}
                           onClick={() => {
                             const id = coin.symbol;
@@ -364,7 +367,7 @@ export default function Convertor() {
               </div>
             </div>
           </div>
-          <div className="h-72 bg-slate-800 rounded-md flex justify-end flex-col mx-32 w-all">
+          <div className="h-72 dark:bg-slate-800 rounded-md flex justify-end flex-col mx-32 w-all bg-white">
             {load && <div className="loading"></div>}
             {err ? (
               <span>There has been an error, please come back later</span>
@@ -386,7 +389,7 @@ export default function Convertor() {
               />
             )}
           </div>
-          <div className="flex ml-32 mt-6 justify-between bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4">
+          <div className="flex ml-32 mt-6 justify-between dark:bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4 bg-white">
             <button
               onClick={handleTime}
               id="minutes 5 288"

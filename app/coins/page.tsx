@@ -1,17 +1,17 @@
 "use client";
 
 import Navcoin from "../components/Navcoin";
-import Slidercoin from "../components/Slidercoin";
 import Link from "next/link";
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/lib/store";
 import { setCompare } from "@/lib/symbolSlice";
 import { changeTimePeriod } from "@/lib/timeSlice";
-import { Linegraph } from "../components/Linegraph";
-import { Bargraph } from "../components/Bargraph";
 import { Comparegraph, Compexit } from "../components/svgComps";
+const Linegraph = React.lazy(() => import("../components/Linegraph"));
+const Bargraph = React.lazy(() => import("../components/Bargraph"));
+const Slidercoin = React.lazy(() => import("../components/Slidercoin"));
 
 export default function Coins() {
   const [coinHistory, setCoinHistory] = useState<any>([]);
@@ -23,7 +23,6 @@ export default function Coins() {
   const [error, setError] = useState<boolean>(false);
   const [load, setLoad] = useState<boolean>(false);
   const [err, setErr] = useState<boolean>(false);
-  const [rendered, setRendered] = useState<boolean>(false);
 
   const today = new Date().toDateString();
 
@@ -50,7 +49,6 @@ export default function Coins() {
 
   const getCoinsHistory = async (symbol: string) => {
     setLoading(true);
-    setRendered(false);
     try {
       if (symbol.length) {
         const { data } = await axios.get(
@@ -96,11 +94,6 @@ export default function Coins() {
     setLoad(false);
   };
 
-  const apiLoaded = async () => {
-    await getCoinsHistory(symbol);
-    setRendered(true);
-  };
-
   const handleTime = (e: any) => {
     const [time, aggre, limit] = e.target.id.split(" ");
     setSelectedTime(e.target.id);
@@ -115,26 +108,29 @@ export default function Coins() {
   const isSelected = (id: string) => {
     let style = "";
     if (selectedTime === id) {
-      style = "py-1 rounded-md px-5 bg-violet-800";
+      style = "py-1 rounded-md px-5 dark:bg-violet-800 bg-violet-300";
     } else {
-      style = "py-1 rounded-md px-5";
+      style =
+        "py-1 rounded-md px-5 Hover:dark:bg-violet-800 hover:bg-violet-300";
     }
     return style;
   };
 
   useEffect(() => {
-    getCoinsHistory(symbol);
-    apiLoaded();
+    const fetchData = async () => {
+      await getCoinsHistory(symbol);
+    };
+    fetchData();
   }, [symbol, selectedTime, compare, currency]);
 
   return (
-    <div className="mx-16">
+    <div className="px-16 pt-4 bg-gray-200 dark:bg-slate-950">
       <div className="flex mx-18">
-        <Link href="/coins">
-          <button className="p-3 rounded-sm bg-slate-600 w-72">Coins</button>
-        </Link>
+        <div className="p-3 rounded-sm dark:bg-slate-600 w-72 bg-violet-400 text-center">
+          Coins
+        </div>
         <Link href="/convertor">
-          <button className="bg-slate-800 p-3 rounded-sm hover:bg-slate-600 w-72">
+          <button className="dark:bg-slate-800 p-3 rounded-sm dark:hover:bg-slate-600 w-72 bg-violet-300 hover:bg-violet-400">
             Convertor
           </button>
         </Link>
@@ -142,7 +138,7 @@ export default function Coins() {
       <div className="flex justify-self-end mx-18">
         <button
           onClick={handleCompare}
-          className="bg-slate-800 p-3 rounded-md hover:bg-slate-600"
+          className="dark:bg-slate-800 p-3 rounded-md dark:hover:bg-slate-600 bg-violet-300 hover:bg-violet-400"
         >
           {isCompare ? (
             <div className="flex items-center">
@@ -157,43 +153,48 @@ export default function Coins() {
           )}
         </button>
       </div>
-      <Slidercoin />
+      <Suspense fallback={<div className="loading"></div>}>
+        <Slidercoin />
+      </Suspense>
       <div className="flex justify-between mx-18">
         {error ? (
-          <div className="h-72 w-half bg-slate-800 rounded-md flex justify-end flex-col mr-4">
+          <div className="h-72 w-half dark:bg-slate-800 rounded-md flex justify-end flex-col mr-4 bg-white text-red">
             An error has occured, please check again later.
           </div>
         ) : (
-          <Linegraph
-            coinHistory={coinHistory}
-            limit={limit}
-            rendered={rendered}
-            symbol={symbol}
-            selectedTime={selectedTime}
-            coinCompare={coinCompare}
-            compare={compare}
-            loading={loading}
-            today={today}
-            currency={currency}
-          />
+          <Suspense fallback={<div className="loading"></div>}>
+            <Linegraph
+              coinHistory={coinHistory}
+              limit={limit}
+              symbol={symbol}
+              selectedTime={selectedTime}
+              coinCompare={coinCompare}
+              compare={compare}
+              loading={loading}
+              today={today}
+              currency={currency}
+            />
+          </Suspense>
         )}
         {err ? (
-          <div className="h-72 w-half bg-slate-800 rounded-md flex justify-end flex-col ml-4">
-            the following error has occured: {err}, please check again later.
+          <div className="h-72 w-half dark:bg-slate-800 rounded-md flex justify-end flex-col ml-4 bg-white text-red">
+            An error has occured, please check again later.
           </div>
         ) : (
-          <Bargraph
-            coinHistoryHour={coinHistoryHour}
-            coinCompareHour={coinCompareHour}
-            load={load}
-            coinCompare={coinCompare}
-            coinHistory={coinHistory}
-            compare={compare}
-            today={today}
-          />
+          <Suspense fallback={<div className="loading"></div>}>
+            <Bargraph
+              coinHistoryHour={coinHistoryHour}
+              coinCompareHour={coinCompareHour}
+              load={load}
+              coinCompare={coinCompare}
+              coinHistory={coinHistory}
+              compare={compare}
+              today={today}
+            />
+          </Suspense>
         )}
       </div>
-      <div className="flex ml-18 mt-4 justify-between bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4">
+      <div className="flex ml-18 mt-4 justify-between dark:bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4 bg-white">
         <button
           onClick={handleTime}
           id="minutes 5 288"

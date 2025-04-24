@@ -11,8 +11,8 @@ import {
   Plus,
   Defaulticon,
 } from "@/app/components/Utility";
-import Link from "next/link";
 import axios from "axios";
+import { Copy } from "@/app/components/svgComps";
 
 export default function Coin({ params }: any) {
   const [coinsInfo, setCoinsInfo] = useState<any>({});
@@ -77,48 +77,21 @@ export default function Coin({ params }: any) {
       ) : (
         <div>
           {coin && (
-            <div className="mx-32 p-2">
+            <div className="mx-32">
               <div className="flex">
-                <div className="p-7 bg-slate-800 rounded-lg w-1/3 mr-72">
+                <div className="p-7 dark:bg-slate-800 rounded-lg w-1/3 mr-72 bg-white">
                   <div className="flex items-center">
                     <Defaulticon coin={coin.symbol} height="h-12" />
                     <div>
                       <span className="text-xl">
                         {coin.name} ({coin.symbol})
                       </span>
-                      <div className="flex">
-                        <Link
-                          href={{
-                            pathname: coinSite?.urls.website[0],
-                          }}
-                        >
-                          <p className="text-sm">{coinSite?.urls.website}</p>
-                        </Link>
-                        <button
-                          onClick={() => {
-                            const id = coinSite?.urls.website;
-                            handleCopy(id);
-                          }}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            className="h-6 ml-2 p-1 rounded-md hover:bg-slate-600"
-                          >
-                            <path d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
-                          </svg>
-                          <div
-                            className={
-                              copy === coinSite?.urls.website
-                                ? " bg-slate-600 p-4 absolute z-10 rounded-lg"
-                                : "hidden"
-                            }
-                          >
-                            Site Copied!
-                          </div>
-                        </button>
-                      </div>
+                      <Copy
+                        site={coinSite?.urls.website}
+                        handleCopy={handleCopy}
+                        copy={copy}
+                        siteName="https://bitcoin.org/"
+                      />
                     </div>
                   </div>
                   <div className="mt-8 flex items-baseline">
@@ -205,132 +178,43 @@ export default function Coin({ params }: any) {
                 ) : (
                   <div className="w-1/3">
                     <p>{coinSite?.description}</p>
-                    <div className="mt-16 flex-col flex items-center">
-                      <div
-                        className={
-                          coinSite?.urls.technical_doc[0]
-                            ? "bg-slate-800 p-4 rounded-md mb-8"
-                            : ""
-                        }
-                      >
-                        <Link
-                          href={{
-                            pathname: coinSite?.urls.technical_doc[0],
-                          }}
-                        >
-                          <span className="bg-slate-800 p-4 rounded-md">
-                            {coinSite?.urls.technical_doc}
-                          </span>
-                        </Link>
-                        <button
-                          onClick={() => {
-                            const id = coinSite?.urls.technical_doc;
-                            handleCopy(id);
-                          }}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            className="h-6 ml-2 p-1 rounded-md hover:bg-slate-600"
-                          >
-                            <path d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
-                          </svg>
-                          <div
-                            className={
-                              copy === coinSite?.urls.technical_doc
-                                ? " bg-slate-600 p-4 absolute z-10 rounded-lg"
-                                : "hidden"
-                            }
-                          >
-                            Site Copied!
-                          </div>
-                        </button>
-                      </div>
-                      <div
-                        className={
-                          coinSite?.urls.message_board[0]
-                            ? "bg-slate-800 p-4 rounded-md mb-8"
-                            : ""
-                        }
-                      >
-                        <Link
-                          href={{
-                            pathname: coinSite?.urls.message_board[0],
-                          }}
-                        >
-                          <span>{coinSite?.urls.message_board}</span>
-                        </Link>
-                        <button
-                          onClick={() => {
-                            const id = coinSite?.urls.message_board;
-                            handleCopy(id);
-                          }}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            className="h-6 ml-2 p-1 rounded-md hover:bg-slate-600"
-                          >
-                            <path d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
-                          </svg>
-                          <div
-                            className={
-                              copy === coinSite?.urls.message_board
-                                ? " bg-slate-600 p-4 absolute z-10 rounded-lg"
-                                : "hidden"
-                            }
-                          >
-                            Site Copied!
-                          </div>
-                        </button>
-                      </div>
-                      <div
-                        className={
-                          coinSite?.urls.source_code[0]
-                            ? "bg-slate-800 p-4 rounded-md"
-                            : ""
-                        }
-                      >
-                        <Link
-                          href={{
-                            pathname: coinSite?.urls.source_code[0],
-                          }}
-                        >
-                          <span>{coinSite?.urls.source_code}</span>
-                        </Link>
-                        <button
-                          onClick={() => {
-                            const id = coinSite?.urls.source_code[0];
-                            handleCopy(id);
-                          }}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            className="h-6 ml-2 p-1 rounded-md hover:bg-slate-600"
-                          >
-                            <path d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
-                          </svg>
-                          <div
-                            className={
-                              copy === coinSite?.urls.source_code[0]
-                                ? " bg-slate-600 p-4 absolute z-10 rounded-lg"
-                                : "hidden"
-                            }
-                          >
-                            Site Copied!
-                          </div>
-                        </button>
-                      </div>
+                    <div className="mt-16 text-center w-2/3">
+                      {coinSite?.urls.technical_doc[0] && (
+                        <div className="dark:bg-slate-800 p-4 rounded-md mb-8 bg-white">
+                          <Copy
+                            site={coinSite?.urls.technical_doc[0]}
+                            handleCopy={handleCopy}
+                            copy={copy}
+                            siteName="https://bitcoin.org/bitcoin.pdf"
+                          />
+                        </div>
+                      )}
+                      {coinSite?.urls.message_board[0] && (
+                        <div className="dark:bg-slate-800 p-4 rounded-md mb-8 bg-white">
+                          <Copy
+                            site={coinSite?.urls.message_board[0]}
+                            handleCopy={handleCopy}
+                            copy={copy}
+                            siteName="https://bitcointalk.org"
+                          />
+                        </div>
+                      )}
+                      {coinSite?.urls.source_code[0] && (
+                        <div className="dark:bg-slate-800 p-4 rounded-md mb-8 bg-white">
+                          <Copy
+                            site={coinSite?.urls.source_code[0]}
+                            handleCopy={handleCopy}
+                            copy={copy}
+                            siteName="https://github.com/bitcoin/bitcoin"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
               </div>
               <div className="flex">
-                <div className="p-6 bg-slate-800 rounded-lg w-half mt-8 mr-8">
+                <div className="p-6 dark:bg-slate-800 rounded-lg w-half mt-8 mr-8 bg-white">
                   <div className="flex justify-between mb-4">
                     <div className="flex">
                       <Plus />
@@ -378,7 +262,7 @@ export default function Coin({ params }: any) {
                     </span>
                   </div>
                 </div>
-                <div className="p-6 bg-slate-800 rounded-lg w-half mt-8 mr-8">
+                <div className="p-6 dark:bg-slate-800 rounded-lg w-half mt-8 mr-8 bg-white">
                   <div className="flex justify-between mb-4">
                     <div className="flex">
                       <Plus />
@@ -403,7 +287,7 @@ export default function Coin({ params }: any) {
                 </div>
               </div>
               <div className="flex">
-                <div className="p-6 bg-slate-800 rounded-lg w-half mt-8 mr-8">
+                <div className="p-6 dark:bg-slate-800 rounded-lg w-half mt-8 mr-8 bg-white">
                   <div className="flex justify-between mb-4">
                     <div className="flex">
                       <Plus />

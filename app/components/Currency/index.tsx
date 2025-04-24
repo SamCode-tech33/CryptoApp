@@ -21,65 +21,67 @@ export function Currency() {
   };
 
   return (
-    <div className="relative mr-6">
-      <button
-        className="bg-slate-800 hover:bg-slate-600 py-2 px-3 rounded-sm flex items-center w-full"
-        onClick={() => {
-          setIsOpen(true);
-        }}
-        onBlur={() => {
-          setTimeout(() => setIsOpen(false), 200);
-        }}
-      >
-        <span className={currency === "USD" ? "mr-2" : "hidden"}>$</span>
-        <span className={currency === "EUR" ? "mr-2" : "hidden"}>€</span>
-        <span className={currency === "JPY" ? "mr-2" : "hidden"}>¥</span>
-        <span className={currency === "BTC" ? "mr-2" : "hidden"}>₿</span>
-        <span className={currency === "ETH" ? "mr-2" : "hidden"}>Ξ</span>
-        <span>{currency}</span>
-        <Uparrow isOpen={isOpen} />
-      </button>
-      <div
-        className={
-          isOpen
-            ? "flex flex-col items-center bg-slate-800 absolute z-10 w-full rounded-sm border-gray-500 border"
-            : "hidden"
-        }
-      >
-        <div
-          className="py-2 w-full hover:bg-slate-600 text-center cursor-pointer rounded-sm"
-          onClick={newCurrency}
-          id="$"
+    <div>
+      <div className="relative mr-6">
+        <button
+          className="dark:bg-slate-800 dark:hover:bg-slate-600 py-2 px-3 rounded-sm flex items-center w-full bg-violet-300 hover:bg-violet-400"
+          onClick={() => {
+            setIsOpen(!isOpen);
+          }}
+          onBlur={() => {
+            setTimeout(() => setIsOpen(false), 200);
+          }}
         >
-          $ USD
-        </div>
+          <span className={currency === "USD" ? "mr-2" : "hidden"}>$</span>
+          <span className={currency === "EUR" ? "mr-2" : "hidden"}>€</span>
+          <span className={currency === "JPY" ? "mr-2" : "hidden"}>¥</span>
+          <span className={currency === "BTC" ? "mr-2" : "hidden"}>₿</span>
+          <span className={currency === "ETH" ? "mr-2" : "hidden"}>Ξ</span>
+          <span>{currency}</span>
+          <Uparrow isOpen={isOpen} />
+        </button>
         <div
-          className="py-2 w-full hover:bg-slate-600 text-center cursor-pointer rounded-sm"
-          onClick={newCurrency}
-          id="€"
+          className={
+            isOpen
+              ? "flex flex-col items-center dark:bg-slate-800 absolute z-10 w-full rounded-sm border-gray-500 border bg-slate-300"
+              : "hidden"
+          }
         >
-          € EUR
-        </div>
-        <div
-          className="py-2 w-full hover:bg-slate-600 text-center cursor-pointer rounded-sm"
-          onClick={newCurrency}
-          id="¥"
-        >
-          ¥ JPY
-        </div>
-        <div
-          className="py-2 w-full hover:bg-slate-600 text-center cursor-pointer rounded-sm"
-          onClick={newCurrency}
-          id="₿"
-        >
-          ₿ BTC
-        </div>
-        <div
-          className="py-2 w-full hover:bg-slate-600 text-center cursor-pointer rounded-sm"
-          onClick={newCurrency}
-          id="Ξ"
-        >
-          Ξ ETH
+          <div
+            className="py-2 w-full dark:hover:bg-slate-600 text-center cursor-pointer rounded-sm hover:bg-slate-400"
+            onClick={newCurrency}
+            id="$"
+          >
+            $ USD
+          </div>
+          <div
+            className="py-2 w-full dark:hover:bg-slate-600 text-center cursor-pointer rounded-sm hover:bg-slate-400"
+            onClick={newCurrency}
+            id="€"
+          >
+            € EUR
+          </div>
+          <div
+            className="py-2 w-full dark:hover:bg-slate-600 text-center cursor-pointer rounded-sm hover:bg-slate-400"
+            onClick={newCurrency}
+            id="¥"
+          >
+            ¥ JPY
+          </div>
+          <div
+            className="py-2 w-full dark:hover:bg-slate-600 text-center cursor-pointer rounded-sm hover:bg-slate-400"
+            onClick={newCurrency}
+            id="₿"
+          >
+            ₿ BTC
+          </div>
+          <div
+            className="py-2 w-full dark:hover:bg-slate-600 text-center cursor-pointer rounded-sm hover:bg-slate-400"
+            onClick={newCurrency}
+            id="Ξ"
+          >
+            Ξ ETH
+          </div>
         </div>
       </div>
     </div>

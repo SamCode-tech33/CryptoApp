@@ -16,7 +16,7 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
 
-export const Bargraph = ({
+const Bargraph = ({
   coinHistoryHour,
   coinCompareHour,
   load,
@@ -35,7 +35,7 @@ export const Bargraph = ({
   return (
     <div className="relative">
       {load && <div className="loading"></div>}
-      <div className="h-72 w-half bg-slate-800 rounded-md flex justify-end flex-col ml-4">
+      <div className="h-72 w-half dark:bg-slate-800 rounded-md flex justify-end flex-col ml-4 bg-white">
         <div className="flex">
           <div>
             <div className="flex">
@@ -92,7 +92,7 @@ export const Bargraph = ({
                 dataKey="valueComp"
                 stackId="valueComp"
                 fill="#DA5BA5"
-                activeBar={{ stroke: "white", strokeWidth: 3 }}
+                activeBar={{ stroke: "teal", strokeWidth: 3 }}
                 label={<CustomizedLabel />}
               />
             )}
@@ -100,7 +100,7 @@ export const Bargraph = ({
               dataKey="value"
               stackId="valueComp"
               fill="#69388A"
-              activeBar={{ stroke: "white", strokeWidth: 3 }}
+              activeBar={{ stroke: "teal", strokeWidth: 3 }}
               label={compare.length ? "" : <CustomizedLabel />}
               radius={[4, 4, 0, 0]}
             />
@@ -110,3 +110,5 @@ export const Bargraph = ({
     </div>
   );
 };
+
+export default Bargraph;

@@ -72,8 +72,8 @@ export default function Slidercoin() {
                     <div
                       className={
                         coin.symbol === symbol || coin.symbol === compare
-                          ? "h-24 dark:bg-slate-600 dark:hover:bg-slate-600 rounded-md mx-2 flex justify-left items-center"
-                          : "h-24 dark:bg-slate-800 dark:hover:bg-slate-600 rounded-md mx-2 flex justify-left items-center cursor-pointer"
+                          ? "h-24 dark:bg-slate-600 rounded-md mx-2 flex justify-left items-center bg-violet-300"
+                          : "h-24 dark:bg-slate-800 dark:hover:bg-slate-600 rounded-md mx-2 flex justify-left items-center cursor-pointer bg-white hover:bg-violet-300"
                       }
                     >
                       <div className="ml-4"></div>

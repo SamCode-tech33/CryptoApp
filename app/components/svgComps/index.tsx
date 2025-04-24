@@ -1,158 +1,4 @@
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch, RootState } from "@/lib/store";
-import { fetchCoins } from "@/lib/coinsSlice";
-import { changeSearch } from "@/lib/searchSlice";
-import { addCommas } from "../Utility";
-
-export const Navlinks = () => {
-  const [home, setHome] = useState(true);
-
-  const changeHome = () => {
-    setHome(false);
-  };
-  const backHome = () => {
-    setHome(true);
-  };
-  return (
-    <div className="flex justify-between items-center">
-      <Link href="/" className="mx-6 flex items-center" onClick={backHome}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          className={home ? "h-6 mr-2" : "text-slate-600 h-6 mr-2"}
-        >
-          <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
-          <path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" />
-        </svg>
-
-        <span className={home ? "" : "text-slate-600"}>Home</span>
-      </Link>
-      <Link href="/portfolio" className="mx-6 flex" onClick={changeHome}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          className={home ? "h-6 mr-2 text-slate-600" : "h-6 mr-2"}
-        >
-          <path d="M11.644 1.59a.75.75 0 0 1 .712 0l9.75 5.25a.75.75 0 0 1 0 1.32l-9.75 5.25a.75.75 0 0 1-.712 0l-9.75-5.25a.75.75 0 0 1 0-1.32l9.75-5.25Z" />
-          <path d="m3.265 10.602 7.668 4.129a2.25 2.25 0 0 0 2.134 0l7.668-4.13 1.37.739a.75.75 0 0 1 0 1.32l-9.75 5.25a.75.75 0 0 1-.71 0l-9.75-5.25a.75.75 0 0 1 0-1.32l1.37-.738Z" />
-          <path d="m10.933 19.231-7.668-4.13-1.37.739a.75.75 0 0 0 0 1.32l9.75 5.25c.221.12.489.12.71 0l9.75-5.25a.75.75 0 0 0 0-1.32l-1.37-.738-7.668 4.13a2.25 2.25 0 0 1-2.134-.001Z" />
-        </svg>
-
-        <span className={home ? "text-slate-600" : ""}>Portfolio</span>
-      </Link>
-    </div>
-  );
-};
-
-export const Navsearch = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const searchTerm = useSelector((state: RootState) => state.search.searchTerm);
-  const currency = useSelector(
-    (state: RootState) => state.currency.currencyType
-  );
-  const currencySymbol = useSelector(
-    (state: RootState) => state.currency.currencySymbol
-  );
-
-  const dispatch = useDispatch<AppDispatch>();
-  const { data, loading, error } = useSelector(
-    (state: RootState) => state.coins
-  );
-
-  const handleInputChange = (e: any) => {
-    dispatch(changeSearch(e.target.value));
-  };
-
-  useEffect(() => {
-    if (!data)
-      dispatch(fetchCoins({ start: 1, limit: 400, convert: currency }));
-  }, [currency]);
-
-  return (
-    <div className="relative w-full max-w-xs">
-      <input
-        type="text"
-        placeholder="Search..."
-        value={searchTerm}
-        onChange={handleInputChange}
-        onFocus={() => setIsOpen(true)}
-        onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-        className="w-full pl-10 pr-4 p-2 rounded-sm bg-slate-800 text-white dark:caret-white"
-      />
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        className="absolute left-3 top-1/2 transform -translate-y-1/2 size-5 text-gray-400"
-      >
-        <path
-          fillRule="evenodd"
-          d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
-          clipRule="evenodd"
-        />
-      </svg>
-      {error ? (
-        <p className="block p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-          An error has occured, please try again later...
-        </p>
-      ) : (
-        <div
-          className={
-            isOpen
-              ? "border absolute z-10 bg-slate-900 w-full overflow-y-scroll h-96"
-              : "hidden"
-          }
-        >
-          {loading && <div className="loading"></div>}
-          {data
-            .filter((coin) =>
-              coin.name.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-            .map((coin) => {
-              if (!coin.quote?.[currency]) {
-                return null;
-              }
-              let coinQuote;
-              if (coin.quote?.[currency]) {
-                coinQuote = coin.quote?.[currency];
-              } else {
-                coinQuote = coin.quote.USD;
-              }
-              const coinPrice = addCommas(coinQuote.price);
-              return (
-                <Link
-                  href={`/coins/${coin.id}`}
-                  key={coin.id}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded flex justify-between"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <span>
-                    {coin.name} ({coin.symbol})
-                  </span>
-                  <span>
-                    {currencySymbol} {coinPrice}
-                  </span>
-                </Link>
-              );
-            })}
-          {data.filter((coin) =>
-            coin.name.toLowerCase().includes(searchTerm.toLowerCase())
-          ).length === 0 &&
-            !loading && (
-              <p className="block p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                No coin found...
-              </p>
-            )}
-        </div>
-      )}
-    </div>
-  );
-};
 
 export const Filtericon = () => {
   return (
@@ -347,5 +193,45 @@ export const Bankicon = () => {
       />
       <path d="M12 7.875a1.125 1.125 0 1 0 0-2.25 1.125 1.125 0 0 0 0 2.25Z" />
     </svg>
+  );
+};
+
+export const Copy = ({ site, handleCopy, copy, siteName }: any) => {
+  return (
+    <div className="flex items-center">
+      <Link
+        href={{
+          pathname: siteName,
+        }}
+        className="w-full"
+      >
+        <p className="text-sm">{site}</p>
+      </Link>
+      <button
+        onClick={() => {
+          const id = site;
+          handleCopy(id);
+        }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          className="h-6 ml-2 p-1 rounded-md dark:hover:bg-slate-600 hover:bg-slate-400"
+        >
+          <path d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+        </svg>
+        <div
+          className={
+            copy === site
+              ? " dark:bg-slate-600 p-4 absolute z-10 rounded-lg bg-slate-300"
+              : "hidden"
+          }
+        >
+          Site Copied!
+        </div>
+      </button>
+    </div>
   );
 };

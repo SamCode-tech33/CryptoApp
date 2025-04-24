@@ -77,14 +77,24 @@ path {
 }
 
 .-left-22 {
-  left: -86px
+  left: -82px
+}
+
+.-left-26 {
+  left: -98px
+}
+
+.notification {
+  transition: all 200ms ease-in-out;
+  translate: 0, 32px;
+  margin-top: 12px;
+  opacity: 1;
 }
 
 .date-cal {
   padding: 3px;
   text-align: center;
   border-radius: 16px;
-  background: rgb(100 116 139);
   caret-color: white;
 }
 

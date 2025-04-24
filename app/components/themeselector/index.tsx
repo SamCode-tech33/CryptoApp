@@ -16,7 +16,7 @@ export function ModeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="bg-slate-800 hover:bg-slate-600 p-2.5 rounded-md">
+        <button className="dark:bg-slate-800 dark:hover:bg-slate-600 p-2.5 rounded-md bg-violet-300 hover:bg-violet-400">
           <Sun className="h-[1.2rem] w-[1.2rem] transition-all dark:-rotate-90 dark:scale-0" />
           <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 -translate-y-5" />
           <span className="sr-only">Toggle theme</span>
@@ -24,13 +24,19 @@ export function ModeToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme("light")}>
-          Light
+          <div className="cursor-pointer w-full h-full bg-slate-300 p-2 rounded-md hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-600">
+            Light
+          </div>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")}>
-          Dark
+          <div className="cursor-pointer w-full h-full bg-slate-300 p-2 rounded-md hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-600">
+            Dark
+          </div>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")}>
-          System
+          <div className="cursor-pointer w-full h-full bg-slate-300 p-2 rounded-md hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-600">
+            System
+          </div>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
