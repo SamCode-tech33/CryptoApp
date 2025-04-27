@@ -179,7 +179,7 @@ export const CustomTooltip = ({
     const valueCompProper = payload[0].payload.valueCompProper;
     const name = payload[0].payload.name;
     return (
-      <div className="text-violet-500 mt-3 flex flex-col items-end text-lg dark:bg-slate-700 p-1 rounded-md z-10">
+      <div className="text-violet-500 mt-3 flex flex-col items-end text-lg dark:bg-slate-700/50 p-1 rounded-md -z-10">
         <p>{name}</p>
         <p>
           {onConverter ? (
@@ -224,7 +224,8 @@ export const CustomToolTipMini = ({ active, payload }: any) => {
       <div className="dark:text-white text-sm md:flex flex-col items-end z-10 dark:bg-slate-600 bg-violet-300 rounded-md py-1 px-2 hidden">
         <p>{name}</p>
         <p>
-          {currencySymbol}{valueProper}
+          {currencySymbol}
+          {valueProper}
         </p>
       </div>
     );

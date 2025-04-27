@@ -286,13 +286,13 @@ export default function Navcoin() {
               <div className="items-center w-full flex">
                 <h1 className="md:hidden block ml-4">Market overview</h1>
                 <div
-                  className="relative ml-8 md:hidden flex items-center dark:bg-slate-600 rounded-md border p-1 cursor-pointer dark:hover:bg-slate-400"
+                  className="relative ml-6 md:hidden flex items-center dark:bg-slate-600 rounded-md border p-1 cursor-pointer dark:hover:bg-slate-400"
                   onClick={() => setPercentOpen(!percentOpen)}
                 >
                   <span className="">{percentSelected}</span>
                   <Uparrow isOpen={percentOpen} />
                   {percentOpen && (
-                    <div className="absolute dark:bg-slate-950 rounded-md border top-full">
+                    <div className="absolute dark:bg-slate-950 rounded-md border top-full -left-0.5">
                       <div
                         className="dark:hover:bg-slate-600 p-3 cursor-pointer rounded-md"
                         onClick={handlePercentSelect}
@@ -459,7 +459,7 @@ export default function Navcoin() {
                             {coin.name} ({coin.symbol})
                           </span>
                         </div>
-                        <div className="w-price ml-16 md:ml-0">
+                        <div className="w-price ml-12 pl-1 md:ml-0">
                           <span>
                             {currencySymbol}
                             {coinPrice}

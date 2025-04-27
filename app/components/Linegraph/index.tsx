@@ -107,7 +107,7 @@ const Linegraph = ({
                 rightSym={rightSym}
               />
             }
-            position={{ x: size.width - 230, y: -60 }}
+            position={{ x: size.width - 227, y: -55 }}
           />
           <Area
             type="monotone"
