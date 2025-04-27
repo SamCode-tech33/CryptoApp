@@ -36,6 +36,16 @@ path {
   margin-left: 72px;
 }
 
+.lg-mx-22 {
+  @media (min-width: 1024px) {
+    margin: 20px 74px;
+  }
+}
+
+.bar-width {
+  width: 92%;
+}
+
 .h-82 {
   height: 22rem;
 }
@@ -111,14 +121,12 @@ path {
   border-radius: 8px !important;
 }
 
-/* Today’s date */
 .react-datepicker__day--today {
   background: teal !important;
   color: white !important;
   border-radius: 8px !important;
 }
 
-/* Day hover */
 .react-datepicker__day:hover {
   background-color: #0070f3 !important;
   color: white !important;
@@ -156,6 +164,78 @@ path {
   position: absolute;
   top: 50%;
   left: 50%;
+}
+
+.w-number {
+  width: 2.5%;
+}
+
+.w-filter {
+  width: 55%;
+}
+
+@media (min-width: 730px) {
+  .w-filter {
+    width: 65%;
+  }
+}
+
+@media (min-width: 1280px) {
+  .w-filter {
+    width: 41%;
+  }
+}
+
+.w-name {
+  width: 32.8%;
+}
+
+.w-price {
+  width: 19%;
+}
+
+.w-1h {
+  width: 14%;
+}
+
+.w-24h {
+  width: 14.5%;
+}
+
+.w-7d {
+  width: 14.8%;
+}
+
+.w-volume {
+  width: 15%
+}
+
+@media (min-width: 1480px) {
+  .w-volume {
+    width: 17.5%;
+  }
+}
+
+@media (min-width: 1820px) {
+  .w-volume {
+    width: 19.2%;
+  }
+}
+
+.w-circ {
+  width: 20%
+}
+
+.w-last7 {
+  width: 15.8%;
+  margin-left: 48px;
+}
+
+@media (min-width: 768px) {
+  .w-last7 {
+    width: 15.8%;
+    margin-left: 0;
+  }
 }
 
 @keyframes spin {

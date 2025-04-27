@@ -29,7 +29,7 @@ export const Globalheader = () => {
 
   return (
     <div className="dark:bg-slate-950 bg-gray-200">
-      <div className="flex items-center mx-96 justify-around p-1 mb-2">
+      <div className="flex items-center 2xl:mx-80 justify-around sm:p-1 mb-2 xl:mx-60 lg:mx-28">
         <div className="flex items-center">
           <Lightningicon />
           <div>
@@ -67,7 +67,7 @@ export const Globalheader = () => {
             )}{" "}
             B
           </div>
-          <div className="w-16 h-2 ml-3 rounded-md bg-gray-400">
+          <div className="md:w-12 h-2 ml-3 rounded-md bg-gray-400 lg:w-16">
             <div
               className="bg-white h-2 rounded-md"
               style={{
@@ -79,43 +79,41 @@ export const Globalheader = () => {
                     64 <
                   7.5
                     ? "8px"
-                    : `${
-                        Number(
-                          globalData.total_volume?.usd /
-                            globalData.total_market_cap?.usd
-                        ) * 64
-                      }px`,
+                    : `${Number(
+                        globalData.total_volume?.usd /
+                          globalData.total_market_cap?.usd
+                      )}%`,
               }}
             ></div>
           </div>
         </div>
-        <div className="flex items-center">
+        <div className="sm:flex items-center hidden">
           <Defaulticon coin="btc" height="h-6" />
           <div>
             {Math.round(Number(globalData.market_cap_percentage?.btc))}%
           </div>
-          <div className="w-16 h-2 ml-3 rounded-md bg-gray-400">
+          <div className="md:w-12 h-2 ml-3 rounded-md bg-gray-400 lg:w-16">
             <div
               className="bg-orange-400 h-2 rounded-md"
               style={{
                 width: `${Math.round(
-                  (Number(globalData.market_cap_percentage?.btc) / 100) * 64
-                )}px`,
+                  Number(globalData.market_cap_percentage?.btc)
+                )}%`,
               }}
             ></div>
           </div>
         </div>
-        <div className="flex items-center">
+        <div className="items-center hidden sm:flex">
           <Defaulticon coin="eth" height="h-6" />
           <div></div>
           {Math.round(Number(globalData.market_cap_percentage?.eth))}%
-          <div className="w-16 h-2 ml-3 rounded-md bg-gray-400">
+          <div className="md:w-12 h-2 ml-3 rounded-md bg-gray-400 lg:w-16">
             <div
               className="h-2 rounded-md bg-blue-500"
               style={{
                 width: `${Math.round(
-                  (Number(globalData.market_cap_percentage?.eth) / 100) * 64
-                )}px`,
+                  Number(globalData.market_cap_percentage?.eth)
+                )}%`,
               }}
             ></div>
           </div>

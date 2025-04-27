@@ -63,27 +63,43 @@ export const sliderSettings = {
   prevArrow: <SamplePrevArrow />,
   responsive: [
     {
-      breakpoint: 1024,
+      breakpoint: 1900,
       settings: {
-        slidesToShow: 4,
-        slidesToScroll: 4,
+        slidesToShow: 5,
+        slidesToScroll: 5,
         infinite: false,
         dots: false,
       },
     },
     {
-      breakpoint: 600,
+      breakpoint: 1615,
       settings: {
-        slidesToShow: 2,
-        slidesToScroll: 2,
-        initialSlide: 2,
+        slidesToShow: 4,
+        slidesToScroll: 4,
+        initialSlide: 4,
       },
     },
     {
-      breakpoint: 480,
+      breakpoint: 1340,
       settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1,
+        slidesToShow: 3,
+        slidesToScroll: 3,
+      },
+    },
+    {
+      breakpoint: 860,
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 2,
+      },
+    },
+    {
+      breakpoint: 768,
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 2,
+        arrows: false,
+        touchMove: true,
       },
     },
   ],
@@ -163,7 +179,7 @@ export const CustomTooltip = ({
     const valueCompProper = payload[0].payload.valueCompProper;
     const name = payload[0].payload.name;
     return (
-      <div className="text-violet-500 text-2xl mt-3 flex flex-col items-end">
+      <div className="text-violet-500 mt-3 flex flex-col items-end text-lg dark:bg-slate-700 p-1 rounded-md z-10">
         <p>{name}</p>
         <p>
           {onConverter ? (
@@ -205,10 +221,10 @@ export const CustomToolTipMini = ({ active, payload }: any) => {
     const valueProper = payload[0].payload.valueProper;
     const name = formatDate(payload[0].payload.name);
     return (
-      <div className="dark:text-white text-sm mt-2 flex flex-col items-end">
+      <div className="dark:text-white text-sm md:flex flex-col items-end z-10 dark:bg-slate-600 bg-violet-300 rounded-md py-1 px-2 hidden">
         <p>{name}</p>
         <p>
-          {currencySymbol} {valueProper}
+          {currencySymbol}{valueProper}
         </p>
       </div>
     );
@@ -279,10 +295,7 @@ export function getGraphData(
   return { max, min, coinHist };
 }
 
-export function getGraphComparison(
-  pdata: any,
-  pdataComp: any,
-) {
+export function getGraphComparison(pdata: any, pdataComp: any) {
   const histCompare = pdata.coinHist.map((data: any, index: number) => {
     if (pdataComp.coinHist.length) {
       let valueComp = 0;

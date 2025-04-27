@@ -13,17 +13,17 @@ const Navlinks = () => {
   const [home, setHome] = useState(location.pathname);
 
   return (
-    <div className="flex justify-between items-center px-32 bg-white py-4 dark:bg-slate-900">
+    <div className="flex justify-between items-center lg:px-36 sm:px-16 px-8 bg-white py-4 dark:bg-slate-900">
       <Link href="/" onClick={() => setHome("/coins")}>
         <div className="flex h-4 items-center">
           <Logo />
-          <h3 className="ml-2">ZenCoin</h3>
+          <h3 className="hidden md:block md:ml-2">ZenCoin</h3>
         </div>
       </Link>
       <div className="flex justify-between items-center">
         <Link
           href="/"
-          className="mx-6 flex items-center"
+          className="xl:mx-6 flex items-center sm:mx-2"
           onClick={() => setHome("/coins")}
         >
           <svg
@@ -43,8 +43,8 @@ const Navlinks = () => {
           <span
             className={
               home === "/coins"
-                ? "dark:text-white text-violet-700"
-                : "dark:text-slate-600 h-6 mr-2 text-violet-300"
+                ? "dark:text-white text-violet-700 hidden md:block"
+                : "dark:text-slate-600 text-violet-300 hidden md:block"
             }
           >
             Home
@@ -52,7 +52,7 @@ const Navlinks = () => {
         </Link>
         <Link
           href="/portfolio"
-          className="mx-6 flex"
+          className="xl:mx-6 flex sm:mx-2"
           onClick={() => setHome("/portfolio")}
         >
           <svg
@@ -73,8 +73,8 @@ const Navlinks = () => {
           <span
             className={
               home === "/portfolio"
-                ? "dark:text-white text-violet-700"
-                : "dark:text-slate-600 text-violet-300"
+                ? "dark:text-white text-violet-700 hidden md:block"
+                : "dark:text-slate-600 text-violet-300 hidden md:block"
             }
           >
             Portfolio
@@ -116,7 +116,7 @@ const Navsearch = () => {
   }, [currency]);
 
   return (
-    <div className="relative w-full max-w-xs">
+    <div className="relative xl:w-80 lg:w-52 w-40">
       <input
         type="text"
         placeholder="Search..."
@@ -124,7 +124,7 @@ const Navsearch = () => {
         onChange={handleInputChange}
         onFocus={() => setIsOpen(true)}
         onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-        className="w-full pl-10 pr-4 p-2 rounded-sm dark:bg-slate-800 text-white dark:caret-white bg-slate-300"
+        className="w-full pl-9 pr-4 p-2 rounded-sm dark:bg-slate-800 text-white dark:caret-white bg-slate-300"
       />
       <svg
         xmlns="http://www.w3.org/2000/svg"
