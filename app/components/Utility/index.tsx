@@ -177,10 +177,20 @@ export const CustomTooltip = ({
   if (active && payload && payload.length) {
     const valueProper = payload[0].payload.valueProper;
     const valueCompProper = payload[0].payload.valueCompProper;
-    const name = payload[0].payload.name;
+    const name = payload[0].payload.name.split(" ");
+    const date = (
+      name[1] +
+      " " +
+      name[2] +
+      ", " +
+      name[3] +
+      " " +
+      name[4]
+    ).split(":");
+    const formattedDate = date[0] + ":" + date[1];
     return (
       <div className="text-violet-500 mt-3 flex flex-col items-end text-lg dark:bg-slate-700/50 p-1 rounded-md -z-10">
-        <p>{name}</p>
+        <p>{formattedDate}</p>
         <p>
           {onConverter ? (
             <span>

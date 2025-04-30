@@ -52,11 +52,12 @@ const Bargraph = ({
             >
               / {coinCompare[0]?.INSTRUMENT}
             </h1>
-            <h1 className="text-lg ml-2 text-violet-500">Volume 24h</h1>
+            <h1 className="text-lg ml-2 text-violet-500">Vol-24h</h1>
           </div>
           <div className="flex flex-col items-start justify-left ml-2">
-            <h1 className="text-lg ml-1 text-violet-500">
-              {currencySymbol} {addCommas(pdata.totalVolume)}
+            <h1 className="text-lg text-violet-500">
+              {currencySymbol}
+              {addCommas(pdata.totalVolume)}
             </h1>
             <h1
               className={
@@ -82,7 +83,7 @@ const Bargraph = ({
             offset={10}
             separator=""
             content={<CustomTooltip currency="USD" />}
-            position={{ x: size.width - 227, y: -55 }}
+            position={{ x: size.width - 170, y: -100 }}
             cursor={{ fill: "transparent" }}
           />
           {compare.length && (
