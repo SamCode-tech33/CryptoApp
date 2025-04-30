@@ -34,7 +34,7 @@ const SamplePrevArrow = (props: any) => {
   return (
     <div
       onClick={onClick}
-      className="h-8 flex bg-slate-300 hover:bg-slate-400 absolute w-8 -left-8 top-1/3 items-center rounded-3xl justify-center cursor-pointer rotate-180 dark:bg-slate-700 dark:hover:bg-slate-500"
+      className="h-8 flex bg-slate-300 hover:bg-slate-400 absolute w-8 -left-8 top-6 items-center rounded-3xl justify-center cursor-pointer rotate-180 dark:bg-slate-700 dark:hover:bg-slate-500"
     >
       <Arrowright />
     </div>
@@ -46,7 +46,7 @@ const SampleNextArrow = (props: any) => {
   return (
     <div
       onClick={onClick}
-      className="h-8 flex bg-slate-300 hover:bg-slate-400 absolute w-8 left-full top-1/3 items-center rounded-3xl justify-center cursor-pointer dark:bg-slate-700 dark:hover:bg-slate-500"
+      className="h-8 flex bg-slate-300 hover:bg-slate-400 absolute w-8 left-full top-6 items-center rounded-3xl justify-center cursor-pointer dark:bg-slate-700 dark:hover:bg-slate-500"
     >
       <Arrowright />
     </div>
@@ -56,6 +56,7 @@ const SampleNextArrow = (props: any) => {
 export const sliderSettings = {
   dots: false,
   infinite: false,
+  adaptiveHeight: true,
   speed: 800,
   slidesToShow: 6,
   slidesToScroll: 6,

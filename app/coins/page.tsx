@@ -138,7 +138,7 @@ export default function Coins() {
             </Link>
           </div>
         </div>
-        <div className="lg:mx-20 sm:mt-8 justify-between flex items-center sm:justify-center md:justify-end w-full">
+        <div className="lg:mx-20 justify-between flex items-center sm:justify-center md:justify-end w-full">
           <p className="sm:hidden block">Select a crypto to view statistics.</p>
           <button
             onClick={handleCompare}
