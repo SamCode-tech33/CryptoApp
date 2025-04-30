@@ -68,7 +68,7 @@ export const Sevendaygraph = ({
 
   return (
     <div className="w-last7">
-      <div className="sm:w-32 w-28 h-12 rounded-sm flex">
+      <div className="sm:w-32 w-22 h-12 rounded-sm flex">
         {load && <div className="loading"></div>}
         {err ? (
           <div className="text-red-800 m-auto">Insufficient Data</div>

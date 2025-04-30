@@ -277,14 +277,16 @@ export default function Navcoin() {
       {error ? (
         <p>The following {error} occured. Please try again later.</p>
       ) : (
-        <ul className="2xl:mx-32 xl:mx-24 lg:mx-20">
+        <ul className="2xl:mx-32 xl:mx-24 lg:mx-20 mx-2">
           <li className="text-black dark:text-white h-12 flex items-center">
             <div className="justify-center mr-4 w-number md:flex hidden">
               <span>#</span>
             </div>
             <div className="w-filter">
               <div className="items-center w-full flex">
-                <h1 className="md:hidden block ml-4">Market overview</h1>
+                <h1 className="md:hidden block ml-4 w-5/12 mr-1.5 sm:mr-10 md:mr-0">
+                  Market overview
+                </h1>
                 <div
                   className="relative ml-6 md:hidden flex items-center dark:bg-slate-600 rounded-md border p-1 cursor-pointer dark:hover:bg-slate-400"
                   onClick={() => setPercentOpen(!percentOpen)}
@@ -351,7 +353,7 @@ export default function Navcoin() {
                     </div>
                   </div>
                 </div>
-                <div className="w-price relative h-10 md:flex hidden">
+                <div className="w-price relative h-10 md:flex hidden mr-1">
                   <Rangefilter
                     filterState={filterState}
                     currentFilterState="Price"
@@ -416,10 +418,10 @@ export default function Navcoin() {
                 </div>
               </div>
             </div>
-            <div className="w-volume xl:flex hidden">
+            <div className="w-volume xl:flex hidden 2xl:text-base text-sm">
               <span>24h Volume / Market Cap</span>
             </div>
-            <div className="w-volume xl:flex hidden">
+            <div className="w-volume xl:flex hidden 2xl:text-base text-sm">
               <span>Circulating Coins / Total Supply</span>
             </div>
             <div className="w-last7 flex">
@@ -453,19 +455,25 @@ export default function Navcoin() {
                         <span>{index + 1}</span>
                       </div>
                       <div className="w-filter flex items-center">
-                        <div className="w-name flex justify-left mx-3 items-center">
+                        <div className="w-name flex mx-3 items-center">
                           <Defaulticon coin={coin.symbol} height="h-8" />
-                          <span>
+                          <span className="hidden sm:block">
                             {coin.name} ({coin.symbol})
                           </span>
+                          <div className="w-full flex flex-col sm:hidden">
+                            <span>{coin.symbol}</span>
+                            <span className="text-sm opacity-30">
+                              {coin.name.split(" ")[0]}
+                            </span>
+                          </div>
                         </div>
-                        <div className="w-price ml-12 pl-1 md:ml-0">
-                          <span>
+                        <div className="w-price text-sm sm:text-base flex flex-col mr-0 2xl:mr-4 xl:mr-7 md:mr-7">
+                          <div className="text-end w-full">
                             {currencySymbol}
                             {coinPrice}
-                          </span>
+                          </div>
                           {percentSelected === "1h%" && (
-                            <div className="ml-2 md:hidden flex w-20">
+                            <div className="md:hidden flex w-full justify-end">
                               <Updownarrow coin={coinQuote.percent_change_1h} />
                               <span
                                 className={

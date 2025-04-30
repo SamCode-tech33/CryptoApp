@@ -13,7 +13,7 @@ const Navlinks = () => {
   const [home, setHome] = useState(location.pathname);
 
   return (
-    <div className="flex justify-between items-center lg:px-36 sm:px-16 px-8 bg-white py-4 dark:bg-slate-900">
+    <div className="flex justify-between items-center lg:px-36 md:px-16 sm:px-8 px-2 bg-white py-4 dark:bg-slate-900">
       <Link href="/" onClick={() => setHome("/coins")}>
         <div className="flex h-4 items-center">
           <Logo />
@@ -23,7 +23,7 @@ const Navlinks = () => {
       <div className="flex justify-between items-center">
         <Link
           href="/"
-          className="xl:mx-6 flex items-center sm:mx-2"
+          className="xl:mx-6 flex items-center sm:mx-2 mx-1"
           onClick={() => setHome("/coins")}
         >
           <svg
@@ -32,8 +32,8 @@ const Navlinks = () => {
             fill="currentColor"
             className={
               home === "/coins"
-                ? "h-6 mr-2 dark:text-white text-violet-700"
-                : "dark:text-slate-600 h-6 mr-2 text-violet-300"
+                ? "h-6 sm:mr-2 dark:text-white text-violet-700"
+                : "dark:text-slate-600 h-6 sm:mr-2 text-violet-300"
             }
           >
             <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
@@ -170,14 +170,15 @@ const Navsearch = () => {
                 <Link
                   href={`/coins/${coin.id}`}
                   key={coin.id}
-                  className="p-2 hover:bg-slate-400 dark:hover:bg-gray-700 rounded flex justify-between"
+                  className="p-2 hover:bg-slate-400 dark:hover:bg-gray-700 rounded flex justify-between sm:flex-row flex-col"
                   onClick={() => setIsOpen(false)}
                 >
                   <div className="flex items-center">
                     <Defaulticon coin={coin.symbol} height="h-4" />
-                    <span>
+                    <span className="hidden sm:block">
                       {coin.name} ({coin.symbol})
                     </span>
+                    <span className="sm:hidden block">{coin.name}</span>
                   </div>
                   <span>
                     {currencySymbol} {coinPrice}

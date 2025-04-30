@@ -24,7 +24,7 @@ export function Currency() {
     <div>
       <div className="relative md:mr-6 mr-2">
         <button
-          className="dark:bg-slate-800 dark:hover:bg-slate-600 py-2 px-3 rounded-sm flex items-center w-full bg-violet-300 hover:bg-violet-400"
+          className="dark:bg-slate-800 dark:hover:bg-slate-600 py-2 sm:px-3 px-2 rounded-sm flex items-center w-full bg-violet-300 hover:bg-violet-400"
           onClick={() => {
             setIsOpen(!isOpen);
           }}

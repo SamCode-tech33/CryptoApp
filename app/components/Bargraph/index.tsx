@@ -83,7 +83,7 @@ const Bargraph = ({
             offset={10}
             separator=""
             content={<CustomTooltip currency="USD" />}
-            position={{ x: size.width - 170, y: -100 }}
+            position={{ x: size.width - 146, y: -107 }}
             cursor={{ fill: "transparent" }}
           />
           {compare.length && (

@@ -1,4 +1,4 @@
-import { Lightningicon, Exchangeicon } from "../svgComps";
+import { Numicon, Exchangeicon } from "../svgComps";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
 import { useState, useEffect } from "react";
@@ -31,26 +31,29 @@ export const Globalheader = () => {
     <div className="dark:bg-slate-950 bg-gray-200">
       <div className="flex items-center 2xl:mx-80 justify-around sm:p-1 mb-2 xl:mx-60 lg:mx-28">
         <div className="flex items-center">
-          <Lightningicon />
-          <div>
-            Coins{" "}
-            {
-              addCommas(Number(globalData.active_cryptocurrencies)).split(
-                "."
-              )[0]
-            }
+          <Numicon />
+          <div className="flex items-center">
+            <span className="sm:block hidden">Coins: </span>
+            <span>
+              {
+                addCommas(Number(globalData.active_cryptocurrencies)).split(
+                  "."
+                )[0]
+              }
+            </span>
           </div>
         </div>
         <div className="flex items-center">
           <Exchangeicon />
-          <div>
-            Exhange {addCommas(Number(globalData.markets)).split(".")[0]}
+          <div className="flex items-center">
+            <span className="sm:block hidden">Exhange: </span>
+            <span>{addCommas(Number(globalData.markets)).split(".")[0]}</span>
           </div>
         </div>
         <div className="flex items-center">
           <Updownarrow coin={globalData.market_cap_change_percentage_24h_usd} />
           <div>
-            {currencySymbol}{" "}
+            {currencySymbol}
             {addCommas(
               Number(globalData.total_market_cap?.[currency.toLowerCase()]) /
                 1000000000000
@@ -60,14 +63,14 @@ export const Globalheader = () => {
         </div>
         <div className="flex items-center">
           <div>
-            {currencySymbol}{" "}
+            {currencySymbol}
             {addCommas(
               Number(globalData.total_volume?.[currency.toLowerCase()]) /
                 1000000000
             )}{" "}
             B
           </div>
-          <div className="md:w-12 h-2 ml-3 rounded-md bg-gray-400 lg:w-16">
+          <div className="md:w-12 h-2 ml-3 rounded-md bg-gray-400 lg:w-16 md:block hidden">
             <div
               className="bg-white h-2 rounded-md"
               style={{

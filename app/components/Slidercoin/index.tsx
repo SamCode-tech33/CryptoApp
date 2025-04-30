@@ -44,7 +44,7 @@ export default function Slidercoin() {
       {error ? (
         <p>The following {error} occured, please try again later...</p>
       ) : (
-        <div className="lg-mx-22 relative my-5">
+        <div className="lg-mx-22 relative my-4">
           <Slider {...sliderSettings}>
             {loading && <div className="loading"></div>}
             {data
@@ -63,32 +63,27 @@ export default function Slidercoin() {
                 }
                 const coinPrice = addCommas(coinQuote.price);
                 return (
-                  <div
-                    key={coin.id}
-                    id={coin.symbol}
-                    className="h-24 rounded-md"
-                    onClick={handleClick}
-                  >
+                  <div key={coin.id} id={coin.symbol} onClick={handleClick}>
                     <div
                       className={
                         coin.symbol === symbol || coin.symbol === compare
-                          ? "h-24 dark:bg-slate-600 rounded-md flex mx-2 justify-between px-3 items-center bg-violet-300"
-                          : "h-24 dark:bg-slate-800 dark:hover:bg-slate-600 rounded-md mx-2 flex justify-between px-3 items-center cursor-pointer bg-white hover:bg-violet-300"
+                          ? "py-3 px-1.5 sm:px-3 sm:p-2 md:p-4 dark:bg-slate-600 rounded-md flex mx-2 justify-between xl:justify-start items-center bg-violet-300"
+                          : "py-3 px-1.5 sm:px-3 sm:p-2 md:p-4 dark:bg-slate-800 dark:hover:bg-slate-600 rounded-md mx-2 flex justify-between xl:justify-start items-center cursor-pointer bg-white hover:bg-violet-300"
                       }
                     >
-                      <div className="sm:flex items-center">
-                        <Defaulticon coin={coin.symbol} height="h-8" />
-                        <span className="block 2xl:hidden text-sm sm:text-base">
+                      <div className="flex items-center xl:mr-4">
+                        <Defaulticon coin={coin.symbol} height="sm:h-8 h-4" />
+                        <span className="block xl:hidden text-sm sm:text-base">
                           {coin.symbol}
                         </span>
                       </div>
-                      <div className="">
-                        <div className="2xl:block hidden">
+                      <div className="hidden sm:block">
+                        <div className="xl:block hidden">
                           <span>{coin.name}</span>
                           <span> ({coin.symbol})</span>
                         </div>
-                        <div className="2xl:flex">
-                          <div className="2xl:mr-2 text-sm sm:text-base">
+                        <div className="xl:flex">
+                          <div className="xl:mr-2 text-sm sm:text-base">
                             {currencySymbol}
                             {coinPrice}
                           </div>

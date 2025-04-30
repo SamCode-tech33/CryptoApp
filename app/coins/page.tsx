@@ -124,21 +124,22 @@ export default function Coins() {
   }, [symbol, selectedTime, compare, currency]);
 
   return (
-    <div className="lg:px-16 md:px-12 px-5 pt-4 bg-gray-200 dark:bg-slate-950">
-      <div className="flex flex-col items-end justify-self-center md:w-full md:justify-between md:flex-row">
-        <div className="md:h-28">
-          <div className="flex lg:mx-20 justify-center md:justify-start mx-2">
-            <div className="p-3 rounded-sm dark:bg-slate-600 2xl:w-72 xl:w-64 w-52 bg-violet-400 text-center">
+    <div className="lg:px-16 md:px-12 px-2 sm:pt-4 bg-gray-200 dark:bg-slate-950">
+      <div className="flex flex-col items-end sm:justify-self-center md:w-full justify-between md:flex-row mx-2">
+        <div className="md:h-28 sm:block hidden">
+          <div className="lg:mx-20 justify-center md:justify-start sm:mx-2 flex">
+            <div className="p-3 rounded-sm dark:bg-slate-600 2xl:w-72 xl:w-64 sm:w-52 bg-violet-400 text-center">
               Coins
             </div>
             <Link href="/convertor">
-              <button className="dark:bg-slate-800 p-3 rounded-sm dark:hover:bg-slate-600 2xl:w-72 xl:w-64 w-52 bg-violet-300 hover:bg-violet-400">
+              <button className="dark:bg-slate-800 p-3 rounded-sm dark:hover:bg-slate-600 2xl:w-72 xl:w-64 sm:w-52 bg-violet-300 hover:bg-violet-400">
                 Convertor
               </button>
             </Link>
           </div>
         </div>
-        <div className="md:flex lg:mx-20 mt-8 justify-center md:justify-end mx-2">
+        <div className="lg:mx-20 sm:mt-8 justify-between flex items-center sm:justify-center md:justify-end w-full">
+          <p className="sm:hidden block">Select a crypto to view statistics.</p>
           <button
             onClick={handleCompare}
             className="dark:bg-slate-800 p-3 rounded-md dark:hover:bg-slate-600 bg-violet-300 hover:bg-violet-400"

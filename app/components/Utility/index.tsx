@@ -87,17 +87,19 @@ export const sliderSettings = {
       },
     },
     {
-      breakpoint: 860,
+      breakpoint: 768,
       settings: {
-        slidesToShow: 2,
-        slidesToScroll: 2,
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        arrows: false,
+        touchMove: true,
       },
     },
     {
-      breakpoint: 768,
+      breakpoint: 640,
       settings: {
-        slidesToShow: 2,
-        slidesToScroll: 2,
+        slidesToShow: 4,
+        slidesToScroll: 4,
         arrows: false,
         touchMove: true,
       },
@@ -112,7 +114,7 @@ export const Updownarrow = ({ coin }: { coin: any }) => {
       fill={coin > 0 ? "#11D861" : "#E9190F"}
       viewBox="0 0 24 24"
       stroke={coin > 0 ? "#11D861" : "#E9190F"}
-      className="h-4 mr-1"
+      className="h-3 mr-0.5"
     >
       <path
         d={
@@ -189,7 +191,7 @@ export const CustomTooltip = ({
     ).split(":");
     const formattedDate = date[0] + ":" + date[1];
     return (
-      <div className="text-violet-500 mt-3 flex flex-col items-end text-lg dark:bg-slate-700/50 p-1 rounded-md -z-10">
+      <div className="text-violet-500 mt-3 flex flex-col items-end text-sm dark:bg-slate-700/50 p-1 rounded-md -z-10 bg-slate-300/50">
         <p>{formattedDate}</p>
         <p>
           {onConverter ? (
@@ -231,7 +233,7 @@ export const CustomToolTipMini = ({ active, payload }: any) => {
     const valueProper = payload[0].payload.valueProper;
     const name = formatDate(payload[0].payload.name);
     return (
-      <div className="dark:text-white text-sm md:flex flex-col items-end z-10 dark:bg-slate-600 bg-violet-300 rounded-md py-1 px-2 hidden">
+      <div className="dark:text-white text-xs md:flex flex-col items-end z-10 dark:bg-slate-600 bg-violet-300 rounded-md py-1 px-2 hidden">
         <p>{name}</p>
         <p>
           {currencySymbol}

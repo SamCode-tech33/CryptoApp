@@ -17,7 +17,7 @@ export default function Logo() {
     <img
       src={theme === "dark" ? "/Images/zen-white.jpg" : "/Images/zen-black.jpg"}
       alt="ZenCoin Logo"
-      className={theme === "dark" ? "h-8" : "h-6"}
+      className={theme === "dark" ? "h-8 mr-1" : "h-6 mr-1"}
     />
   );
 }

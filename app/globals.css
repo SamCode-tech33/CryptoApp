@@ -37,6 +37,7 @@ path {
 }
 
 .lg-mx-22 {
+  margin: 20px 2px;
   @media (min-width: 1024px) {
     margin: 20px 74px;
   }
@@ -171,7 +172,7 @@ path {
 }
 
 .w-filter {
-  width: 55%;
+  width: 68%;
 }
 
 @media (min-width: 730px) {
@@ -187,11 +188,23 @@ path {
 }
 
 .w-name {
-  width: 32.8%;
+  width: 55%;
+}
+
+@media (min-width: 768px) {
+  .w-name {
+    width: 30.8%;
+  }
 }
 
 .w-price {
-  width: 19%;
+  width: 45%;
+}
+
+@media (min-width: 640px) {
+  .w-price {
+    width: 20%;
+  }
 }
 
 .w-1h {
@@ -199,11 +212,11 @@ path {
 }
 
 .w-24h {
-  width: 14.5%;
+  width: 14%;
 }
 
 .w-7d {
-  width: 14.8%;
+  width: 14%;
 }
 
 .w-volume {
@@ -227,8 +240,8 @@ path {
 }
 
 .w-last7 {
-  width: 15.8%;
-  margin-left: 48px;
+  width: 16%;
+  margin-left: 16px;
 }
 
 @media (min-width: 768px) {

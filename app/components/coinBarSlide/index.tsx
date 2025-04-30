@@ -2,7 +2,7 @@ import { addCommas } from "../Utility";
 
 export const Coinbar = ({ currencySymbol, value1, value2, first }: any) => {
   return (
-    <div className="w-volume xl:flex justify-left flex-col hidden ml-3">
+    <div className="w-volume xl:flex justify-left flex-col hidden ml-3 2xl:text-sm text-xs">
       {first === true ? (
         <div className="flex bar-width justify-between">
           <span>
