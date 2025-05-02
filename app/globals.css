@@ -208,6 +208,16 @@ path {
   }
 }
 
+.price-pad {
+  padding-right: 0px;
+}
+
+@media (min-width: 500px) {
+  .price-pad {
+    padding-right: 16px;
+  }
+}
+
 .sticky-nav {
   position: sticky;
   bottom: 0%;

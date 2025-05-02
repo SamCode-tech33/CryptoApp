@@ -467,7 +467,7 @@ export default function Navcoin() {
                             </span>
                           </div>
                         </div>
-                        <div className="w-price text-sm sm:text-base flex flex-col mr-0 2xl:mr-4 xl:mr-7 md:mr-7">
+                        <div className="w-price text-sm sm:text-base flex flex-col 2xl:mr-4 xl:mr-7 md:mr-7 price-pad">
                           <div className="text-end w-full">
                             {currencySymbol}
                             {coinPrice}
