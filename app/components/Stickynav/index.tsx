@@ -9,8 +9,8 @@ export const Stickynav = () => {
           href="/"
           className={
             location.pathname === "/"
-              ? "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer bg-slate-700 p-4 w-full rounded-md"
-              : "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer hover:bg-slate-700 p-4 w-full rounded-md"
+              ? "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer dark:bg-slate-700 bg-white p-4 w-full rounded-md"
+              : "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer dark:hover:bg-slate-700 hover:bg-white p-4 w-full rounded-md"
           }
         >
           <Homeicon />
@@ -20,8 +20,8 @@ export const Stickynav = () => {
           href="/convertor"
           className={
             location.pathname === "/convertor"
-              ? "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer bg-slate-700 p-4 w-full rounded-md"
-              : "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer hover:bg-slate-700 p-4 w-full rounded-md"
+              ? "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer dark:bg-slate-700 bg-white p-4 w-full rounded-md"
+              : "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer dark:hover:bg-slate-700 hover:bg-white p-4 w-full rounded-md"
           }
         >
           <Rightleftarrows />
@@ -31,8 +31,8 @@ export const Stickynav = () => {
           href="/portfolio"
           className={
             location.pathname === "/portfolio"
-              ? "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer bg-slate-700 p-4 w-full rounded-md"
-              : "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer hover:bg-slate-700 p-4 w-full rounded-md"
+              ? "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer dark:bg-slate-700 bg-white p-4 w-full rounded-md"
+              : "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer dark:hover:bg-slate-700 hover:bg-white p-4 w-full rounded-md"
           }
         >
           <Portfolioicon />
