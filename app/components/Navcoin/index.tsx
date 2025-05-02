@@ -456,7 +456,7 @@ export default function Navcoin() {
                       </div>
                       <div className="w-filter flex items-center">
                         <div className="w-name flex mx-3 items-center">
-                          <Defaulticon coin={coin.symbol} height="h-8" />
+                          <Defaulticon coin={coin.symbol} height="h-8" margin="mr-2" />
                           <span className="hidden sm:block">
                             {coin.name} ({coin.symbol})
                           </span>

@@ -5,33 +5,27 @@ import { AppDispatch, RootState } from "@/lib/store";
 import { fetchCoins } from "@/lib/coinsSlice";
 import { changeSearch } from "@/lib/searchSlice";
 import { addCommas, Defaulticon } from "../Utility";
-import Logo from "../Logo";
 import { Currency } from "../Currency";
 import { ModeToggle } from "../themeselector";
+import { Logo } from "../svgComps";
 
 const Navlinks = () => {
-  const [home, setHome] = useState(location.pathname);
-
   return (
-    <div className="flex justify-between items-center lg:px-36 md:px-16 sm:px-8 px-2 bg-white py-4 dark:bg-slate-900">
-      <Link href="/" onClick={() => setHome("/coins")}>
+    <div className="flex justify-between items-center lg:px-36 md:px-16 sm:px-8 px-3 bg-white py-4 dark:bg-slate-900">
+      <Link href="/">
         <div className="flex h-4 items-center">
           <Logo />
           <h3 className="hidden md:block md:ml-2">ZenCoin</h3>
         </div>
       </Link>
       <div className="flex justify-between items-center">
-        <Link
-          href="/"
-          className="xl:mx-6 flex items-center sm:mx-2 mx-1"
-          onClick={() => setHome("/coins")}
-        >
+        <Link href="/" className="xl:mx-6 flex items-center sm:mx-2 mx-1">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
             className={
-              home === "/coins"
+              location.pathname === "/coins"
                 ? "h-6 sm:mr-2 dark:text-white text-violet-700"
                 : "dark:text-slate-600 h-6 sm:mr-2 text-violet-300"
             }
@@ -42,7 +36,7 @@ const Navlinks = () => {
 
           <span
             className={
-              home === "/coins"
+              location.pathname === "/coins"
                 ? "dark:text-white text-violet-700 hidden md:block"
                 : "dark:text-slate-600 text-violet-300 hidden md:block"
             }
@@ -50,17 +44,13 @@ const Navlinks = () => {
             Home
           </span>
         </Link>
-        <Link
-          href="/portfolio"
-          className="xl:mx-6 flex sm:mx-2"
-          onClick={() => setHome("/portfolio")}
-        >
+        <Link href="/portfolio" className="xl:mx-6 flex sm:mx-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
             className={
-              home === "/portfolio"
+              location.pathname === "/portfolio"
                 ? "h-6 mr-2 dark:text-white text-violet-700"
                 : "h-6 mr-2 dark:text-slate-600 text-violet-300"
             }
@@ -72,7 +62,7 @@ const Navlinks = () => {
 
           <span
             className={
-              home === "/portfolio"
+              location.pathname === "/portfolio"
                 ? "dark:text-white text-violet-700 hidden md:block"
                 : "dark:text-slate-600 text-violet-300 hidden md:block"
             }
@@ -174,11 +164,17 @@ const Navsearch = () => {
                   onClick={() => setIsOpen(false)}
                 >
                   <div className="flex items-center">
-                    <Defaulticon coin={coin.symbol} height="h-4" />
+                    <Defaulticon
+                      coin={coin.symbol}
+                      height="h-4"
+                      margin="mr-2"
+                    />
                     <span className="hidden sm:block">
                       {coin.name} ({coin.symbol})
                     </span>
-                    <span className="sm:hidden block">{coin.name}</span>
+                    <span className="sm:hidden block">
+                      {coin.name.split(" ")[0]}
+                    </span>
                   </div>
                   <span>
                     {currencySymbol} {coinPrice}

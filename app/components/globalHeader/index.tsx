@@ -91,7 +91,7 @@ export const Globalheader = () => {
           </div>
         </div>
         <div className="sm:flex items-center hidden">
-          <Defaulticon coin="btc" height="h-6" />
+          <Defaulticon coin="btc" height="h-6" margin="mr-2" />
           <div>
             {Math.round(Number(globalData.market_cap_percentage?.btc))}%
           </div>
@@ -107,7 +107,7 @@ export const Globalheader = () => {
           </div>
         </div>
         <div className="items-center hidden sm:flex">
-          <Defaulticon coin="eth" height="h-6" />
+          <Defaulticon coin="eth" height="h-6" margin="mr-2" />
           <div></div>
           {Math.round(Number(globalData.market_cap_percentage?.eth))}%
           <div className="md:w-12 h-2 ml-3 rounded-md bg-gray-400 lg:w-16">

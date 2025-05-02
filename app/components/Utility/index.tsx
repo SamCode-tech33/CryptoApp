@@ -154,14 +154,22 @@ export const Plus = () => {
   );
 };
 
-export const Defaulticon = ({ coin, height }: { coin: any; height: any }) => {
+export const Defaulticon = ({
+  coin,
+  height,
+  margin,
+}: {
+  coin: any;
+  height: any;
+  margin: any;
+}) => {
   return (
     <img
       id="currentPhoto"
       src={`https://assets.coincap.io/assets/icons/${coin.toLowerCase()}@2x.png`}
       alt=""
       onError={handleImageError}
-      className={`${height} mr-2`}
+      className={`${height} ${margin}`}
     />
   );
 };

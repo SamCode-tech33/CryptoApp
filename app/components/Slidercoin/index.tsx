@@ -72,7 +72,7 @@ export default function Slidercoin() {
                       }
                     >
                       <div className="flex items-center xl:mr-4">
-                        <Defaulticon coin={coin.symbol} height="sm:h-8 h-4" />
+                        <Defaulticon coin={coin.symbol} height="sm:h-8 h-4" margin="mr-2" />
                         <span className="block xl:hidden text-sm sm:text-base">
                           {coin.symbol}
                         </span>

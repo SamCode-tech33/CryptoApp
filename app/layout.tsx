@@ -7,6 +7,7 @@ import React, { Suspense } from "react";
 import { persistor } from "@/lib/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { Globalheader } from "./components/globalHeader";
+import { Stickynav } from "./components/Stickynav";
 const Navlinks = React.lazy(() => import("./components/navigation"));
 
 export default function RootLayout({
@@ -32,6 +33,7 @@ export default function RootLayout({
                 </Suspense>
               </div>
               {children}
+              <Stickynav />
             </StoreProvider>
           </ThemeProvider>
         </PersistGate>

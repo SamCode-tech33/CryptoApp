@@ -48,53 +48,53 @@ export function Currency() {
           }
         >
           <div
-            className="py-2 w-full dark:hover:bg-slate-600 text-center cursor-pointer rounded-sm hover:bg-slate-400"
+            className="py-2 w-full dark:hover:bg-slate-600 text-center cursor-pointer rounded-sm hover:bg-slate-400 flex justify-center"
             onClick={() => {
               const id = "$ USD";
               newCurrency(id);
             }}
           >
-            <span>$</span>
+            <span className="lg:mr-2">$</span>
             <span className="lg:block hidden">USD</span>
           </div>
           <div
-            className="py-2 w-full dark:hover:bg-slate-600 text-center cursor-pointer rounded-sm hover:bg-slate-400"
+            className="py-2 w-full dark:hover:bg-slate-600 text-center cursor-pointer rounded-sm hover:bg-slate-400 flex justify-center"
             onClick={() => {
               const id = "€ EUR";
               newCurrency(id);
             }}
           >
-            <span>€</span>
+            <span className="lg:mr-2">€</span>
             <span className="lg:block hidden">EUR</span>
           </div>
           <div
-            className="py-2 w-full dark:hover:bg-slate-600 text-center cursor-pointer rounded-sm hover:bg-slate-400"
+            className="py-2 w-full dark:hover:bg-slate-600 text-center cursor-pointer rounded-sm hover:bg-slate-400 flex justify-center"
             onClick={() => {
               const id = "¥ JPY";
               newCurrency(id);
             }}
           >
-            <span>¥</span>
+            <span className="lg:mr-2">¥</span>
             <span className="lg:block hidden">JPY</span>
           </div>
           <div
-            className="py-2 w-full dark:hover:bg-slate-600 text-center cursor-pointer rounded-sm hover:bg-slate-400"
+            className="py-2 w-full dark:hover:bg-slate-600 text-center cursor-pointer rounded-sm hover:bg-slate-400 flex justify-center"
             onClick={() => {
               const id = "₿ BTC";
               newCurrency(id);
             }}
           >
-            <span>₿</span>
+            <span className="lg:mr-2">₿</span>
             <span className="lg:block hidden">BTC</span>
           </div>
           <div
-            className="py-2 w-full dark:hover:bg-slate-600 text-center cursor-pointer rounded-sm hover:bg-slate-400"
+            className="py-2 w-full dark:hover:bg-slate-600 text-center cursor-pointer rounded-sm hover:bg-slate-400 flex justify-center"
             onClick={() => {
               const id = "Ξ ETH";
               newCurrency(id);
             }}
           >
-            <span>Ξ</span>
+            <span className="lg:mr-2">Ξ</span>
             <span className="lg:block hidden">ETH</span>
           </div>
         </div>

@@ -109,10 +109,10 @@ export default function Convertor() {
   const isSelected = (id: string) => {
     let style = "";
     if (selectedTime === id) {
-      style = "py-1 rounded-md px-5 dark:bg-violet-800 bg-violet-300";
+      style = "py-1 rounded-md px-3 dark:bg-violet-800 bg-violet-300";
     } else {
       style =
-        "py-1 rounded-md px-5 hover:bg-violet-300 dark:hover:bg-violet-800";
+        "py-1 rounded-md px-3 Hover:dark:bg-violet-800 hover:bg-violet-300";
     }
     return style;
   };
@@ -147,15 +147,15 @@ export default function Convertor() {
   }, [menuIconLeft, selectedTime, menuIconRight, currency]);
 
   return (
-    <div>
-      <div className="flex mx-32">
+    <div className="xl:mx-32 lg:mx-24 md:mx-8 mx-4">
+      <div className="sm:flex w-full hidden">
         <Link href="/coins" className="mb-6">
-          <button className="dark:bg-slate-800 p-3 rounded-sm dark:hover:bg-slate-600 w-72 bg-violet-300 hover:bg-violet-400">
+          <button className="dark:bg-slate-800 p-3 rounded-sm dark:hover:bg-slate-600 lg:w-72 sm:w-48 bg-violet-300 hover:bg-violet-400">
             Coins
           </button>
         </Link>
         <Link href="/convertor">
-          <div className="p-3 rounded-sm dark:bg-slate-600 w-72 bg-violet-400 text-center">
+          <div className="p-3 rounded-sm dark:bg-slate-600 lg:w-72 sm:w-48 bg-violet-400 text-center">
             Convertor
           </div>
         </Link>
@@ -163,34 +163,47 @@ export default function Convertor() {
       {error ? (
         <span>There has been an error, please come back later</span>
       ) : (
-        <div className="relative">
-          <div className="mx-32">
+        <div className="relative w-full">
+          <div>
             <h1>Crypto Currency Convertor</h1>
             <p className="text-gray-500">{today}</p>
           </div>
-          <div className="mx-32 flex">
+          <div className="flex w-full justify-center items-center 2xl:flex-row flex-col">
             {loading && <div className="loading"></div>}
-            <div className="w-half dark:bg-slate-800 h-52 mr-4 rounded-md mt-6 mb-6 bg-white">
-              <p className="ml-10 mt-4 mb-8">You sell</p>
-              <div className="border-b-2 border-gray-400 pb-4 mx-8 mb-4">
-                <div className="flex justify-between">
+            <div className="w-full dark:bg-slate-800 h-52 2xl:mr-4 rounded-md my-6 bg-white">
+              <p className="lg:ml-10 ml-4 mt-4 mb-4">You sell</p>
+              <div className="border-b-2 border-gray-400 pb-4 lg:mx-8 mb-4 mx-4">
+                <div className="flex justify-between items-center">
                   <button
                     className="dark:bg-slate-800 dark:hover:bg-slate-600 p-2.5 rounded-md bg-violet-300 hover:bg-violet-400"
                     onClick={() => setIsOpenLeft(!isOpenLeft)}
                   >
-                    <div className="flex items-center justify-between w-56">
-                      <Defaulticon coin={menuIconLeft} height="h-8" />
+                    <div className="flex items-center justify-between">
+                      <Defaulticon
+                        coin={menuIconLeft}
+                        height="h-8"
+                        margin="mr-2"
+                      />
                       <div className="flex items-center">
-                        <span>{menuTriggerLeft}</span>
+                        <span className="md:block hidden">
+                          {menuTriggerLeft}
+                        </span>
+                        <span className="md:hidden block">
+                          {menuTriggerLeft
+                            .split(" ")[1]
+                            .split("(")
+                            .join("")
+                            .split(")")
+                            .join("")}
+                        </span>
                         <Uparrow isOpen={isOpenLeft} />
                       </div>
                     </div>
-                    <span className="sr-only">Toggle theme</span>
                   </button>
                   <input
                     type="text"
                     value={conversionValue}
-                    className="dark:bg-slate-600 rounded-md p-4 h-12 w-80 text-right dark:caret-white bg-white border-gray-600 border"
+                    className="dark:bg-slate-600 rounded-md p-4 lg:h-12 h-8 lg:w-80 w-40 text-right dark:caret-white bg-white border-gray-600 border"
                     placeholder={menuIconLeft}
                     onChange={handleCalculate}
                   />
@@ -241,7 +254,11 @@ export default function Convertor() {
                           }}
                         >
                           <div className="flex items-center">
-                            <Defaulticon coin={coin.symbol} height="h-6" />
+                            <Defaulticon
+                              coin={coin.symbol}
+                              height="h-6"
+                              margin="mr-2"
+                            />
                             <span>
                               {coin.name} ({coin.symbol})
                             </span>
@@ -269,25 +286,39 @@ export default function Convertor() {
                 </span>
               </div>
             </div>
-            <div className="w-half dark:bg-slate-800 h-52 ml-4 rounded-md  mt-6 mb-6 bg-white">
+            <div className="w-full dark:bg-slate-800 h-52 2xl:ml-4 rounded-md mb-6 2xl:mt-6 bg-white">
               {loading && <div className="loading"></div>}
-              <p className="ml-8 mt-4 mb-8">You buy</p>
-              <div className="border-b-2 border-gray-400 pb-4 mx-8 mb-4">
-                <div className="flex justify-between">
+              <p className="lg:ml-10 ml-4 mt-4 mb-4">You buy</p>
+              <div className="border-b-2 border-gray-400 pb-4 lg:mx-8 mx-4 mb-4">
+                <div className="flex justify-between items-center">
                   <button
                     className="dark:bg-slate-800 dark:hover:bg-slate-600 p-2.5 rounded-md bg-violet-300 hover:bg-violet-400"
                     onClick={() => setIsOpenRight(!isOpenRight)}
                   >
-                    <div className="flex items-center justify-between w-56">
-                      <Defaulticon coin={menuIconRight} height="h-8" />
+                    <div className="flex items-center justify-between">
+                      <Defaulticon
+                        coin={menuIconRight}
+                        height="h-8"
+                        margin="mr-2"
+                      />
                       <div className="flex items-center">
-                        <span>{menuTriggerRight}</span>
+                        <span className="md:block hidden">
+                          {menuTriggerRight}
+                        </span>
+                        <span className="md:hidden block">
+                          {menuTriggerRight
+                            .split(" ")[1]
+                            .split("(")
+                            .join("")
+                            .split(")")
+                            .join("")}
+                        </span>
                         <Uparrow isOpen={isOpenRight} />
                       </div>
                     </div>
                     <span className="sr-only">Toggle theme</span>
                   </button>
-                  <div className="dark:bg-slate-600 rounded-md p-4 h-12 w-80 text-right border border-gray-600 flex items-center justify-end">
+                  <div className="dark:bg-slate-600 rounded-md p-4 lg:h-12 h-8 lg:w-80 w-40 text-right border border-gray-600 flex items-center justify-end">
                     <span>
                       {convertedNum} {menuIconRight}
                     </span>
@@ -338,7 +369,11 @@ export default function Convertor() {
                           }}
                         >
                           <div className="flex items-center">
-                            <Defaulticon coin={coin.symbol} height="h-6" />
+                            <Defaulticon
+                              coin={coin.symbol}
+                              height="h-6"
+                              margin="mr-2"
+                            />
                             <span>
                               {coin.name} ({coin.symbol})
                             </span>
@@ -367,7 +402,7 @@ export default function Convertor() {
               </div>
             </div>
           </div>
-          <div className="h-72 dark:bg-slate-800 rounded-md flex justify-end flex-col mx-32 w-all bg-white">
+          <div className="h-72 dark:bg-slate-800 rounded-md flex justify-end flex-col w-full bg-white">
             {load && <div className="loading"></div>}
             {err ? (
               <span>There has been an error, please come back later</span>
@@ -389,7 +424,7 @@ export default function Convertor() {
               />
             )}
           </div>
-          <div className="flex ml-32 mt-6 justify-between dark:bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4 bg-white">
+          <div className="flex my-6 justify-between dark:bg-slate-800 p-2 rounded-md h-12 items-center lg:w-80 xl:w-96 bg-white">
             <button
               onClick={handleTime}
               id="minutes 5 288"
