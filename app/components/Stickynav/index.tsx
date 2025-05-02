@@ -1,39 +1,42 @@
 import Link from "next/link";
 import { Homeicon, Rightleftarrows, Portfolioicon } from "../svgComps";
+import { usePathname } from "next/navigation";
 
 export const Stickynav = () => {
+  const pathname = usePathname();
+  const baseClasses =
+    "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer p-4 w-full rounded-md";
+  const activeClasses = "dark:bg-slate-700 bg-white";
+  const inactiveClasses = "dark:hover:bg-slate-700 hover:bg-white";
+
   return (
     <div className="sticky-nav dark:bg-slate-900 bg-slate-300 px-3 py-1">
       <div className="flex justify-between items-center sm:hidden">
         <Link
           href="/"
-          className={
-            location.pathname === "/"
-              ? "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer dark:bg-slate-700 bg-white p-4 w-full rounded-md"
-              : "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer dark:hover:bg-slate-700 hover:bg-white p-4 w-full rounded-md"
-          }
+          className={`${baseClasses} ${
+            pathname === "/" || pathname === "/coins"
+              ? activeClasses
+              : inactiveClasses
+          }`}
         >
           <Homeicon />
-          <span className="">Home</span>
+          <span>Home</span>
         </Link>
         <Link
           href="/convertor"
-          className={
-            location.pathname === "/convertor"
-              ? "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer dark:bg-slate-700 bg-white p-4 w-full rounded-md"
-              : "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer dark:hover:bg-slate-700 hover:bg-white p-4 w-full rounded-md"
-          }
+          className={`${baseClasses} ${
+            pathname === "/convertor" ? activeClasses : inactiveClasses
+          }`}
         >
           <Rightleftarrows />
-          <span className="">Convertor</span>
+          <span>Convertor</span>
         </Link>
         <Link
           href="/portfolio"
-          className={
-            location.pathname === "/portfolio"
-              ? "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer dark:bg-slate-700 bg-white p-4 w-full rounded-md"
-              : "xl:mx-6 flex flex-col items-center sm:mx-2 mx-1 cursor-pointer dark:hover:bg-slate-700 hover:bg-white p-4 w-full rounded-md"
-          }
+          className={`${baseClasses} ${
+            pathname === "/portfolio" ? activeClasses : inactiveClasses
+          }`}
         >
           <Portfolioicon />
           <span className="h-6">Portfolio</span>

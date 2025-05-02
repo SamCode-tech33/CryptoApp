@@ -8,8 +8,10 @@ import { addCommas, Defaulticon } from "../Utility";
 import { Currency } from "../Currency";
 import { ModeToggle } from "../themeselector";
 import { Logo } from "../svgComps";
+import { usePathname } from "next/navigation";
 
 const Navlinks = () => {
+  const pathname = usePathname();
   return (
     <div className="flex justify-between items-center lg:px-36 md:px-16 sm:px-8 px-3 bg-white py-4 dark:bg-slate-900">
       <Link href="/">
@@ -25,7 +27,7 @@ const Navlinks = () => {
             viewBox="0 0 24 24"
             fill="currentColor"
             className={
-              location.pathname === "/coins"
+              pathname === "/" || pathname === "/coins"
                 ? "h-6 sm:mr-2 dark:text-white text-violet-700"
                 : "dark:text-slate-600 h-6 sm:mr-2 text-violet-300"
             }
@@ -36,7 +38,7 @@ const Navlinks = () => {
 
           <span
             className={
-              location.pathname === "/coins"
+              pathname === "/" || pathname === "/coins"
                 ? "dark:text-white text-violet-700 hidden md:block"
                 : "dark:text-slate-600 text-violet-300 hidden md:block"
             }
@@ -50,7 +52,7 @@ const Navlinks = () => {
             viewBox="0 0 24 24"
             fill="currentColor"
             className={
-              location.pathname === "/portfolio"
+              pathname === "/portfolio"
                 ? "h-6 mr-2 dark:text-white text-violet-700"
                 : "h-6 mr-2 dark:text-slate-600 text-violet-300"
             }
@@ -62,7 +64,7 @@ const Navlinks = () => {
 
           <span
             className={
-              location.pathname === "/portfolio"
+              pathname === "/portfolio"
                 ? "dark:text-white text-violet-700 hidden md:block"
                 : "dark:text-slate-600 text-violet-300 hidden md:block"
             }
