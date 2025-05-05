@@ -2,24 +2,26 @@ import { addCommas } from "../Utility";
 
 export const Coinbar = ({ currencySymbol, value1, value2, first }: any) => {
   return (
-    <div className="w-72 flex justify-left flex-col">
+    <div className="w-volume xl:flex justify-left flex-col hidden ml-3 2xl:text-sm text-xs">
       {first === true ? (
-        <div className="flex w-64 justify-between">
+        <div className="flex bar-width justify-between">
           <span>
-            {currencySymbol} {addCommas(value1)}B
+            {currencySymbol}
+            {addCommas(value1)}B
           </span>
           <span>
-            {currencySymbol} {addCommas(value2)}B
+            {currencySymbol}
+            {addCommas(value2)}B
           </span>
         </div>
       ) : (
-        <div className="flex w-64 justify-between">
+        <div className="flex bar-width justify-between">
           <span>
             {value1 / 1000 > 1
               ? `${addCommas(value1 / 1000)}B`
               : `${addCommas(value1)}M`}
           </span>
-          <span className={value2 === 0 ? "text-2xl" : value2 + ""}>
+          <span>
             {value2 === 0
               ? "∞"
               : value2 / 1000 > 1
@@ -28,7 +30,7 @@ export const Coinbar = ({ currencySymbol, value1, value2, first }: any) => {
           </span>
         </div>
       )}
-      <div className="w-64 h-2 rounded-lg dark:bg-slate-600 bg-gray-300">
+      <div className="bar-width h-2 rounded-lg dark:bg-slate-600 bg-gray-300">
         <div
           className="h-2 rounded-lg bg-violet-500"
           style={{

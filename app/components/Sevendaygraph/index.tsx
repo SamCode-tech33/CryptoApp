@@ -67,47 +67,49 @@ export const Sevendaygraph = ({
   }, []);
 
   return (
-    <div className="w-32 h-12 rounded-sm flex">
-      {load && <div className="loading"></div>}
-      {err ? (
-        <div className="text-red-800 m-auto">Insufficient Data</div>
-      ) : (
-        <ResponsiveContainer height="100%">
-          <AreaChart data={pdata}>
-            <defs>
-              <linearGradient
-                id={`colorUv-${symbol}`}
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="0.8"
-              >
-                <stop offset="0%" stopColor={sevenDay} stopOpacity={0.8} />
-                <stop offset="100%" stopColor={sevenDay} stopOpacity={0.1} />
-              </linearGradient>
-            </defs>
-            <XAxis dataKey="name" hide={true} />
-            <YAxis
-              domain={[`dataMin-${max - min}`, `dataMax+${max - min}`]}
-              hide={true}
-            />
-            <Tooltip
-              offset={10}
-              separator=""
-              content={<CustomToolTipMini />}
-              position={{ x: 135, y: 0 }}
-            />
-            <Area
-              type="monotone"
-              dataKey="value"
-              stroke={sevenDay}
-              fillOpacity={1}
-              fill={`url(#colorUv-${symbol})`}
-              name="$"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      )}
+    <div className="w-last7">
+      <div className="sm:w-32 w-22 h-12 rounded-sm flex">
+        {load && <div className="loading"></div>}
+        {err ? (
+          <div className="text-red-800 m-auto">Insufficient Data</div>
+        ) : (
+          <ResponsiveContainer height="100%">
+            <AreaChart data={pdata}>
+              <defs>
+                <linearGradient
+                  id={`colorUv-${symbol}`}
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="0.8"
+                >
+                  <stop offset="0%" stopColor={sevenDay} stopOpacity={0.8} />
+                  <stop offset="100%" stopColor={sevenDay} stopOpacity={0.1} />
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="name" hide={true} />
+              <YAxis
+                domain={[`dataMin-${max - min}`, `dataMax+${max - min}`]}
+                hide={true}
+              />
+              <Tooltip
+                offset={10}
+                separator=""
+                content={<CustomToolTipMini />}
+                position={{ x: 130, y: 0 }}
+              />
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke={sevenDay}
+                fillOpacity={1}
+                fill={`url(#colorUv-${symbol})`}
+                name="$"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        )}
+      </div>
     </div>
   );
 };

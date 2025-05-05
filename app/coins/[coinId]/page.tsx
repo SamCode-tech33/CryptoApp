@@ -77,11 +77,15 @@ export default function Coin({ params }: any) {
       ) : (
         <div>
           {coin && (
-            <div className="mx-32">
-              <div className="flex">
-                <div className="p-7 dark:bg-slate-800 rounded-lg w-1/3 mr-72 bg-white">
+            <div className="xl:mx-32 lg:mx-16 md:mx-8 sm:mx-4 mx-2">
+              <div className="flex justify-between md:flex-row flex-col">
+                <div className="p-7 dark:bg-slate-800 rounded-lg xl:w-1/3 bg-white md:mr-8">
                   <div className="flex items-center">
-                    <Defaulticon coin={coin.symbol} height="h-12" />
+                    <Defaulticon
+                      coin={coin.symbol}
+                      height="h-12"
+                      margin="mr-2"
+                    />
                     <div>
                       <span className="text-xl">
                         {coin.name} ({coin.symbol})
@@ -96,7 +100,7 @@ export default function Coin({ params }: any) {
                   </div>
                   <div className="mt-8 flex items-baseline">
                     <span className="text-3xl mr-4">
-                      {currencySymbol}{" "}
+                      {currencySymbol}
                       {addCommas(coin.quote?.[currency].price) ||
                         addCommas(coin.quote.USD.price)}
                     </span>
@@ -176,9 +180,9 @@ export default function Coin({ params }: any) {
                     again later
                   </p>
                 ) : (
-                  <div className="w-1/3">
+                  <div className="md:ml-8 mt-8 md:mt-0 xl:mr-32 2xl:mr-64">
                     <p>{coinSite?.description}</p>
-                    <div className="mt-16 text-center w-2/3">
+                    <div className="mt-12 text-center max-w-96">
                       {coinSite?.urls.technical_doc[0] && (
                         <div className="dark:bg-slate-800 p-4 rounded-md mb-8 bg-white">
                           <Copy
@@ -213,10 +217,10 @@ export default function Coin({ params }: any) {
                   </div>
                 )}
               </div>
-              <div className="flex">
-                <div className="p-6 dark:bg-slate-800 rounded-lg w-half mt-8 mr-8 bg-white">
-                  <div className="flex justify-between mb-4">
-                    <div className="flex">
+              <div className="flex lg:flex-row flex-col lg:text-base text-xs">
+                <div className="p-6 dark:bg-slate-800 rounded-lg w-full mt-8 mr-8 bg-white">
+                  <div className="flex justify-between mb-4 items-center">
+                    <div className="flex items-center">
                       <Plus />
                       <span>Total Volume:</span>
                     </div>
@@ -231,19 +235,19 @@ export default function Coin({ params }: any) {
                       {coin.symbol}
                     </span>
                   </div>
-                  <div className="flex justify-between mb-4">
+                  <div className="flex justify-between mb-4 items-center">
                     <div className="flex">
                       <Plus />
                       <span>Volume 24h:</span>
                     </div>
                     <span>
-                      {currencySymbol}{" "}
+                      {currencySymbol}
                       {addCommas(coin.quote?.[currency].volume_24h) ||
                         addCommas(coin.quote.USD.volume_24h)}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <div className="flex">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center">
                       <Plus />
                       <span>Volume/Market:</span>
                     </div>
@@ -262,9 +266,9 @@ export default function Coin({ params }: any) {
                     </span>
                   </div>
                 </div>
-                <div className="p-6 dark:bg-slate-800 rounded-lg w-half mt-8 mr-8 bg-white">
-                  <div className="flex justify-between mb-4">
-                    <div className="flex">
+                <div className="p-6 dark:bg-slate-800 rounded-lg w-full mt-8 bg-white">
+                  <div className="flex justify-between mb-4 items-center">
+                    <div className="flex items-center">
                       <Plus />
                       <span>Max Supply:</span>
                     </div>{" "}
@@ -275,8 +279,8 @@ export default function Coin({ params }: any) {
                       {coin.symbol}
                     </span>
                   </div>
-                  <div className="flex justify-between mb-4">
-                    <div className="flex">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center">
                       <Plus />
                       <span>Circulating Supply:</span>
                     </div>
@@ -286,33 +290,33 @@ export default function Coin({ params }: any) {
                   </div>
                 </div>
               </div>
-              <div className="flex">
-                <div className="p-6 dark:bg-slate-800 rounded-lg w-half mt-8 mr-8 bg-white">
-                  <div className="flex justify-between mb-4">
-                    <div className="flex">
+              <div className="flex lg:text-base text-xs lg:flex-row flex-col">
+                <div className="p-6 dark:bg-slate-800 rounded-lg w-full mt-8 mr-8 bg-white">
+                  <div className="flex justify-between mb-4 items-center">
+                    <div className="flex items-center">
                       <Plus />
                       <span>Market Cap:</span>
                     </div>
                     <span>
-                      {currencySymbol}{" "}
+                      {currencySymbol}
                       {addCommas(coin.quote?.[currency].market_cap) ||
                         addCommas(coin.quote.USD.market_cap)}
                     </span>
                   </div>
-                  <div className="flex justify-between mb-4">
-                    <div className="flex">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center">
                       <Plus />
                       <span>Fully Diluted Valuation:</span>
                     </div>
                     <span>
-                      {currencySymbol}{" "}
+                      {currencySymbol}
                       {addCommas(
                         coin.quote?.[currency].fully_diluted_market_cap
                       ) || addCommas(coin.quote.USD.fully_diluted_market_cap)}
                     </span>
                   </div>
                 </div>
-                <div className="p-6 rounded-lg w-half mt-12 mr-8"></div>
+                <div className="p-6 rounded-lg w-full mt-12"></div>
               </div>
             </div>
           )}

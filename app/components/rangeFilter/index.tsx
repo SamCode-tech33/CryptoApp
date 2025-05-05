@@ -1,4 +1,4 @@
-import { Filtericon, Arrowright, Xmark } from "../svgComps";
+import { Filtericon, Arrowright, Trashicon } from "../svgComps";
 
 export const Rangefilter = ({
   filterState,
@@ -12,12 +12,13 @@ export const Rangefilter = ({
   handleUpperValue,
   upperValue,
   handleRangeClear,
+  handleFullClear,
 }: any) => {
   return (
     <div
       className={
         filterState === currentFilterState
-          ? "p-4 rounded-sm dark:hover:bg-slate-600 absolute h-52 z-10 flex items-center flex-col -left-10 -top-2 bg-slate-300"
+          ? "p-4 rounded-sm dark:hover:bg-slate-600 absolute h-52 z-10 flex items-center flex-col -left-10 -top-2 bg-slate-300 w-40"
           : "p-2 rounded-sm dark:hover:bg-slate-800"
       }
       onMouseEnter={() => handleFilter(currentFilterState)}
@@ -50,18 +51,24 @@ export const Rangefilter = ({
           value={upperValue}
           placeholder="Upper Value"
         />
-        <div className="flex">
+        <div className="flex justify-between my-4">
           <button
-            className="dark:hover:bg-white dark:bg-gray-800 p-1 rounded-sm mt-6 dark:hover:text-black mr-4 bg-white hover:bg-gray-400"
+            className="dark:hover:bg-white dark:bg-gray-800 p-1 rounded-sm dark:hover:text-black bg-white hover:bg-gray-400 text-sm"
+            onClick={() => handleRangeClear("Price")}
+          >
+            <Trashicon />
+          </button>
+          <button
+            className="dark:hover:bg-white dark:bg-gray-800 p-1 rounded-sm dark:hover:text-black ml-1 bg-white hover:bg-gray-400"
+            onClick={handleFullClear}
+          >
+            <span className="text-sm">Clear all</span>
+          </button>
+          <button
+            className="dark:hover:bg-white dark:bg-gray-800 p-1 rounded-sm dark:hover:text-black ml-1 bg-white hover:bg-gray-400"
             onClick={handleRangeRender}
           >
             <Arrowright />
-          </button>
-          <button
-            className="dark:hover:bg-white dark:bg-gray-800 p-1 rounded-sm mt-6 dark:hover:text-black ml-4 bg-white hover:bg-gray-400"
-            onClick={() => handleRangeClear("Price")}
-          >
-            <Xmark />
           </button>
         </div>
       </form>

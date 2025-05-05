@@ -5,35 +5,31 @@ import { AppDispatch, RootState } from "@/lib/store";
 import { fetchCoins } from "@/lib/coinsSlice";
 import { changeSearch } from "@/lib/searchSlice";
 import { addCommas, Defaulticon } from "../Utility";
-import Logo from "../Logo";
 import { Currency } from "../Currency";
 import { ModeToggle } from "../themeselector";
+import { Logo } from "../svgComps";
+import { usePathname } from "next/navigation";
 
 const Navlinks = () => {
-  const [home, setHome] = useState(location.pathname);
-
+  const pathname = usePathname();
   return (
-    <div className="flex justify-between items-center px-32 bg-white py-4 dark:bg-slate-900">
-      <Link href="/" onClick={() => setHome("/coins")}>
+    <div className="flex justify-between items-center lg:px-36 md:px-16 sm:px-8 px-3 bg-white py-4 dark:bg-slate-900">
+      <Link href="/">
         <div className="flex h-4 items-center">
           <Logo />
-          <h3 className="ml-2">ZenCoin</h3>
+          <h3 className="hidden md:block md:ml-2">ZenCoin</h3>
         </div>
       </Link>
       <div className="flex justify-between items-center">
-        <Link
-          href="/"
-          className="mx-6 flex items-center"
-          onClick={() => setHome("/coins")}
-        >
+        <Link href="/" className="xl:mx-6 flex items-center sm:mx-2 mx-1">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
             className={
-              home === "/coins"
-                ? "h-6 mr-2 dark:text-white text-violet-700"
-                : "dark:text-slate-600 h-6 mr-2 text-violet-300"
+              pathname === "/" || pathname === "/coins"
+                ? "h-6 sm:mr-2 dark:text-white text-violet-700"
+                : "dark:text-slate-600 h-6 sm:mr-2 text-violet-300"
             }
           >
             <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
@@ -42,25 +38,21 @@ const Navlinks = () => {
 
           <span
             className={
-              home === "/coins"
-                ? "dark:text-white text-violet-700"
-                : "dark:text-slate-600 h-6 mr-2 text-violet-300"
+              pathname === "/" || pathname === "/coins"
+                ? "dark:text-white text-violet-700 hidden md:block"
+                : "dark:text-slate-600 text-violet-300 hidden md:block"
             }
           >
             Home
           </span>
         </Link>
-        <Link
-          href="/portfolio"
-          className="mx-6 flex"
-          onClick={() => setHome("/portfolio")}
-        >
+        <Link href="/portfolio" className="xl:mx-6 flex sm:mx-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
             className={
-              home === "/portfolio"
+              pathname === "/portfolio"
                 ? "h-6 mr-2 dark:text-white text-violet-700"
                 : "h-6 mr-2 dark:text-slate-600 text-violet-300"
             }
@@ -72,9 +64,9 @@ const Navlinks = () => {
 
           <span
             className={
-              home === "/portfolio"
-                ? "dark:text-white text-violet-700"
-                : "dark:text-slate-600 text-violet-300"
+              pathname === "/portfolio"
+                ? "dark:text-white text-violet-700 hidden md:block"
+                : "dark:text-slate-600 text-violet-300 hidden md:block"
             }
           >
             Portfolio
@@ -116,7 +108,7 @@ const Navsearch = () => {
   }, [currency]);
 
   return (
-    <div className="relative w-full max-w-xs">
+    <div className="relative xl:w-80 lg:w-52 w-40">
       <input
         type="text"
         placeholder="Search..."
@@ -124,7 +116,7 @@ const Navsearch = () => {
         onChange={handleInputChange}
         onFocus={() => setIsOpen(true)}
         onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-        className="w-full pl-10 pr-4 p-2 rounded-sm dark:bg-slate-800 text-white dark:caret-white bg-slate-300"
+        className="w-full pl-9 pr-4 p-2 rounded-sm dark:bg-slate-800 text-white dark:caret-white bg-slate-300"
       />
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -170,13 +162,20 @@ const Navsearch = () => {
                 <Link
                   href={`/coins/${coin.id}`}
                   key={coin.id}
-                  className="p-2 hover:bg-slate-400 dark:hover:bg-gray-700 rounded flex justify-between"
+                  className="p-2 hover:bg-slate-400 dark:hover:bg-gray-700 rounded flex justify-between sm:flex-row flex-col"
                   onClick={() => setIsOpen(false)}
                 >
                   <div className="flex items-center">
-                    <Defaulticon coin={coin.symbol} height="h-4" />
-                    <span>
+                    <Defaulticon
+                      coin={coin.symbol}
+                      height="h-4"
+                      margin="mr-2"
+                    />
+                    <span className="hidden sm:block">
                       {coin.name} ({coin.symbol})
+                    </span>
+                    <span className="sm:hidden block">
+                      {coin.name.split(" ")[0]}
                     </span>
                   </div>
                   <span>

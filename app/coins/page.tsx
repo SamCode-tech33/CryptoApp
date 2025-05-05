@@ -108,10 +108,10 @@ export default function Coins() {
   const isSelected = (id: string) => {
     let style = "";
     if (selectedTime === id) {
-      style = "py-1 rounded-md px-5 dark:bg-violet-800 bg-violet-300";
+      style = "py-1 rounded-md px-3 dark:bg-violet-800 bg-violet-300";
     } else {
       style =
-        "py-1 rounded-md px-5 Hover:dark:bg-violet-800 hover:bg-violet-300";
+        "py-1 rounded-md px-3 Hover:dark:bg-violet-800 hover:bg-violet-300";
     }
     return style;
   };
@@ -124,41 +124,46 @@ export default function Coins() {
   }, [symbol, selectedTime, compare, currency]);
 
   return (
-    <div className="px-16 pt-4 bg-gray-200 dark:bg-slate-950">
-      <div className="flex mx-18">
-        <div className="p-3 rounded-sm dark:bg-slate-600 w-72 bg-violet-400 text-center">
-          Coins
+    <div className="lg:px-16 md:px-12 px-2 sm:pt-4 bg-gray-200 dark:bg-slate-950">
+      <div className="flex flex-col items-end sm:justify-self-center md:w-full justify-between md:flex-row mx-2">
+        <div className="md:h-28 sm:block hidden">
+          <div className="lg:mx-20 justify-center md:justify-start sm:mx-2 flex">
+            <div className="p-3 rounded-sm dark:bg-slate-600 2xl:w-72 xl:w-64 sm:w-52 bg-violet-400 text-center">
+              Coins
+            </div>
+            <Link href="/convertor">
+              <button className="dark:bg-slate-800 p-3 rounded-sm dark:hover:bg-slate-600 2xl:w-72 xl:w-64 sm:w-52 bg-violet-300 hover:bg-violet-400">
+                Convertor
+              </button>
+            </Link>
+          </div>
         </div>
-        <Link href="/convertor">
-          <button className="dark:bg-slate-800 p-3 rounded-sm dark:hover:bg-slate-600 w-72 bg-violet-300 hover:bg-violet-400">
-            Convertor
+        <div className="lg:mx-20 justify-between flex items-center sm:justify-center md:justify-end w-full">
+          <p className="sm:hidden block">Select a crypto to view statistics.</p>
+          <button
+            onClick={handleCompare}
+            className="dark:bg-slate-800 p-3 rounded-md dark:hover:bg-slate-600 bg-violet-300 hover:bg-violet-400"
+          >
+            {isCompare ? (
+              <div className="flex items-center">
+                <Comparegraph />
+                <span>Exit Comparison</span>
+              </div>
+            ) : (
+              <div className="flex items-center">
+                <Compexit />
+                <span>Compare</span>
+              </div>
+            )}
           </button>
-        </Link>
-      </div>
-      <div className="flex justify-self-end mx-18">
-        <button
-          onClick={handleCompare}
-          className="dark:bg-slate-800 p-3 rounded-md dark:hover:bg-slate-600 bg-violet-300 hover:bg-violet-400"
-        >
-          {isCompare ? (
-            <div className="flex items-center">
-              <Comparegraph />
-              <span>Exit Comparison</span>
-            </div>
-          ) : (
-            <div className="flex items-center">
-              <Compexit />
-              <span>Compare</span>
-            </div>
-          )}
-        </button>
+        </div>
       </div>
       <Suspense fallback={<div className="loading"></div>}>
         <Slidercoin />
       </Suspense>
-      <div className="flex justify-between mx-18">
+      <div className="flex flex-col items-center justify-center xl:flex-row xl:justify-between lg:mx-20 mx-2">
         {error ? (
-          <div className="h-72 w-half dark:bg-slate-800 rounded-md flex justify-end flex-col mr-4 bg-white text-red">
+          <div className="h-72 w-full dark:bg-slate-800 rounded-md flex justify-end flex-col bg-white text-red">
             An error has occured, please check again later.
           </div>
         ) : (
@@ -177,7 +182,7 @@ export default function Coins() {
           </Suspense>
         )}
         {err ? (
-          <div className="h-72 w-half dark:bg-slate-800 rounded-md flex justify-end flex-col ml-4 bg-white text-red">
+          <div className="h-72 w-full dark:bg-slate-800 rounded-md flex justify-end flex-col bg-white text-red">
             An error has occured, please check again later.
           </div>
         ) : (
@@ -194,7 +199,7 @@ export default function Coins() {
           </Suspense>
         )}
       </div>
-      <div className="flex ml-18 mt-4 justify-between dark:bg-slate-800 px-3 py-1 rounded-md h-12 items-center w-1/4 bg-white">
+      <div className="flex lg:mx-20 mt-4 justify-between dark:bg-slate-800 p-2 rounded-md h-12 items-center lg:w-80 xl:w-96 bg-white mx-2">
         <button
           onClick={handleTime}
           id="minutes 5 288"

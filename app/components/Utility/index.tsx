@@ -34,7 +34,7 @@ const SamplePrevArrow = (props: any) => {
   return (
     <div
       onClick={onClick}
-      className="h-8 flex bg-slate-300 hover:bg-slate-400 absolute w-8 -left-8 top-1/3 items-center rounded-3xl justify-center cursor-pointer rotate-180 dark:bg-slate-700 dark:hover:bg-slate-500"
+      className="h-8 flex bg-slate-300 hover:bg-slate-400 absolute w-8 -left-8 top-6 items-center rounded-3xl justify-center cursor-pointer rotate-180 dark:bg-slate-700 dark:hover:bg-slate-500"
     >
       <Arrowright />
     </div>
@@ -46,7 +46,7 @@ const SampleNextArrow = (props: any) => {
   return (
     <div
       onClick={onClick}
-      className="h-8 flex bg-slate-300 hover:bg-slate-400 absolute w-8 left-full top-1/3 items-center rounded-3xl justify-center cursor-pointer dark:bg-slate-700 dark:hover:bg-slate-500"
+      className="h-8 flex bg-slate-300 hover:bg-slate-400 absolute w-8 left-full top-6 items-center rounded-3xl justify-center cursor-pointer dark:bg-slate-700 dark:hover:bg-slate-500"
     >
       <Arrowright />
     </div>
@@ -56,6 +56,7 @@ const SampleNextArrow = (props: any) => {
 export const sliderSettings = {
   dots: false,
   infinite: false,
+  adaptiveHeight: true,
   speed: 800,
   slidesToShow: 6,
   slidesToScroll: 6,
@@ -63,27 +64,45 @@ export const sliderSettings = {
   prevArrow: <SamplePrevArrow />,
   responsive: [
     {
-      breakpoint: 1024,
+      breakpoint: 1900,
       settings: {
-        slidesToShow: 4,
-        slidesToScroll: 4,
+        slidesToShow: 5,
+        slidesToScroll: 5,
         infinite: false,
         dots: false,
       },
     },
     {
-      breakpoint: 600,
+      breakpoint: 1615,
       settings: {
-        slidesToShow: 2,
-        slidesToScroll: 2,
-        initialSlide: 2,
+        slidesToShow: 4,
+        slidesToScroll: 4,
+        initialSlide: 4,
       },
     },
     {
-      breakpoint: 480,
+      breakpoint: 1340,
       settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1,
+        slidesToShow: 3,
+        slidesToScroll: 3,
+      },
+    },
+    {
+      breakpoint: 768,
+      settings: {
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        arrows: false,
+        touchMove: true,
+      },
+    },
+    {
+      breakpoint: 640,
+      settings: {
+        slidesToShow: 4,
+        slidesToScroll: 4,
+        arrows: false,
+        touchMove: true,
       },
     },
   ],
@@ -96,7 +115,7 @@ export const Updownarrow = ({ coin }: { coin: any }) => {
       fill={coin > 0 ? "#11D861" : "#E9190F"}
       viewBox="0 0 24 24"
       stroke={coin > 0 ? "#11D861" : "#E9190F"}
-      className="h-4 mr-1"
+      className="h-3 mr-0.5"
     >
       <path
         d={
@@ -135,14 +154,22 @@ export const Plus = () => {
   );
 };
 
-export const Defaulticon = ({ coin, height }: { coin: any; height: any }) => {
+export const Defaulticon = ({
+  coin,
+  height,
+  margin,
+}: {
+  coin: any;
+  height: any;
+  margin: any;
+}) => {
   return (
     <img
       id="currentPhoto"
       src={`https://assets.coincap.io/assets/icons/${coin.toLowerCase()}@2x.png`}
       alt=""
       onError={handleImageError}
-      className={`${height} mr-2`}
+      className={`${height} ${margin}`}
     />
   );
 };
@@ -161,10 +188,20 @@ export const CustomTooltip = ({
   if (active && payload && payload.length) {
     const valueProper = payload[0].payload.valueProper;
     const valueCompProper = payload[0].payload.valueCompProper;
-    const name = payload[0].payload.name;
+    const name = payload[0].payload.name.split(" ");
+    const date = (
+      name[1] +
+      " " +
+      name[2] +
+      ", " +
+      name[3] +
+      " " +
+      name[4]
+    ).split(":");
+    const formattedDate = date[0] + ":" + date[1];
     return (
-      <div className="text-violet-500 text-2xl mt-3 flex flex-col items-end">
-        <p>{name}</p>
+      <div className="text-violet-500 mt-3 flex flex-col items-end text-sm dark:bg-slate-700/50 p-1 rounded-md -z-10 bg-slate-300/50">
+        <p>{formattedDate}</p>
         <p>
           {onConverter ? (
             <span>
@@ -205,10 +242,11 @@ export const CustomToolTipMini = ({ active, payload }: any) => {
     const valueProper = payload[0].payload.valueProper;
     const name = formatDate(payload[0].payload.name);
     return (
-      <div className="dark:text-white text-sm mt-2 flex flex-col items-end">
+      <div className="dark:text-white text-xs md:flex flex-col items-end z-10 dark:bg-slate-600 bg-violet-300 rounded-md py-1 px-2 hidden">
         <p>{name}</p>
         <p>
-          {currencySymbol} {valueProper}
+          {currencySymbol}
+          {valueProper}
         </p>
       </div>
     );
@@ -279,10 +317,7 @@ export function getGraphData(
   return { max, min, coinHist };
 }
 
-export function getGraphComparison(
-  pdata: any,
-  pdataComp: any,
-) {
+export function getGraphComparison(pdata: any, pdataComp: any) {
   const histCompare = pdata.coinHist.map((data: any, index: number) => {
     if (pdataComp.coinHist.length) {
       let valueComp = 0;

@@ -44,7 +44,7 @@ export default function Slidercoin() {
       {error ? (
         <p>The following {error} occured, please try again later...</p>
       ) : (
-        <div className="my-6 mx-16 relative">
+        <div className="lg-mx-22 relative my-4">
           <Slider {...sliderSettings}>
             {loading && <div className="loading"></div>}
             {data
@@ -63,40 +63,43 @@ export default function Slidercoin() {
                 }
                 const coinPrice = addCommas(coinQuote.price);
                 return (
-                  <div
-                    key={coin.id}
-                    id={coin.symbol}
-                    className="h-24 rounded-md"
-                    onClick={handleClick}
-                  >
+                  <div key={coin.id} id={coin.symbol} onClick={handleClick}>
                     <div
                       className={
                         coin.symbol === symbol || coin.symbol === compare
-                          ? "h-24 dark:bg-slate-600 rounded-md mx-2 flex justify-left items-center bg-violet-300"
-                          : "h-24 dark:bg-slate-800 dark:hover:bg-slate-600 rounded-md mx-2 flex justify-left items-center cursor-pointer bg-white hover:bg-violet-300"
+                          ? "py-3 px-1.5 sm:px-3 sm:p-2 md:p-4 dark:bg-slate-600 rounded-md flex mx-2 justify-between xl:justify-start items-center bg-violet-300"
+                          : "py-3 px-1.5 sm:px-3 sm:p-2 md:p-4 dark:bg-slate-800 dark:hover:bg-slate-600 rounded-md mx-2 flex justify-between xl:justify-start items-center cursor-pointer bg-white hover:bg-violet-300"
                       }
                     >
-                      <div className="ml-4"></div>
-                      <Defaulticon coin={coin.symbol} height="h-8" />
-                      <div>
-                        <div>
+                      <div className="flex items-center xl:mr-4">
+                        <Defaulticon coin={coin.symbol} height="sm:h-8 h-4" margin="mr-2" />
+                        <span className="block xl:hidden text-sm sm:text-base">
+                          {coin.symbol}
+                        </span>
+                      </div>
+                      <div className="hidden sm:block">
+                        <div className="xl:block hidden">
                           <span>{coin.name}</span>
                           <span> ({coin.symbol})</span>
                         </div>
-                        <div className="flex">
-                          <span className="mr-2">
-                            {currencySymbol} {coinPrice}
-                          </span>
-                          <Updownarrow coin={coinQuote.percent_change_1h} />
-                          <span
-                            className={
-                              coinQuote.percent_change_1h > 0
-                                ? "text-green-500"
-                                : "text-red-600"
-                            }
-                          >
-                            {Math.abs(coinQuote.percent_change_1h.toFixed(2))}%
-                          </span>
+                        <div className="xl:flex">
+                          <div className="xl:mr-2 text-sm sm:text-base">
+                            {currencySymbol}
+                            {coinPrice}
+                          </div>
+                          <div className="flex justify-end">
+                            <Updownarrow coin={coinQuote.percent_change_1h} />
+                            <span
+                              className={
+                                coinQuote.percent_change_1h > 0
+                                  ? "text-green-500 text-sm sm:text-base"
+                                  : "text-red-600 text-sm sm:text-base"
+                              }
+                            >
+                              {Math.abs(coinQuote.percent_change_1h.toFixed(2))}
+                              %
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>

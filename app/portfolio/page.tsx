@@ -8,6 +8,7 @@ import {
   Sellicon,
   Trashicon,
   Bankicon,
+  Plusicon,
 } from "../components/svgComps";
 import { addCommas, Defaulticon } from "../components/Utility";
 import { useSelector, useDispatch } from "react-redux";
@@ -99,7 +100,8 @@ export default function Portfolio() {
           const newValue = {
             ...asset,
             currencyAmount:
-              (data.Data.Data[1].low + data.Data.Data[1].high) / 2,
+              ((data.Data.Data[1].low + data.Data.Data[1].high) / 2) *
+              asset.coinAmount,
           };
           return newValue;
         })
@@ -257,29 +259,32 @@ export default function Portfolio() {
     if (portfolio.length) {
       currencyChange();
     }
-    dispatch(fetchCoins({ start: 1, limit: 400, convert: currency }));
+    dispatch(fetchCoins({ start: 1, limit: 200, convert: currency }));
+    setBuyWith(currency);
   }, [currency]);
 
   useEffect(() => {
     getCoinPriceOnDate();
-  }, [coinSymbol, dateUnix]);
+  }, [coinSymbol, dateUnix, currency]);
 
   useEffect(() => {
     handlePurchase();
   }, [coinPrice]);
 
   return (
-    <div className="bg-gray-200 pt-1 dark:bg-slate-950">
+    <div className="bg-gray-200 sm:pt-1 dark:bg-slate-950 port-height">
       <Notification
         noti={noti}
         message={errNoti ? `Error: ${notiMessage}` : `Success: ${notiMessage}`}
         error={errNoti}
       />
-      <div className="mb-8 mt-16">
-        <div className="mx-32 flex justify-between">
-          <h1 className="text-3xl">Portfolio</h1>
+      <div className="sm:mb-8 sm:mt-4">
+        <div className="lg:mx-32 md:mx-16 mx-4 flex justify-between items-center">
+          <h1 className="lg:text-3xl md:text-2xl sm:text-xl sm:block hidden">
+            Portfolio
+          </h1>
           <button
-            className="rounded-lg dark:bg-slate-800 px-16 py-3 dark:hover:bg-slate-600 bg-violet-300 hover:bg-violet-400"
+            className="rounded-lg dark:bg-slate-800 lg:px-16 md:px-12 md:py-3 sm:py-2 sm:px-8 dark:hover:bg-slate-600 bg-violet-300 hover:bg-violet-400 sm:block hidden"
             onClick={() => setIsAddingAsset(!isAddingAsset)}
           >
             Add Asset
@@ -289,78 +294,92 @@ export default function Portfolio() {
       <div
         className={
           isAddingAsset
-            ? "absolute dark:bg-black w-1/2 h-2/5 left-1/4 top-1/3 rounded-md border dark:border-white border-black z-10 bg-white"
+            ? "absolute dark:bg-black w-2/3 h-1/2 left-add-asset top-1/4 rounded-md border dark:border-white border-black z-10 bg-white"
             : "hidden"
         }
       >
-        <div className="flex justify-between mx-16 mt-8">
-          <p className="text-3xl">Purchase Crypto:</p>
+        <div className="flex justify-between lg:mx-16 mx-4 mt-10 items-start">
+          <p className="xl:text-2xl text-base">Purchase Crypto:</p>
           <p
             className={
-              purchaseAmountChosen ? "ml-6 text-3xl text-green-500" : "hidden"
+              purchaseAmountChosen
+                ? "ml-6 text-green-500 xl:text-2xl lg:text-base text-sm"
+                : "hidden"
             }
           >
-            {assetHeader
-              .split(" ")
-              .join(` ${coinSymbol} - - ${currencySymbol}`)}
+            {assetHeader.split(" ").join(` ${coinSymbol} - ${currencySymbol}`)}
           </p>
           <p
             className={
               noPurchase && assetHeader === ""
-                ? "ml-6 text-lg text-red-500"
+                ? "ml-6 text-red-500 xl:text-lg lg:text-base sm:text-sm text-xs"
                 : "hidden"
             }
           >
-            Choose purchase amount before continuing
+            Choose purchase amount before continuing.
           </p>
           <p
             className={
               noPurchase && assetHeader !== ""
-                ? "ml-6 text-lg text-red-500"
+                ? "ml-6 text-red-500 xl:text-lg lg:text-base sm:text-sm text-xs"
                 : "hidden"
             }
           >
-            Not enough funds
+            Not enough funds.
           </p>
           <p
             className={
-              purchaseNotNumber ? "ml-6 text-lg text-red-500" : "hidden"
+              purchaseNotNumber
+                ? "ml-6 text-red-500 xl:text-lg lg:text-base sm:text-sm text-xs"
+                : "hidden"
             }
           >
-            Purchase amount must be a number and greater than 0
+            Amount must be a number and greater than 0.
           </p>
           <button
-            className="p-1 border border-white rounded-full hover:text-black hover:bg-white"
+            className="2xl:p-1 border border-white rounded-full hover:text-black hover:bg-white sm:block hidden"
             onClick={() => setIsAddingAsset(false)}
           >
             <Xmark />
           </button>
         </div>
-        <div className="flex justify-between mx-16 h-full mt-8">
-          <div className="h-3/5 dark:bg-slate-800  bg-violet-300  w-1/3 rounded-md mr-16 flex flex-col items-center justify-around">
-            <div className="mt-10">
-              <Defaulticon coin={coinSymbol} height="h-16" />
+        <div className="flex justify-between lg:mx-16 mx-4 lg:items-center mt-8 items-start">
+          <div className="dark:bg-slate-800  bg-violet-300 md:w-1/4 w-1/3 rounded-md flex flex-col items-center justify-around xl:py-12 sm:py-8 py-6">
+            <div className="mb-4">
+              <Defaulticon
+                coin={coinSymbol}
+                height="2xl:h-10 xl:h-8 lg:h-6 h-4"
+                margin="mr-0"
+              />
             </div>
-            {coinSymbol !== "" ? (
-              <span className="text-3xl">
-                {coinName} ({coinSymbol})
-              </span>
-            ) : (
-              <span className="text-lg">Select Crypto-Currency</span>
-            )}
+            <div className="flex flex-col items-center">
+              <div className="2xl:text-xl xl:text-base lg:text-sm text-xs sm:block hidden">
+                {coinName}
+              </div>
+              <div className="2xl:text-xl xl:text-base lg:text-sm text-xs">
+                {coinSymbol}
+              </div>
+            </div>
           </div>
-          <div className="h-3/5 w-2/3 rounded-md ml-16 relative">
+          <div className="h-3/5 w-3/5 rounded-md relative">
             <div
-              className="flex items-center justify-between dark:bg-slate-800 p-2 rounded-md cursor-pointer dark:hover:bg-slate-600 bg-violet-300 hover:bg-violet-400"
+              className="flex items-center sm:justify-between justify-center dark:bg-slate-800 p-2 rounded-md cursor-pointer dark:hover:bg-slate-600 bg-violet-300 hover:bg-violet-400"
               onClick={() => {
                 setIsCoinSelect(!isCoinSelect);
                 setIsPurchaseSelect(false);
               }}
             >
               <div className="flex items-center">
-                <Defaulticon coin={coinSymbol} height="h-8" />
-                <span className="ml-2">
+                <Defaulticon
+                  coin={coinSymbol}
+                  height="xl:h-8 lg:h-6 h-4"
+                  margin="mr-2"
+                />
+                <span className="ml-2 xl:text-base lg:text-sm text-xs sm:block hidden">
                   {coinName} ({coinSymbol})
+                </span>
+                <span className="ml-2 xl:text-base lg:text-sm text-xs sm:hidden block">
+                  {coinSymbol}
                 </span>
               </div>
               <Uparrow isOpen={isCoinSelect} />
@@ -388,8 +407,8 @@ export default function Portfolio() {
                   .map((coin) => {
                     return (
                       <div
-                        key={coin.symbol + coin.id}
-                        className="p-3 dark:hover:bg-slate-600 cursor-pointer flex justify-between hover:bg-slate-400"
+                        key={coin.symbol + Math.random() * 1}
+                        className="p-3 dark:hover:bg-slate-600 cursor-pointer flex justify-between hover:bg-slate-400 md:flex-row flex-col sm:text-base text-sm"
                         onClick={() => {
                           setCoinSymbol(coin.symbol);
                           setCoinName(coin.name);
@@ -398,59 +417,83 @@ export default function Portfolio() {
                         }}
                       >
                         <div className="flex items-center">
-                          <Defaulticon coin={coin.symbol} height="h-6" />
-                          <span>
+                          <Defaulticon
+                            coin={coin.symbol}
+                            height="lg:h-6 h-4"
+                            margin="mr-2"
+                          />
+                          <span className="hidden lg:block">
                             {coin.name} ({coin.symbol})
+                          </span>
+                          <span className="block lg:hidden">
+                            {coin.name.split(" ")[0]}
                           </span>
                         </div>
                         <span>
-                          {currencySymbol} {addCommas(coinPrice)}
+                          {currencySymbol}
+                          {addCommas(coinPrice)}
                         </span>
                       </div>
                     );
                   })}
             </div>
             <div
-              className="flex items-center justify-between dark:bg-slate-800 p-2 rounded-md cursor-pointer dark:hover:bg-slate-600 mt-4 bg-violet-300 hover:bg-violet-400"
+              className="flex items-center sm:justify-between justify-center dark:bg-slate-800 p-2 rounded-md cursor-pointer dark:hover:bg-slate-600 mt-4 bg-violet-300 hover:bg-violet-400"
               onClick={() => {
                 setIsPurchaseSelect(!isPurchaseSelect);
                 setIsCoinSelect(false);
               }}
             >
-              <span className="ml-2">{purchaseHeader}</span>
+              <span className="ml-2 xl:text-base lg:text-sm text-xs md:block hidden">
+                {purchaseHeader}
+              </span>
+              {assetHeader ? (
+                <span className="ml-2 xl:text-base lg:text-sm text-xs md:hidden block">
+                  {assetHeader.split(" ")[0] + " " + coinSymbol}
+                </span>
+              ) : (
+                <span className="ml-2 xl:text-base lg:text-sm text-xs md:hidden block">
+                  Amount
+                </span>
+              )}
               <Uparrow isOpen={isPurchaseSelect} />
             </div>
             <div
               className={
                 isPurchaseSelect && coinSymbol !== ""
-                  ? "border absolute z-10 dark:bg-slate-900 h-32 w-full flex flex-col justify-around bg-slate-300"
+                  ? "border absolute z-10 dark:bg-slate-900 md:h-32 h-64 w-full flex flex-col justify-around bg-slate-300"
                   : "hidden"
               }
             >
-              <div className="flex items-center justify-between">
+              <div className="flex md:items-center items-start justify-between md:flex-row flex-col ml-4">
                 <input
                   type="text"
                   value={purchaseAmount}
                   placeholder="Purchase Amount. . ."
-                  className="w-1/2 p-2 rounded-sm dark:bg-slate-700 dark:text-white dark:caret-white ml-4 text-left"
+                  className="w-1/2 p-2 rounded-sm dark:bg-slate-700 dark:text-white dark:caret-white text-left md:block hidden"
                   onChange={(e) => setPurchaseAmount(e.target.value)}
                 />
-                <button
-                  className="flex items-center dark:bg-slate-700 dark:hover:bg-slate-600 rounded-md p-2 bg-white hover:bg-violet-300"
+                <input
+                  type="text"
+                  value={purchaseAmount}
+                  placeholder="#. . ."
+                  className="w-2/3 p-2 rounded-sm dark:bg-slate-700 dark:text-white dark:caret-white text-left block md:hidden"
+                  onChange={(e) => setPurchaseAmount(e.target.value)}
+                />
+                <div
+                  className="sm:w-20 w-2/3 flex items-center justify-between dark:bg-slate-700 dark:hover:bg-slate-600 rounded-md p-2 bg-white hover:bg-violet-300 mt-4 md:mt-0 relative cursor-pointer"
                   onClick={() => setIsBuyWithSelect(!isBuyWithSelect)}
                 >
-                  <span>{buyWith}</span> <Uparrow isOpen={isBuyWithSelect} />{" "}
-                </button>
-                <div className="relative">
+                  <span>{buyWith}</span> <Uparrow isOpen={isBuyWithSelect} />
                   <div
                     className={
                       isBuyWithSelect
-                        ? "absolute z-10 dark:bg-slate-800 -left-26 top-5 flex flex-col w-16 bg-white"
+                        ? "absolute z-10 dark:bg-slate-800 flex flex-col w-full bg-white buy-with-abs rounded-md"
                         : "hidden"
                     }
                   >
                     <button
-                      className="p-2 dark:hover:bg-slate-600 hover:bg-violet-300"
+                      className="p-2 dark:hover:bg-slate-600 hover:bg-violet-300 rounded-md"
                       onClick={() => {
                         setBuyWith(currency);
                         setIsBuyWithSelect(false);
@@ -459,7 +502,7 @@ export default function Portfolio() {
                       {currency}
                     </button>
                     <button
-                      className=" p-2 dark:hover:bg-slate-600 hover:bg-violet-300"
+                      className=" p-2 dark:hover:bg-slate-600 hover:bg-violet-300 rounded-md"
                       onClick={() => {
                         setBuyWith(coinSymbol);
                         setIsBuyWithSelect(false);
@@ -470,24 +513,25 @@ export default function Portfolio() {
                   </div>
                 </div>
                 <button
-                  className="dark:bg-slate-700 p-2 rounded-lg mr-4 dark:hover:bg-slate-500 bg-white hover:bg-violet-300"
+                  className="sm:w-16 w-2/3 dark:bg-slate-700 p-2 rounded-lg mr-4 dark:hover:bg-slate-500 bg-white hover:bg-violet-300 mt-4 md:mt-0 flex justify-center"
                   onClick={() => handlePurchase()}
                 >
                   <Arrowright />
                 </button>
               </div>
-              <div className="flex items-center mx-6 justify-between">
+              <div className="flex items-center mx-6 justify-between md:flex-row flex-col sm:text-base text-xs">
                 {buyWith === currency ? (
                   <div className="flex">
                     <span className="mr-1">{currency}: </span>
                     <span>
-                      {currencySymbol} {addCommas(Number(purchaseAmount))}
+                      {currencySymbol}
+                      {addCommas(Number(purchaseAmount))}
                     </span>
                   </div>
                 ) : (
                   <div className="flex">
                     <span className="mr-1">{coinSymbol}: </span>
-                    <span>{addCommas(Number(purchaseAmount))}</span>
+                    <span>{purchaseAmount}</span>
                   </div>
                 )}
                 {buyWith === currency ? (
@@ -501,15 +545,17 @@ export default function Portfolio() {
                   <div className="flex">
                     <span className="mr-1">{currency}: </span>
                     <span>
-                      {currencySymbol}{" "}
+                      {currencySymbol}
                       {addCommas(Number(purchaseAmount) * coinPrice)}
                     </span>
                   </div>
                 )}
               </div>
             </div>
-            <div className="flex items-center justify-between dark:bg-slate-800 p-2 rounded-md cursor-pointer mt-4 bg-violet-300 hover:bg-violet-400">
-              <span className="ml-2">Purchase Date</span>
+            <div className="flex items-center sm:justify-between justify-center dark:bg-slate-800 p-2 rounded-md cursor-pointer mt-4 bg-violet-300 hover:bg-violet-400">
+              <span className="ml-2 xl:text-base lg:text-sm text-xs sm:block hidden">
+                Purchase Date
+              </span>
               <div className="relative">
                 <DatePicker
                   selected={startDate}
@@ -528,15 +574,23 @@ export default function Portfolio() {
                 />
               </div>
             </div>
-            <div className="flex justify-between mt-5">
+            <div className="flex sm:justify-between justify-center sm:flex-row flex-col">
               <button
-                className="dark:bg-slate-800 w-56 p-3 rounded-md dark:hover:bg-slate-600 bg-violet-300 hover:bg-violet-400"
+                className="dark:bg-teal-800 lg:p-3 sm:p-2 p-1 mt-4 sm:w-56 rounded-md dark:hover:bg-teal-600 bg-teal-400 hover:bg-teal-500 xl:text-sm text-xs sm:hidden block"
+                onClick={() =>
+                  handlePortfolio(coinSymbol, assetHeader, dateUnix)
+                }
+              >
+                Save & Buy
+              </button>
+              <button
+                className="dark:bg-slate-800 lg:p-3 sm:p-2 p-1 mt-4 sm:w-56 rounded-md dark:hover:bg-slate-600 bg-violet-300 hover:bg-violet-400 xl:text-sm text-xs"
                 onClick={() => setIsAddingAsset(false)}
               >
                 Cancel
               </button>
               <button
-                className="dark:bg-teal-800 w-56 p-3 rounded-md dark:hover:bg-teal-600 bg-teal-400 hover:bg-teal-500"
+                className="dark:bg-teal-800 lg:p-3 sm:p-2 mt-4 p-1 sm:w-56 rounded-md dark:hover:bg-teal-600 bg-teal-400 hover:bg-teal-500 xl:text-sm text-xs hidden sm:block"
                 onClick={() =>
                   handlePortfolio(coinSymbol, assetHeader, dateUnix)
                 }
@@ -547,113 +601,132 @@ export default function Portfolio() {
           </div>
         </div>
       </div>
-      <div className="dark:bg-slate-800 rounded-lg mb-6 flex justify-between p-5 mx-32 items-center bg-white">
-        <div className=" dark:bg-slate-600 w-48 rounded-md flex flex-col items-center bg-violet-300">
+      <div className="dark:bg-slate-800 rounded-lg mb-4 flex justify-between p-5 lg:mx-32 md:mx-16 mx-4 items-center bg-white relative">
+        <div className=" dark:bg-slate-600 rounded-md lg:flex flex-col items-center bg-violet-200 mr-4 w-72 hidden">
           <div className="my-4">
             <Bankicon />
           </div>
           <span className="text-xl mb-4">Bank</span>
         </div>
-        <div className="flex flex-col items-center">
-          <span className="mb-2 underline">Total Bank Funds</span>
-          <span className="mt-2">
-            {currencySymbol}
-            {addCommas(totalFunds)}
-          </span>
+        <div className=" absolute lg:hidden bank-abs">
+          <Bankicon />
         </div>
-        <div className="flex flex-col items-center">
-          <span className="mb-2 underline">Total Crypto-Asset Value</span>
-          <span className="mt-2">
-            {currencySymbol}
-            {addCommas(assetValue)}
-          </span>
-        </div>
-        <div className="flex flex-col items-center">
-          <span className="mb-2 underline">Total Wealth</span>
-          <span className="mt-2">
-            {currencySymbol}
-            {addCommas(totalFunds + assetValue)}
-          </span>
-        </div>
-        <div>
-          <div
-            className="flex items-center justify-between dark:bg-slate-600 p-4 rounded-md cursor-pointer dark:hover:bg-slate-400 bg-violet-300 hover:bg-violet-400"
-            onClick={() => {
-              setIsCoinAssetsSelect(!isCoinAssetsSelect);
-            }}
-          >
-            <div className="flex items-center">
-              <span className="ml-2">Coins Owned</span>
+        <div className="flex lg:flex-row justify-between flex-col-reverse w-full items-center">
+          <div className="flex w-full justify-between lg:mt-0 mt-4">
+            <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 rounded-md mr-4 w-1/2 p-2 md:text-sm text-xs">
+              <span className="md:underline opacity-50 md:opacity-100 my-2">
+                Bank Funds
+              </span>
+              <span>
+                {currencySymbol}
+                {addCommas(totalFunds)}
+              </span>
             </div>
-            <Uparrow isOpen={isCoinAssetsSelect} />
+            <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 rounded-md mr-4 w-1/2 p-2 md:text-sm text-xs">
+              <span className="md:underline opacity-50 md:opacity-100 my-2">
+                Crypto-Asset Value
+              </span>
+              <span>
+                {currencySymbol}
+                {addCommas(assetValue)}
+              </span>
+            </div>
+            <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 rounded-md mr-4 w-1/2 p-2 md:text-sm text-xs">
+              <span className="md:underline opacity-50 md:opacity-100 my-2">
+                Total Wealth
+              </span>
+              <span>
+                {currencySymbol}
+                {addCommas(totalFunds + assetValue)}
+              </span>
+            </div>
           </div>
-          {isCoinAssetsSelect && (
-            <div className="border absolute z-10 dark:bg-slate-900 overflow-y-scroll h-80 border-black dark:border-white bg-slate-300">
-              <input
-                type="text"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => setAssetSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 p-2 rounded-sm dark:bg-slate-600 text-white dark:caret-white border-black border"
-              />
-              {portfolio.length &&
-                portfolio
-                  .filter((asset) =>
-                    asset.coinName
-                      .toLowerCase()
-                      .includes(assetSearchTerm.toLowerCase())
-                  )
-                  .map((asset) => {
-                    return (
-                      <div
-                        key={asset.date + asset.coinSymbol}
-                        className="p-3 dark:hover:bg-slate-600 cursor-pointer flex justify-between hover:bg-slate-400"
-                      >
-                        <div className="flex items-center">
-                          <Defaulticon coin={asset.coinSymbol} height="h-4" />
-                          <span>
-                            ({asset.coinSymbol}) - {asset.coinAmount}
-                          </span>
-                        </div>
-                        <span>
-                          {currencySymbol}
-                          {addCommas(asset.currencyAmount)}
-                        </span>
-                      </div>
-                    );
-                  })}
-            </div>
-          )}
-        </div>
-        <div>
-          {!openFundsAdd ? (
-            <button
-              className="flex items-center dark:bg-slate-600 dark:hover:bg-slate-400 p-4 rounded-md mr-4 bg-violet-300 hover:bg-violet-400"
-              onClick={() => setOpenFundsAdd(true)}
-            >
-              <span className="mr-3">Add Funds</span>
-              <Sellicon />
-            </button>
-          ) : (
-            <div className="p-4 dark:bg-slate-900 flex w-64 rounded-md bg-slate-300">
-              <input
-                type="text"
-                placeholder="Add Funds..."
-                value={addFundsAmount}
-                onChange={(e) => setAddFundsAmount(e.target.value)}
-                className="w-full p-2 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white"
-              />
-              <button
-                onClick={handleAddFunds}
-                className="p-2 ml-3 rounded-md dark:bg-slate-600"
+          <div className="lg:w-2/3 flex lg:justify-end w-full lg:text-base text-xs mx-4">
+            <div>
+              <div
+                className="w-full lg:w-full flex items-center justify-between dark:bg-slate-600 py-4 px-2 sm:px-4 rounded-md cursor-pointer dark:hover:bg-slate-400 bg-violet-300 hover:bg-violet-400"
+                onClick={() => {
+                  setIsCoinAssetsSelect(!isCoinAssetsSelect);
+                }}
               >
-                <Arrowright />
-              </button>
+                <div className="flex">
+                  <span>Coins Owned</span>
+                </div>
+                <Uparrow isOpen={isCoinAssetsSelect} />
+              </div>
+              {isCoinAssetsSelect && (
+                <div className="border absolute z-10 dark:bg-slate-900 overflow-y-scroll h-80 border-black dark:border-white bg-slate-300">
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => setAssetSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 p-2 rounded-sm dark:bg-slate-600 text-white dark:caret-white border-black border"
+                  />
+                  {portfolio.length &&
+                    portfolio
+                      .filter((asset) =>
+                        asset.coinName
+                          .toLowerCase()
+                          .includes(assetSearchTerm.toLowerCase())
+                      )
+                      .map((asset) => {
+                        return (
+                          <div
+                            key={asset.date + asset.coinSymbol}
+                            className="p-3 dark:hover:bg-slate-600 cursor-pointer flex justify-between hover:bg-slate-400 lg:flex-row flex-col"
+                          >
+                            <div className="flex items-center">
+                              <Defaulticon
+                                coin={asset.coinSymbol}
+                                height="h-4"
+                                margin="mr-2"
+                              />
+                              <span>
+                                {asset.coinSymbol} - {asset.coinAmount}
+                              </span>
+                            </div>
+                            <span className="ml-6">
+                              {currencySymbol}
+                              {addCommas(asset.currencyAmount)}
+                            </span>
+                          </div>
+                        );
+                      })}
+                </div>
+              )}
             </div>
-          )}
+            <div>
+              {!openFundsAdd ? (
+                <button
+                  className="flex sm:w-full w-2/3 mx-4 justify-between items-center dark:bg-slate-600 dark:hover:bg-slate-400 sm:p-4 p-2 rounded-md bg-violet-300 hover:bg-violet-400"
+                  onClick={() => setOpenFundsAdd(true)}
+                >
+                  <span>Add Funds</span>
+                  <Sellicon />
+                </button>
+              ) : (
+                <div className="p-4 dark:bg-slate-900 flex w-64 rounded-md bg-slate-300 relative z-10">
+                  <input
+                    type="text"
+                    placeholder="Add Funds..."
+                    value={addFundsAmount}
+                    onChange={(e) => setAddFundsAmount(e.target.value)}
+                    className="w-full p-2 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white"
+                  />
+                  <button
+                    onClick={handleAddFunds}
+                    className="p-2 ml-3 rounded-md dark:bg-slate-600"
+                  >
+                    <Arrowright />
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-      <div className="flex flex-col mx-32">
+      <div className="flex flex-col lg:mx-32 md:mx-16 mx-4">
         {loading && <div className="loading"></div>}
         {data.length &&
           portfolio.map((asset) => {
@@ -663,32 +736,53 @@ export default function Portfolio() {
             const capToVol = (
               (coinQuote.volume_24h / coinQuote.market_cap) *
               100
-            ).toFixed(3);
+            ).toFixed(1);
             const circToMax = coin.circulating_supply / coin.max_supply;
             const priceChange24 =
               (coinQuote.percent_change_24h / 100) * coinQuote.price;
+            let coinMax = coin.max_supply;
+            if (coin.max_supply === null) {
+              coinMax = "∞";
+            }
             return (
               <div
                 className="dark:bg-slate-800 rounded-lg mb-6 flex justify-between p-5 relative bg-white"
                 key={asset.coinSymbol}
               >
-                <div className=" dark:bg-slate-600 w-72 rounded-md flex flex-col items-center justify-center bg-violet-300">
-                  <div className="mb-12">
-                    <Defaulticon coin={asset.coinSymbol} height="h-16" />
+                <div className=" dark:bg-slate-700 w-72 rounded-md flex-col items-center justify-center bg-violet-200 hidden lg:flex">
+                  <div className="mb-16">
+                    <Defaulticon
+                      coin={asset.coinSymbol}
+                      height="h-16"
+                      margin="mr-0"
+                    />
                   </div>
-                  {coinSymbol !== "" ? (
-                    <span className="text-3xl">
-                      {asset.coinName} ({asset.coinSymbol})
-                    </span>
-                  ) : (
-                    <span className="text-lg">Select Crypto-Currency</span>
-                  )}
+                  <span className="xl:text-3xl mt-4">
+                    {asset.coinName} {asset.coinSymbol}
+                  </span>
                 </div>
-                <div className="flex flex-col w-3/4">
-                  <div className="flex flex-col mx-8 border-b-2 border-gray-400 pb-6">
+                <div className="lg:hidden absolute left-emblem">
+                  <Defaulticon
+                    coin={asset.coinSymbol}
+                    height="h-10"
+                    margin="mr-0"
+                  />
+                </div>
+                <div className="flex flex-col w-full">
+                  <div className="flex flex-col mx-0 lg:mx-4 border-b-2 border-gray-400 pb-6 2xl:text-base text-sm w-full">
                     <div className="flex justify-between mb-4">
-                      <h1 className="text-2xl">Market Price</h1>
-                      <div>
+                      <div className="text-2xl md:block hidden">
+                        <div>Market Price</div>
+                        <div className="text-xs">Purchased {asset.date}</div>
+                      </div>
+                      <div className="text-xs block md:hidden">
+                        <div>
+                          {asset.coinName} ({asset.coinSymbol})
+                        </div>
+                        <div className="opacity-50">Purchased</div>
+                        <div className="opacity-50">{asset.date}</div>
+                      </div>
+                      <div className="mr-12 sm:mr-20 lg:mr-5">
                         {isSelling && (
                           <div className="absolute z-10 dark:bg-slate-900 p-3 rounded-md left-1/2 top-1/3 flex flex-col items-center bg-slate-300">
                             <span>Amount to sell?</span>
@@ -819,121 +913,164 @@ export default function Portfolio() {
                           </div>
                         )}
                         <button
-                          className="p-2 dark:bg-slate-600 rounded-md dark:hover:bg-slate-400 mr-2 bg-violet-300 hover:bg-violet-400"
+                          className="p-2 dark:bg-slate-600 rounded-md dark:hover:bg-slate-400 lg:mr-2 mr-0.5 bg-violet-300 hover:bg-violet-400"
                           onClick={() => setIsSelling(!isSelling)}
                         >
                           <Sellicon />
                         </button>
                         <button
-                          className="p-2 dark:bg-slate-600 rounded-md dark:hover:bg-slate-400 ml-2 bg-violet-300 hover:bg-violet-400"
+                          className="p-2 dark:bg-slate-600 rounded-md dark:hover:bg-slate-400 lg:ml-2 ml-0.5 bg-violet-300 hover:bg-violet-400"
                           onClick={() => setIsDeleting(!isDeleting)}
                         >
                           <Trashicon />
                         </button>
                       </div>
                     </div>
-                    <div className="flex justify-between">
-                      <div className="flex flex-col items-center">
-                        <span className="mb-2 underline">Current Price</span>
-                        <span>
-                          {currencySymbol} {addCommas(coinQuote.price)}
-                        </span>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <span className="mb-2 underline">Price Change 24h</span>
-                        <div className="flex items-center">
-                          <Updownarrow coin={priceChange24} />
-                          <span
-                            className={
-                              priceChange24 >= 0
-                                ? "text-green-500"
-                                : "text-red-500"
-                            }
-                          >
+                    <div className="flex justify-between items-center w-full">
+                      <div className="xl:flex-row flex flex-col mr-4 h-full w-full">
+                        <div className="flex flex-col items-center justify-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full xl:mb-0 mb-4 xl:mr-4 h-full">
+                          <span className="md:underline md:text-sm text-xs opacity-50 md:opacity-100 mb-2">
+                            Current Price
+                          </span>
+                          <span>
                             {currencySymbol}
-                            {addCommas(Math.abs(priceChange24))}
+                            {addCommas(coinQuote.price)}
                           </span>
                         </div>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <span className="underline">
-                          Volume % of Market Cap
-                        </span>
-                        <div className="my-2">
-                          <div className="bg-gray-400 w-40 h-3 rounded-lg">
-                            <div
+                        <div className="flex flex-col items-center justify-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full h-full">
+                          <span className="md:underline md:text-sm text-xs opacity-50 md:opacity-100 mb-2">
+                            Price Change 24h
+                          </span>
+                          <div className="flex items-center">
+                            <Updownarrow coin={priceChange24} />
+                            <span
                               className={
-                                Number(capToVol) > 4
-                                  ? "bg-green-500 h-3 rounded-lg"
-                                  : "bg-red-500 h-3 rounded-lg"
+                                priceChange24 >= 0
+                                  ? "text-green-500"
+                                  : "text-red-500"
                               }
-                              style={{
-                                width:
-                                  Number(capToVol) > 8 ? `${capToVol}%` : "8%",
-                              }}
-                            ></div>
+                            >
+                              {currencySymbol}
+                              {addCommas(Math.abs(priceChange24))}
+                            </span>
                           </div>
                         </div>
-                        <span>{capToVol}%</span>
                       </div>
-                      <div className="flex flex-col items-center">
-                        <span className="underline">
-                          Circ Supply vs. Max Supply
-                        </span>
-                        <div className="my-2">
-                          <div className="bg-gray-400 w-40 h-3 rounded-lg">
-                            <div
-                              className="dark:bg-teal-400 bg-teal-500 h-3 rounded-lg"
-                              style={{
-                                width:
-                                  Number(circToMax * 100) > 8
-                                    ? `${circToMax * 100}%`
-                                    : "8%",
-                              }}
-                            ></div>
+                      <div className="xl:flex-row flex flex-col w-full mr-4">
+                        <div className="flex flex-col items-center justify-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full xl:mr-4">
+                          <span className="md:underline md:text-sm text-xs opacity-50 md:opacity-100">
+                            Volume - Market Cap
+                          </span>
+                          <div className="flex items-center lg:flex-col flex-row">
+                            <div className="mt-2 md:block hidden">
+                              <div className="bg-gray-400 lg:w-40 w-20 h-2 lg:h-3 rounded-lg">
+                                <div
+                                  className={
+                                    Number(capToVol) > 4
+                                      ? "bg-green-500 h-2 lg:h-3 rounded-lg"
+                                      : "bg-red-500 h-2 lg:h-3 rounded-lg"
+                                  }
+                                  style={{
+                                    width:
+                                      Number(capToVol) > 8
+                                        ? `${capToVol}%`
+                                        : "8%",
+                                  }}
+                                ></div>
+                              </div>
+                            </div>
+                            <span className="text-green-500 ml-2 lg:ml-0 mt-2">
+                              {capToVol}%
+                            </span>
                           </div>
                         </div>
-                        <span>
-                          {addCommas(coin.circulating_supply).split(".")[0]} /{" "}
-                          {addCommas(coin.max_supply).split(".")[0]}
-                        </span>
+                        <div className="flex flex-col items-center justify-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full xl:mt-0 mt-4">
+                          <span className="underline md:block hidden">
+                            Circ Supply - Max Supply
+                          </span>
+                          <span className="md:text-sm text-xs opacity-50 md:opacity-100 md:hidden block">
+                            Circulating - Max
+                          </span>
+                          <div className="flex items-center lg:flex-col flex-row">
+                            <div className="mt-2 md:block hidden">
+                              <div className="bg-gray-400 lg:w-40 w-20 h-2 lg:h-3 rounded-lg">
+                                <div
+                                  className="dark:bg-teal-400 bg-teal-500 h-2 lg:h-3 rounded-lg"
+                                  style={{
+                                    width:
+                                      Number(circToMax * 100) > 8
+                                        ? `${circToMax * 100}%`
+                                        : "8%",
+                                  }}
+                                ></div>
+                              </div>
+                            </div>
+                            <span className="dark:text-teal-400 text-teal-500 ml-2 lg:ml-0 mt-2 lg:block hidden">
+                              {addCommas(coin.circulating_supply).split(".")[0]}{" "}
+                              / {addCommas(coin.max_supply).split(".")[0]}
+                            </span>
+                            {coinMax === "∞" ? (
+                              <span className="dark:text-teal-400 text-teal-500 ml-2 lg:ml-0 mt-2 block lg:hidden">
+                                {
+                                  addCommas(
+                                    coin.circulating_supply / 1000000
+                                  ).split(".")[0]
+                                }
+                                M / ∞
+                              </span>
+                            ) : (
+                              <span className="dark:text-teal-400 text-teal-500 ml-2 lg:ml-0 mt-2 block lg:hidden">
+                                {
+                                  addCommas(
+                                    coin.circulating_supply / 1000000
+                                  ).split(".")[0]
+                                }
+                                M /{" "}
+                                {
+                                  addCommas(coin.max_supply / 1000000).split(
+                                    "."
+                                  )[0]
+                                }{" "}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col mx-8 pt-6">
-                    <div className="flex justify-between mb-4">
+                  <div className="flex flex-col lg:ml-4 pt-6 2xl:text-base text-sm w-full">
+                    <div className="justify-between mb-4 md:flex hidden">
                       <h1 className="text-2xl">Your Holdings</h1>
                     </div>
-                    <div className="flex justify-between">
-                      <div className="flex flex-col items-center">
-                        <span className="mb-2 underline">Coins Held</span>
-                        <span>{asset.coinAmount.toFixed(5)}</span>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <span className="mb-2 underline">
-                          Fiat Value at Purchase
-                        </span>
-                        <div className="flex items-center">
-                          <span>
-                            {currencySymbol}
-                            {addCommas(asset.currencyAmount)}
+                    <div className="flex justify-between w-full">
+                      <div className="flex w-full xl:flex-row flex-col mr-4">
+                        <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full h-full mr-4 mb-4">
+                          <span className="md:text-sm text-xs opacity-50 md:opacity-100 mb-2 md:underline">
+                            Coins Held
                           </span>
+                          <span>{asset.coinAmount.toFixed(5)}</span>
+                        </div>
+                        <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full h-full">
+                          <span className="md:text-sm text-xs opacity-50 md:opacity-100 mb-2 md:underline">
+                            Value at Purchase
+                          </span>
+                          <div className="flex items-center">
+                            <span>
+                              {currencySymbol}
+                              {addCommas(asset.currencyAmount)}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex flex-col items-center">
-                        <span className="mb-2 underline">
-                          Current Fiat Value
-                        </span>
-                        <div className="flex items-center">
-                          <Updownarrow
-                            coin={
-                              Number(coinQuote.price) -
-                              Number(asset.currencyAmount)
-                            }
-                          />
+                      <div className="flex w-full xl:flex-row flex-col mr-4">
+                        <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full h-full mr-4 mb-4">
+                          <span className="md:text-sm text-xs opacity-50 md:opacity-100 mb-2 md:underline">
+                            Current Fiat Value
+                          </span>
                           <span
                             className={
-                              Number(coinQuote.price) >
+                              Number(coinQuote.price) *
+                                Number(asset.coinAmount) >
                               Number(asset.currencyAmount)
                                 ? "text-green-500"
                                 : "text-red-500"
@@ -943,70 +1080,70 @@ export default function Portfolio() {
                             {addCommas(coinQuote.price * asset.coinAmount)}
                           </span>
                         </div>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <span className="underline">
-                          Value Change Since Purchase
-                        </span>
-                        <div className="my-2 flex items-center">
-                          <Updownarrow
-                            coin={
-                              Number(coinQuote.price) *
-                                Number(asset.coinAmount) -
-                              Number(asset.currencyAmount)
-                            }
-                          />
-                          <span
-                            className={
-                              Number(coinQuote.price) *
-                                Number(asset.coinAmount) >
-                              Number(asset.currencyAmount)
-                                ? "text-green-500 mr-3"
-                                : "text-red-500 mr-3"
-                            }
-                          >
-                            {" "}
-                            {currencySymbol}
-                            {addCommas(
-                              Math.abs(
-                                Number(coinQuote.price) *
-                                  Number(asset.coinAmount) -
-                                  Number(asset.currencyAmount)
-                              )
-                            )}
+                        <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 sm:p-2 p-1 rounded-md w-full h-full">
+                          <span className="md:text-sm text-xs opacity-50 md:opacity-100 sm:mb-2 md:underline">
+                            Value Change
                           </span>
-                          <Updownarrow
-                            coin={
-                              Number(coinQuote.price) *
-                                Number(asset.coinAmount) -
-                              Number(asset.currencyAmount)
-                            }
-                          />
-                          <span
-                            className={
-                              Number(coinQuote.price) *
-                                Number(asset.coinAmount) >
-                              Number(asset.currencyAmount)
-                                ? "text-green-500"
-                                : "text-red-500"
-                            }
-                          >
-                            {(
-                              (Math.abs(
-                                Number(coinQuote.price) *
-                                  Number(asset.coinAmount) -
+                          <div className="flex items-center sm:flex-row flex-col">
+                            <div className="flex items-center">
+                              <Updownarrow
+                                coin={
+                                  Number(coinQuote.price) *
+                                    Number(asset.coinAmount) -
                                   Number(asset.currencyAmount)
-                              ) /
-                                Number(asset.currencyAmount)) *
-                              100
-                            ).toFixed(3)}
-                            %
-                          </span>
+                                }
+                              />
+                              <span
+                                className={
+                                  Number(coinQuote.price) *
+                                    Number(asset.coinAmount) >
+                                  Number(asset.currencyAmount)
+                                    ? "text-green-500 sm:mr-3"
+                                    : "text-red-500 sm:mr-3"
+                                }
+                              >
+                                {" "}
+                                {currencySymbol}
+                                {addCommas(
+                                  Math.abs(
+                                    Number(coinQuote.price) *
+                                      Number(asset.coinAmount) -
+                                      Number(asset.currencyAmount)
+                                  )
+                                )}
+                              </span>
+                            </div>
+                            <div className="flex items-center">
+                              <Updownarrow
+                                coin={
+                                  Number(coinQuote.price) *
+                                    Number(asset.coinAmount) -
+                                  Number(asset.currencyAmount)
+                                }
+                              />
+                              <span
+                                className={
+                                  Number(coinQuote.price) *
+                                    Number(asset.coinAmount) >
+                                  Number(asset.currencyAmount)
+                                    ? "text-green-500"
+                                    : "text-red-500"
+                                }
+                              >
+                                {(
+                                  (Math.abs(
+                                    Number(coinQuote.price) *
+                                      Number(asset.coinAmount) -
+                                      Number(asset.currencyAmount)
+                                  ) /
+                                    Number(asset.currencyAmount)) *
+                                  100
+                                ).toFixed(3)}
+                                %
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <span className="mb-2 underline">Purchase Date</span>
-                        <span>{asset.date}</span>
                       </div>
                     </div>
                   </div>
@@ -1015,6 +1152,12 @@ export default function Portfolio() {
             );
           })}
       </div>
+      <button
+        className="rounded-3xl dark:bg-violet-800 lg:px-16 md:px-12 p-3 dark:hover:bg-violet-600 bg-violet-200 hover:bg-violet-400 sm:hidden sticky-add border border-slate-500"
+        onClick={() => setIsAddingAsset(!isAddingAsset)}
+      >
+        <Plusicon />
+      </button>
     </div>
   );
 }

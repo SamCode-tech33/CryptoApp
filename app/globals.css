@@ -36,6 +36,17 @@ path {
   margin-left: 72px;
 }
 
+.lg-mx-22 {
+  margin: 20px 2px;
+  @media (min-width: 1024px) {
+    margin: 20px 74px;
+  }
+}
+
+.bar-width {
+  width: 92%;
+}
+
 .h-82 {
   height: 22rem;
 }
@@ -92,10 +103,24 @@ path {
 }
 
 .date-cal {
-  padding: 3px;
+  padding: 2px 0px;
   text-align: center;
   border-radius: 16px;
   caret-color: white;
+  width: 90px;
+  font-size: 12px;
+}
+@media (min-width: 768px) {
+  .date-cal {
+    width: 100px;
+  font-size: 12px;
+  }
+}
+@media (min-width: 1390px) {
+  .date-cal {
+    width: 140px;
+    font-size: 16px;
+  }
 }
 
 .react-datepicker {
@@ -111,14 +136,12 @@ path {
   border-radius: 8px !important;
 }
 
-/* Today’s date */
 .react-datepicker__day--today {
   background: teal !important;
   color: white !important;
   border-radius: 8px !important;
 }
 
-/* Day hover */
 .react-datepicker__day:hover {
   background-color: #0070f3 !important;
   color: white !important;
@@ -146,6 +169,65 @@ path {
   position: absolute !important;
 }
 
+.left-add-asset {
+  left: 17.5%;
+}
+
+.buy-with-abs {
+  left: 0%;
+  top: 100%;
+}
+
+.left-emblem {
+  top: 4%;
+  left: 86.5%;
+}
+
+@media (min-width: 640px) {
+  .left-emblem {
+    top: 4%;
+    left: 90%;
+  }
+}
+
+.sticky-add {
+  position: sticky;
+  left: 82%;
+  bottom: 12%;
+}
+
+.bank-abs {
+  left: 81%;
+  top: 8%
+}
+
+@media (min-width: 640px) {
+  .bank-abs {
+    left: 90%;
+    top: 8%
+  }
+}
+
+.price-pad {
+  padding-right: 0px;
+}
+
+@media (min-width: 500px) {
+  .price-pad {
+    padding-right: 16px;
+  }
+}
+
+.sticky-nav {
+  position: sticky;
+  bottom: 0%;
+  left: 50%;
+}
+
+.port-height {
+  height: 100vh;
+}
+
 .loading {
   width: 32px;
   height: 32px;
@@ -156,6 +238,90 @@ path {
   position: absolute;
   top: 50%;
   left: 50%;
+}
+
+.w-number {
+  width: 2.5%;
+}
+
+.w-filter {
+  width: 68%;
+}
+
+@media (min-width: 730px) {
+  .w-filter {
+    width: 65%;
+  }
+}
+
+@media (min-width: 1280px) {
+  .w-filter {
+    width: 41%;
+  }
+}
+
+.w-name {
+  width: 55%;
+}
+
+@media (min-width: 768px) {
+  .w-name {
+    width: 30.8%;
+  }
+}
+
+.w-price {
+  width: 45%;
+}
+
+@media (min-width: 640px) {
+  .w-price {
+    width: 20%;
+  }
+}
+
+.w-1h {
+  width: 14%;
+}
+
+.w-24h {
+  width: 14%;
+}
+
+.w-7d {
+  width: 14%;
+}
+
+.w-volume {
+  width: 15%
+}
+
+@media (min-width: 1480px) {
+  .w-volume {
+    width: 17.5%;
+  }
+}
+
+@media (min-width: 1820px) {
+  .w-volume {
+    width: 19.2%;
+  }
+}
+
+.w-circ {
+  width: 20%
+}
+
+.w-last7 {
+  width: 16%;
+  margin-left: 16px;
+}
+
+@media (min-width: 768px) {
+  .w-last7 {
+    width: 8.8%;
+    margin-left: 0;
+  }
 }
 
 @keyframes spin {
