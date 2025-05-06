@@ -113,7 +113,9 @@ export default function Portfolio() {
 
   const handlePurchase = () => {
     setIsPurchaseSelect(false);
-    if (!Number(purchaseAmount)) {
+    if (purchaseAmount === "") {
+      return;
+    } else if (!Number(purchaseAmount)) {
       setPurchaseNotNumber(true);
       setTimeout(() => setPurchaseNotNumber(false), 2000);
     } else if (purchaseAmount !== "" && buyWith === currency) {
@@ -272,7 +274,7 @@ export default function Portfolio() {
   }, [coinPrice]);
 
   return (
-    <div className="bg-gray-200 sm:pt-1 dark:bg-slate-950 port-height">
+    <div className="bg-gray-200 sm:pt-1 dark:bg-slate-900 port-height">
       <Notification
         noti={noti}
         message={errNoti ? `Error: ${notiMessage}` : `Success: ${notiMessage}`}
@@ -294,7 +296,7 @@ export default function Portfolio() {
       <div
         className={
           isAddingAsset
-            ? "absolute dark:bg-black w-2/3 h-1/2 left-add-asset top-1/4 rounded-md border dark:border-white border-black z-10 bg-white"
+            ? "absolute dark:bg-slate-900 w-2/3 h-1/2 left-add-asset top-1/4 rounded-md border dark:border-white border-black z-10 bg-white"
             : "hidden"
         }
       >
@@ -361,14 +363,8 @@ export default function Portfolio() {
               </div>
             </div>
           </div>
-          <div className="h-3/5 w-3/5 rounded-md relative">
-            <div
-              className="flex items-center sm:justify-between justify-center dark:bg-slate-800 p-2 rounded-md cursor-pointer dark:hover:bg-slate-600 bg-violet-300 hover:bg-violet-400"
-              onClick={() => {
-                setIsCoinSelect(!isCoinSelect);
-                setIsPurchaseSelect(false);
-              }}
-            >
+          <div className="h-3/5 w-3/5 rounded-md">
+            <div className="w-full h-full flex items-center sm:justify-between justify-center dark:bg-slate-800 p-2 rounded-md bg-violet-300 relative">
               <div className="flex items-center">
                 <Defaulticon
                   coin={coinSymbol}
@@ -382,63 +378,64 @@ export default function Portfolio() {
                   {coinSymbol}
                 </span>
               </div>
-              <Uparrow isOpen={isCoinSelect} />
-            </div>
-            <div
-              className={
-                isCoinSelect
-                  ? "border absolute z-10 dark:bg-slate-900 overflow-y-scroll h-96 w-full bg-slate-300"
-                  : "hidden"
-              }
-            >
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 p-2 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white"
+                onFocus={() => setIsCoinSelect(true)}
+                onBlur={() => setTimeout(() => setIsCoinSelect(false), 200)}
+                id="searchBar"
+                className="w-1/2 pl-10 pr-4 p-2 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white"
               />
-              {loading && <div className="loading"></div>}
-              {data.length &&
-                data
-                  .filter((coin) =>
-                    coin.name.toLowerCase().includes(searchTerm.toLowerCase())
-                  )
-                  .map((coin) => {
-                    return (
-                      <div
-                        key={coin.symbol + Math.random() * 1}
-                        className="p-3 dark:hover:bg-slate-600 cursor-pointer flex justify-between hover:bg-slate-400 md:flex-row flex-col sm:text-base text-sm"
-                        onClick={() => {
-                          setCoinSymbol(coin.symbol);
-                          setCoinName(coin.name);
-                          setBuyWith(currency);
-                          setIsCoinSelect(false);
-                        }}
-                      >
-                        <div className="flex items-center">
-                          <Defaulticon
-                            coin={coin.symbol}
-                            height="lg:h-6 h-4"
-                            margin="mr-2"
-                          />
-                          <span className="hidden lg:block">
-                            {coin.name} ({coin.symbol})
-                          </span>
-                          <span className="block lg:hidden">
-                            {coin.name.split(" ")[0]}
+              <div
+                className={
+                  isCoinSelect
+                    ? "border absolute z-10 dark:bg-slate-900 overflow-y-scroll max-h-96 bg-slate-300 left-1/2 top-full w-1/2"
+                    : "hidden"
+                }
+              >
+                {loading && <div className="loading"></div>}
+                {data.length &&
+                  data
+                    .filter((coin) =>
+                      coin.name.toLowerCase().includes(searchTerm.toLowerCase())
+                    )
+                    .map((coin) => {
+                      return (
+                        <div
+                          key={coin.symbol + Math.random() * 1}
+                          className="p-3 dark:hover:bg-slate-600 cursor-pointer flex justify-between hover:bg-slate-400 md:flex-row flex-col sm:text-base text-sm"
+                          onClick={() => {
+                            setCoinSymbol(coin.symbol);
+                            setCoinName(coin.name);
+                            setIsCoinSelect(false);
+                          }}
+                        >
+                          <div className="flex items-center">
+                            <Defaulticon
+                              coin={coin.symbol}
+                              height="lg:h-6 h-4"
+                              margin="mr-2"
+                            />
+                            <span className="hidden lg:block">
+                              {coin.name} ({coin.symbol})
+                            </span>
+                            <span className="block lg:hidden">
+                              {coin.name.split(" ")[0]}
+                            </span>
+                          </div>
+                          <span>
+                            {currencySymbol}
+                            {addCommas(coinPrice)}
                           </span>
                         </div>
-                        <span>
-                          {currencySymbol}
-                          {addCommas(coinPrice)}
-                        </span>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+              </div>
             </div>
-            <div
-              className="flex items-center sm:justify-between justify-center dark:bg-slate-800 p-2 rounded-md cursor-pointer dark:hover:bg-slate-600 mt-4 bg-violet-300 hover:bg-violet-400"
+            <button
+              className="w-full h-full flex items-center sm:justify-between justify-center dark:bg-slate-800 p-2 rounded-md dark:hover:bg-slate-600 mt-4 bg-violet-300 hover:bg-violet-400"
               onClick={() => {
                 setIsPurchaseSelect(!isPurchaseSelect);
                 setIsCoinSelect(false);
@@ -457,7 +454,7 @@ export default function Portfolio() {
                 </span>
               )}
               <Uparrow isOpen={isPurchaseSelect} />
-            </div>
+            </button>
             <div
               className={
                 isPurchaseSelect && coinSymbol !== ""
@@ -552,7 +549,7 @@ export default function Portfolio() {
                 )}
               </div>
             </div>
-            <div className="flex items-center sm:justify-between justify-center dark:bg-slate-800 p-2 rounded-md cursor-pointer mt-4 bg-violet-300 hover:bg-violet-400">
+            <div className="flex items-center sm:justify-between justify-center dark:bg-slate-800 p-2 rounded-md mt-4 bg-violet-300 hover:bg-violet-400">
               <span className="ml-2 xl:text-base lg:text-sm text-xs sm:block hidden">
                 Purchase Date
               </span>
@@ -902,14 +899,22 @@ export default function Portfolio() {
                               By deleting this, you agree to sell the entire
                               asset
                             </span>
-                            <button
-                              className="p-3 dark:bg-slate-600 dark:hover:bg-slate-400 my-4 rounded-lg bg-violet-300 hover:bg-violet-400"
-                              onClick={() =>
-                                handleDelete(asset.currencyAmount, asset.id)
-                              }
-                            >
-                              Delete & Sell
-                            </button>
+                            <div className="flex w-full justify-around">
+                              <button
+                                className="p-3 dark:bg-slate-600 dark:hover:bg-slate-400 my-4 rounded-lg bg-violet-300 hover:bg-violet-400"
+                                onClick={() =>
+                                  handleDelete(asset.currencyAmount, asset.id)
+                                }
+                              >
+                                Delete & Sell
+                              </button>
+                              <button
+                                className="p-3 dark:bg-slate-600 dark:hover:bg-slate-400 my-4 rounded-lg bg-violet-300 hover:bg-violet-400"
+                                onClick={() => setIsDeleting(false)}
+                              >
+                                Cancel
+                              </button>
+                            </div>
                           </div>
                         )}
                         <button

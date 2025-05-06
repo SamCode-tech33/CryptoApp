@@ -13,7 +13,7 @@ import { usePathname } from "next/navigation";
 const Navlinks = () => {
   const pathname = usePathname();
   return (
-    <div className="flex justify-between items-center lg:px-36 md:px-16 sm:px-8 px-3 bg-white py-4 dark:bg-slate-900">
+    <div className="flex justify-between items-center lg:px-36 md:px-16 sm:px-8 px-3 bg-white py-3 dark:bg-slate-800">
       <Link href="/">
         <div className="flex h-4 items-center">
           <Logo />
@@ -116,7 +116,7 @@ const Navsearch = () => {
         onChange={handleInputChange}
         onFocus={() => setIsOpen(true)}
         onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-        className="w-full pl-9 pr-4 p-2 rounded-sm dark:bg-slate-800 text-white dark:caret-white bg-slate-300"
+        className="w-full pl-9 pr-4 p-2 rounded-sm dark:bg-slate-700 text-white dark:caret-white bg-slate-300"
       />
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -138,7 +138,7 @@ const Navsearch = () => {
         <div
           className={
             isOpen
-              ? "border absolute z-10 dark:bg-slate-900 w-full overflow-y-scroll h-96 bg-slate-300"
+              ? "border absolute z-10 dark:bg-slate-900 w-full overflow-y-scroll max-h-96 bg-slate-300"
               : "hidden"
           }
         >
@@ -179,7 +179,7 @@ const Navsearch = () => {
                     </span>
                   </div>
                   <span>
-                    {currencySymbol} {coinPrice}
+                    {currencySymbol}{coinPrice}
                   </span>
                 </Link>
               );
