@@ -21,8 +21,7 @@ const Bargraph = ({
   coinHistoryHour,
   coinCompareHour,
   load,
-  coinCompare,
-  coinHistory,
+  coinName,
   compare,
 }: any) => {
   const { ref, size } = useElementSize();
@@ -42,15 +41,13 @@ const Bargraph = ({
       <div className={compare.length ? "flex ml-4" : "flex mb-6 ml-4"}>
         <div>
           <div className="flex">
-            <h1 className="text-lg ml-2 text-violet-500">
-              {coinHistory[0]?.INSTRUMENT}
-            </h1>
+            <h1 className="text-lg ml-2 text-violet-500">{coinName}</h1>
             <h1
               className={
                 compare.length ? "text-lg ml-2 value-comp-tool" : "hidden"
               }
             >
-              / {coinCompare[0]?.INSTRUMENT}
+              / {coinName}
             </h1>
             <h1 className="text-lg ml-2 text-violet-500">Vol-24h</h1>
           </div>
@@ -64,7 +61,8 @@ const Bargraph = ({
                 compare.length ? "text-lg ml-1 value-comp-tool" : "hidden"
               }
             >
-              {currencySymbol} {addCommas(pdataComp.totalVolume)}
+              {currencySymbol}
+              {addCommas(pdataComp.totalVolume)}
             </h1>
           </div>
         </div>
@@ -83,7 +81,7 @@ const Bargraph = ({
             offset={10}
             separator=""
             content={<CustomTooltip currency="USD" />}
-            position={{ x: size.width - 146, y: -107 }}
+            position={{ x: size.width - 142, y: -107 }}
             cursor={{ fill: "transparent" }}
           />
           {compare.length && (

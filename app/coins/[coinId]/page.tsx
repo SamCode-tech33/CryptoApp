@@ -77,9 +77,9 @@ export default function Coin({ params }: any) {
       ) : (
         <div>
           {coin && (
-            <div className="xl:mx-32 lg:mx-16 md:mx-8 sm:mx-4 mx-2">
+            <div className="xl:mx-32 lg:mx-16 md:mx-8 sm:mx-4 mx-2 mt-8">
               <div className="flex justify-between md:flex-row flex-col">
-                <div className="p-7 dark:bg-slate-800 rounded-lg xl:w-1/3 bg-white md:mr-8">
+                <div className="p-7 dark:bg-slate-800 rounded-lg w-full bg-white md:mr-8">
                   <div className="flex items-center">
                     <Defaulticon
                       coin={coin.symbol}
@@ -184,7 +184,7 @@ export default function Coin({ params }: any) {
                     <p>{coinSite?.description}</p>
                     <div className="mt-12 text-center max-w-96">
                       {coinSite?.urls.technical_doc[0] && (
-                        <div className="dark:bg-slate-800 p-4 rounded-md mb-8 bg-white">
+                        <div className="dark:bg-slate-800 dark:hover:bg-slate-700 p-4 rounded-md mb-8 bg-white hover:bg-violet-300">
                           <Copy
                             site={coinSite?.urls.technical_doc[0]}
                             handleCopy={handleCopy}
@@ -194,7 +194,7 @@ export default function Coin({ params }: any) {
                         </div>
                       )}
                       {coinSite?.urls.message_board[0] && (
-                        <div className="dark:bg-slate-800 p-4 rounded-md mb-8 bg-white">
+                        <div className="dark:bg-slate-800 dark:hover:bg-slate-700 p-4 rounded-md mb-8 bg-white hover:bg-violet-300">
                           <Copy
                             site={coinSite?.urls.message_board[0]}
                             handleCopy={handleCopy}
@@ -204,7 +204,7 @@ export default function Coin({ params }: any) {
                         </div>
                       )}
                       {coinSite?.urls.source_code[0] && (
-                        <div className="dark:bg-slate-800 p-4 rounded-md mb-8 bg-white">
+                        <div className="dark:bg-slate-800 dark:hover:bg-slate-700 p-4 rounded-md mb-8 bg-white hover:bg-violet-300">
                           <Copy
                             site={coinSite?.urls.source_code[0]}
                             handleCopy={handleCopy}

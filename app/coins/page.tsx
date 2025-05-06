@@ -111,7 +111,7 @@ export default function Coins() {
       style = "py-1 rounded-md px-3 dark:bg-violet-800 bg-violet-300";
     } else {
       style =
-        "py-1 rounded-md px-3 Hover:dark:bg-violet-800 hover:bg-violet-300";
+        "py-1 rounded-md px-3 dark:hover:bg-violet-800 hover:bg-violet-300";
     }
     return style;
   };
@@ -124,7 +124,7 @@ export default function Coins() {
   }, [symbol, selectedTime, compare, currency]);
 
   return (
-    <div className="lg:px-16 md:px-12 px-2 sm:pt-4 bg-gray-200 dark:bg-slate-950">
+    <div className="lg:px-16 md:px-12 px-2 bg-gray-200 dark:bg-slate-900 pt-4">
       <div className="flex flex-col items-end sm:justify-self-center md:w-full justify-between md:flex-row mx-2">
         <div className="md:h-28 sm:block hidden">
           <div className="lg:mx-20 justify-center md:justify-start sm:mx-2 flex">
@@ -178,6 +178,8 @@ export default function Coins() {
               loading={loading}
               today={today}
               currency={currency}
+              coinName={symbol}
+              coinCompName={compare}
             />
           </Suspense>
         )}
@@ -191,8 +193,7 @@ export default function Coins() {
               coinHistoryHour={coinHistoryHour}
               coinCompareHour={coinCompareHour}
               load={load}
-              coinCompare={coinCompare}
-              coinHistory={coinHistory}
+              coinName={symbol}
               compare={compare}
               today={today}
             />

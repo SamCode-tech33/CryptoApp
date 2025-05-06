@@ -277,7 +277,7 @@ export default function Navcoin() {
       {error ? (
         <p>The following {error} occured. Please try again later.</p>
       ) : (
-        <ul className="2xl:mx-32 xl:mx-24 lg:mx-20 mx-2">
+        <ul className="lg:mx-20 mx-2">
           <li className="text-black dark:text-white h-12 flex items-center">
             <div className="justify-center mr-4 w-number md:flex hidden">
               <span>#</span>
@@ -468,12 +468,12 @@ export default function Navcoin() {
                           </div>
                         </div>
                         <div className="w-price text-sm sm:text-base flex flex-col 2xl:mr-4 xl:mr-7 md:mr-7 price-pad">
-                          <div className="text-end w-full">
+                          <div className="w-full text-start">
                             {currencySymbol}
                             {coinPrice}
                           </div>
                           {percentSelected === "1h%" && (
-                            <div className="md:hidden flex w-full justify-end">
+                            <div className="md:hidden flex w-full items-center text-xs">
                               <Updownarrow coin={coinQuote.percent_change_1h} />
                               <span
                                 className={

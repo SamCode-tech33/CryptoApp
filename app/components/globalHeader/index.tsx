@@ -28,8 +28,8 @@ export const Globalheader = () => {
   }, []);
 
   return (
-    <div className="dark:bg-slate-950 bg-gray-200">
-      <div className="flex items-center 2xl:mx-80 justify-around sm:p-1 mb-2 xl:mx-60 lg:mx-28">
+    <div className="dark:bg-slate-700 bg-gray-200">
+      <div className="flex items-center 2xl:mx-80 justify-around sm:p-1 xl:mx-60 lg:mx-28">
         <div className="flex items-center">
           <Numicon />
           <div className="flex items-center">

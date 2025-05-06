@@ -22,6 +22,8 @@ const Linegraph = ({
   compareHidden,
   onConverter,
   rightSym,
+  coinCompName,
+  coinName,
 }: any) => {
   const { ref, size } = useElementSize();
 
@@ -58,14 +60,11 @@ const Linegraph = ({
       {loading && <div className="loading"></div>}
       {compare.length ? (
         <h1 className="ml-6 mt-2 text-lg">
-          <span className="text-violet-500">{coinHistory[0]?.INSTRUMENT}</span>{" "}
-          <span>/</span>{" "}
-          <span className="value-comp-tool">{coinCompare[0]?.INSTRUMENT}</span>
+          <span className="text-violet-500">{coinName}</span> <span>/</span>{" "}
+          <span className="value-comp-tool">{coinCompName}</span>
         </h1>
       ) : (
-        <h1 className="ml-6 mt-2 text-violet-500 text-lg">
-          {coinHistory[0]?.INSTRUMENT.split("-")[0]}-{currency}
-        </h1>
+        <h1 className="ml-6 mt-2 text-violet-500 text-lg">{coinName}</h1>
       )}
       <h1 className="ml-6 mb-6 text-violet-500 text-lg">{today}</h1>
       <ResponsiveContainer height="70%">
