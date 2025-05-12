@@ -262,7 +262,7 @@ export default function Navcoin() {
             </button>
           </li>
           {loading && (
-            <div>
+            <div className="h-150 overflow-auto">
               {[...Array(100)].map((_, i) => (
                 <Skeleton
                   key={i}
