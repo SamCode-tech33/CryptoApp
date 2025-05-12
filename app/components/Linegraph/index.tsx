@@ -16,7 +16,6 @@ const Linegraph = ({
   selectedTime,
   coinCompare,
   compare,
-  loading,
   today,
   currency,
   compareHidden,
@@ -57,7 +56,6 @@ const Linegraph = ({
       ref={ref}
       className="h-80 w-full dark:bg-slate-800 rounded-md flex justify-end flex-col bg-white relative mb-4 xl:mr-2 xl:mb-0"
     >
-      {loading && <div className="loading"></div>}
       {compare.length ? (
         <h1 className="ml-6 mt-2 text-lg">
           <span className="text-violet-500">{coinName}</span> <span>/</span>{" "}

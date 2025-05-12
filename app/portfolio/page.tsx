@@ -395,7 +395,6 @@ export default function Portfolio() {
                     : "hidden"
                 }
               >
-                {loading && <div className="loading"></div>}
                 {data.length &&
                   data
                     .filter((coin) =>

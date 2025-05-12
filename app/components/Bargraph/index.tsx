@@ -20,7 +20,6 @@ import { useElementSize } from "../windowSizing";
 const Bargraph = ({
   coinHistoryHour,
   coinCompareHour,
-  load,
   coinName,
   compare,
 }: any) => {
@@ -37,7 +36,6 @@ const Bargraph = ({
       ref={ref}
       className="h-80 w-full dark:bg-slate-800 rounded-md flex justify-end flex-col bg-white relative xl:ml-2"
     >
-      {load && <div className="loading"></div>}
       <div className={compare.length ? "flex ml-4" : "flex mb-6 ml-4"}>
         <div>
           <div className="flex">

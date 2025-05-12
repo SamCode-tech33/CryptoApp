@@ -10,6 +10,7 @@ import Linegraph from "../components/Linegraph";
 import axios from "axios";
 import { changeGraph } from "@/lib/symbolSlice";
 import { changeTimePeriod } from "@/lib/timeSlice";
+import { Skeleton } from "../components/Skeleton";
 
 export default function Convertor() {
   const dispatch = useDispatch<AppDispatch>();
@@ -168,7 +169,6 @@ export default function Convertor() {
             <p className="text-gray-500">{today}</p>
           </div>
           <div className="flex w-full justify-center items-center 2xl:flex-row flex-col">
-            {loading && <div className="loading"></div>}
             <div className="w-full dark:bg-slate-800 h-52 2xl:mr-4 rounded-md my-6 bg-white">
               <p className="lg:ml-10 ml-4 mt-4 mb-4">You sell</p>
               <div className="border-b-2 border-gray-400 pb-4 lg:mx-8 mx-4 mb-4">
@@ -265,24 +265,27 @@ export default function Convertor() {
                   />
                 </div>
               </div>
-              <div className="flex justify-between mx-8">
-                <span>
-                  1 {menuIconLeft} = {currencySymbol}
-                  {selectedPriceLeft}
-                </span>
-                <span>
-                  {convertedNum.length
-                    ? `Value = ${currencySymbol}` +
-                      addCommas(
-                        Number(selectedPriceLeft.split(",").join("")) *
-                          Number(conversionValue)
-                      )
-                    : ""}
-                </span>
-              </div>
+              {loading ? (
+                <Skeleton classTail="h-6 dark:bg-slate-600 rounded-md flex justify-between bg-gray-300 mx-8" />
+              ) : (
+                <div className="flex justify-between mx-8">
+                  <span>
+                    1 {menuIconLeft} = {currencySymbol}
+                    {selectedPriceLeft}
+                  </span>
+                  <span>
+                    {convertedNum.length
+                      ? `Value = ${currencySymbol}` +
+                        addCommas(
+                          Number(selectedPriceLeft.split(",").join("")) *
+                            Number(conversionValue)
+                        )
+                      : ""}
+                  </span>
+                </div>
+              )}
             </div>
             <div className="w-full dark:bg-slate-800 h-52 2xl:ml-4 rounded-md mb-6 2xl:mt-6 bg-white">
-              {loading && <div className="loading"></div>}
               <p className="lg:ml-10 ml-4 mt-4 mb-4">You buy</p>
               <div className="border-b-2 border-gray-400 pb-4 lg:mx-8 mx-4 mb-4">
                 <div className="dark:bg-slate-800 p-2.5 rounded-md flex justify-between items-center">
@@ -379,27 +382,32 @@ export default function Convertor() {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-between mx-8">
-                <span>
-                  1 {menuIconRight} = {currencySymbol} {selectedPriceRight}
-                </span>
-                <span>
-                  {convertedNum.length
-                    ? `Value = ${currencySymbol}` +
-                      addCommas(
-                        Number(selectedPriceRight.split(",").join("")) *
-                          Number(convertedNum)
-                      )
-                    : ""}
-                </span>
-              </div>
+              {loading ? (
+                <Skeleton classTail="h-6 dark:bg-slate-600 rounded-md flex justify-between bg-gray-300 mx-8" />
+              ) : (
+                <div className="flex justify-between mx-8">
+                  <span>
+                    1 {menuIconRight} = {currencySymbol} {selectedPriceRight}
+                  </span>
+                  <span>
+                    {convertedNum.length
+                      ? `Value = ${currencySymbol}` +
+                        addCommas(
+                          Number(selectedPriceRight.split(",").join("")) *
+                            Number(convertedNum)
+                        )
+                      : ""}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
-          <div className="h-72 dark:bg-slate-800 rounded-md flex justify-end flex-col w-full bg-white">
-            {load && <div className="loading"></div>}
-            {err ? (
-              <span>There has been an error, please come back later</span>
-            ) : (
+          {load ? (
+            <Skeleton classTail="h-72 dark:bg-slate-800 rounded-md flex justify-end flex-col w-full bg-gray-300" />
+          ) : (
+            <div className="h-72 dark:bg-slate-800 rounded-md flex justify-end flex-col w-full bg-white">
+              {err && <p>There has been an error, please come back later</p>}
+
               <Linegraph
                 coinHistory={coinHistory}
                 limit={limit}
@@ -415,8 +423,8 @@ export default function Convertor() {
                 onConverter={true}
                 rightSym={menuIconRight}
               />
-            )}
-          </div>
+            </div>
+          )}
           <div className="flex my-6 justify-between dark:bg-slate-800 p-2 rounded-md h-12 items-center lg:w-80 xl:w-96 bg-white">
             <button
               onClick={handleTime}

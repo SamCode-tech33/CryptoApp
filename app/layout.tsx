@@ -27,8 +27,8 @@ export default function RootLayout({
           >
             <StoreProvider>
               <Globalheader />
-              <div>
-                <Suspense fallback={<div className="loading"></div>}>
+              <div className="sticky top-0 left-1/2 z-10">
+                <Suspense>
                   <Navlinks />
                 </Suspense>
               </div>

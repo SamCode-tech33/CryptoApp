@@ -10,15 +10,12 @@ import queryString from "query-string";
 import InfiniteScroll from "react-infinite-scroll-component";
 import axios from "axios";
 import { Filtericon, Uparrow } from "../svgComps";
-import { Rangefilter } from "../rangeFilter";
 import { Coinbar } from "../coinBarSlide";
+import { Coinfilter } from "../Coinfilter";
+import { Skeleton } from "../Skeleton";
 
 export default function Navcoin() {
-  const [filterState, setFilterState] = useState<any>("");
-  const [filterValue, setFilterValue] = useState<any>("");
   const [query, setQuery] = useState<any>({});
-  const [lowerValue, setLowerValue] = useState<any>("");
-  const [upperValue, setUpperValue] = useState<any>("");
   const [dataMap, setDataMap] = useState<any>([]);
   const [start, setStart] = useState<number>(1);
   const [dataSet, setDataSet] = useState<any>([]);
@@ -26,6 +23,7 @@ export default function Navcoin() {
   const [error, setError] = useState<any>(false);
   const [percentSelected, setPercentSelected] = useState("1h%");
   const [percentOpen, setPercentOpen] = useState(false);
+  const [filterFocus, setFilterFocus] = useState(false);
 
   const currency = useSelector(
     (state: RootState) => state.currency.currencyType
@@ -53,85 +51,12 @@ export default function Navcoin() {
     }
   };
 
-  const handleFilter = (filter: string) => {
-    setFilterState(filter);
-    setLowerValue("");
-    setUpperValue("");
-  };
-
-  const handleFilterExit = () => {
-    setFilterState("");
-  };
-
-  const handleFilterRender = (e: any) => {
-    const newValue = e.target.value;
-    setFilterValue(newValue);
-    if (!filterState) return;
-    if (!newValue) {
-      delete query["Name"];
-      const newSearch = queryString.stringify(query);
-      window.history.replaceState({}, "", `${location.pathname}?${newSearch}`);
-    } else if (location.search && !Object.hasOwn(query, filterState)) {
-      window.history.replaceState(
-        {},
-        "",
-        `${location.href}&${filterState}=${newValue}`
-      );
-    } else if (Object.hasOwn(query, filterState)) {
-      const urlArray = Object.entries(query)[0];
-      const foundValue = urlArray.find(
-        (el) => urlArray.indexOf(el) === urlArray.indexOf(filterState) + 1
-      ) as string;
-      const urlRipper = location.search
-        .split(foundValue)
-        .toSpliced(1, 0, newValue)
-        .join("");
-      window.history.replaceState({}, "", `${urlRipper}`);
-    } else {
-      window.history.replaceState(
-        {},
-        "",
-        `${location.pathname}?${filterState}=${newValue}`
-      );
-    }
-    setDataMap(dataSet);
-    setQuery(queryString.parse(location.search));
-  };
-
-  const handleLowerValue = (e: any) => {
-    setLowerValue(e.target.value);
-  };
-
-  const handleUpperValue = (e: any) => {
-    setUpperValue(e.target.value);
-  };
-
-  const handleRangeRender = (e: any) => {
-    e.preventDefault();
-    if (!filterState || !lowerValue || !upperValue) return;
-    if (location.search && !Object.hasOwn(query, filterState)) {
-      window.history.replaceState(
-        {},
-        "",
-        `${location.href}&${filterState}=${lowerValue}_${upperValue}`
-      );
-    } else if (Object.hasOwn(query, filterState)) {
-      const urlArray = Object.entries(query)[0];
-      const foundValue = urlArray.find(
-        (el) => urlArray.indexOf(el) === urlArray.indexOf(filterState) + 1
-      ) as string;
-      const urlRipper = location.search
-        .split(foundValue)
-        .toSpliced(1, 0, `${lowerValue}_${upperValue}`)
-        .join("");
-      window.history.replaceState({}, "", `${urlRipper}`);
-    } else {
-      window.history.replaceState(
-        {},
-        "",
-        `${location.pathname}?${filterState}=${lowerValue}_${upperValue}`
-      );
-    }
+  const handleFilterRender = (locationString: string) => {
+    window.history.replaceState(
+      {},
+      "",
+      `${location.pathname}?${locationString}`
+    );
     setDataMap(dataSet);
     setQuery(queryString.parse(location.search));
   };
@@ -139,10 +64,6 @@ export default function Navcoin() {
   const handleFullClear = () => {
     if (location.search) {
       window.history.replaceState({}, "", `${location.pathname}`);
-      setLowerValue("");
-      setUpperValue("");
-      setFilterState("");
-      setFilterValue("");
       setQuery({});
       setDataMap(dataSet);
     } else {
@@ -150,28 +71,15 @@ export default function Navcoin() {
     }
   };
 
-  const handleRangeClear = (range: string) => {
-    if (location.search) {
-      delete query[range];
-      setLowerValue("");
-      setUpperValue("");
-      const newSearch = queryString.stringify(query);
-      window.history.replaceState({}, "", `${location.pathname}?${newSearch}`);
-      setQuery(queryString.parse(location.search));
-      setDataMap(dataSet);
-      retainQuery();
-    }
-  };
-
   const retainQuery = () => {
-    if (query.Name && dataMap.length) {
+    if (query.q && dataMap.length) {
       setDataMap((prevDataMap: any) =>
         prevDataMap.filter((coin: any) =>
-          coin.name.toLowerCase().includes(query.Name.toLowerCase())
+          coin.name.toLowerCase().includes(query.q.toLowerCase())
         )
       );
     }
-    if (query.Price && dataMap.length) {
+    if (query.price && dataMap.length) {
       setDataMap((prevDataMap: any) =>
         prevDataMap.filter((coin: any) => {
           let coinQuote;
@@ -181,13 +89,13 @@ export default function Navcoin() {
             coinQuote = coin.quote.USD;
           }
           return (
-            coinQuote.price > parseFloat(query.Price.split("_")[0]) &&
-            coinQuote.price < parseFloat(query.Price.split("_")[1])
+            coinQuote.price > parseFloat(query.price.split("_")[0]) &&
+            coinQuote.price < parseFloat(query.price.split("_")[1])
           );
         })
       );
     }
-    if (query.Hour1 && dataMap.length) {
+    if (query.hour1 && dataMap.length) {
       setDataMap((prevDataMap: any) =>
         prevDataMap.filter((coin: any) => {
           let coinQuote;
@@ -198,13 +106,13 @@ export default function Navcoin() {
           }
           return (
             coinQuote.percent_change_1h >
-              parseFloat(query.Hour1.split("_")[0]) &&
-            coinQuote.percent_change_1h < parseFloat(query.Hour1.split("_")[1])
+              parseFloat(query.hour1.split("_")[0]) &&
+            coinQuote.percent_change_1h < parseFloat(query.hour1.split("_")[1])
           );
         })
       );
     }
-    if (query.Hour24 && dataMap.length) {
+    if (query.hour24 && dataMap.length) {
       setDataMap((prevDataMap: any) =>
         prevDataMap.filter((coin: any) => {
           let coinQuote;
@@ -215,14 +123,14 @@ export default function Navcoin() {
           }
           return (
             coinQuote.percent_change_24h >
-              parseFloat(query.Hour24.split("_")[0]) &&
+              parseFloat(query.hour24.split("_")[0]) &&
             coinQuote.percent_change_24h <
-              parseFloat(query.Hour24.split("_")[1])
+              parseFloat(query.hour24.split("_")[1])
           );
         })
       );
     }
-    if (query.Day7 && dataMap.length) {
+    if (query.day7 && dataMap.length) {
       setDataMap((prevDataMap: any) =>
         prevDataMap.filter((coin: any) => {
           let coinQuote;
@@ -233,8 +141,8 @@ export default function Navcoin() {
           }
           return (
             coinQuote.percent_change_7d >
-              parseFloat(query.Day7.split("_")[0]) &&
-            coinQuote.percent_change_7d < parseFloat(query.Day7.split("_")[1])
+              parseFloat(query.day7.split("_")[0]) &&
+            coinQuote.percent_change_7d < parseFloat(query.day7.split("_")[1])
           );
         })
       );
@@ -256,6 +164,10 @@ export default function Navcoin() {
   }, [start]);
 
   useEffect(() => {
+    setQuery(queryString.parse(location.search));
+  }, [filterFocus]);
+
+  useEffect(() => {
     setStart(1);
     setDataSet([]);
     getCoins();
@@ -272,11 +184,18 @@ export default function Navcoin() {
   }, [query, dataSet]);
 
   return (
-    <div className="mt-8 relative">
-      {loading && <div className="loading"></div>}
-      {error ? (
-        <p>The following {error} occured. Please try again later.</p>
-      ) : (
+    <div>
+      {filterFocus && (
+        <div className="dark:bg-slate-800 border border-gray-600 fixed filter-focus z-10 flex items-center justify-center top-1/2 left-1/2 sm:p-8 py-8 bg-slate-300">
+          <Coinfilter
+            handleFilterRender={handleFilterRender}
+            handleFullClear={handleFullClear}
+            closeFocus={() => setFilterFocus(false)}
+          />
+        </div>
+      )}
+      <div className="mt-8 relative">
+        {error && <p>The following {error} occured. Please try again later.</p>}
         <ul className="lg:mx-20 mx-2">
           <li className="text-black dark:text-white h-12 flex items-center">
             <div className="justify-center mr-4 w-number md:flex hidden">
@@ -316,109 +235,16 @@ export default function Navcoin() {
                     </div>
                   )}
                 </div>
-                <div className="w-name md:flex hidden">
-                  <div
-                    className={
-                      filterState === "Name"
-                        ? "flex items-center p-2 rounded-sm dark:hover:bg-slate-600 h-20 z-10 hover:bg-slate-300"
-                        : "flex items-center p-2 rounded-sm dark:hover:bg-slate-800"
-                    }
-                    onMouseEnter={() => handleFilter("Name")}
-                    onMouseLeave={handleFilterExit}
-                  >
-                    <span>Name</span>
-                    <Filtericon />
-                    <div
-                      className={
-                        filterState === "Name"
-                          ? "flex items-center flex-col"
-                          : "hidden"
-                      }
-                    >
-                      <form className="flex ml-2 h-8 z-10" action="">
-                        <input
-                          type="text"
-                          className="dark:bg-slate-600 rounded-sm w-32 mr-1 dark:caret-white border-gray-300 border p-1 mb-2"
-                          value={filterValue}
-                          onChange={handleFilterRender}
-                          placeholder="Coin..."
-                        />
-                      </form>
-                      <button
-                        className="flex justify-left items-center dark:bg-slate-800 p-1 rounded-sm dark:hover:bg-slate-400 bg-violet-300 hover:bg-violet-400"
-                        onClick={handleFullClear}
-                      >
-                        <span className="text-sm">Clear All</span>
-                      </button>
-                    </div>
-                  </div>
+                <div className="w-name md:flex hidden mr-1.5">Name</div>
+                <div className="w-price relative md:flex hidden mr-4">
+                  Price
                 </div>
-                <div className="w-price relative h-10 md:flex hidden mr-1">
-                  <Rangefilter
-                    filterState={filterState}
-                    currentFilterState="Price"
-                    handleFilter={handleFilter}
-                    handleFilterExit={handleFilterExit}
-                    name="Price"
-                    handleRangeRender={handleRangeRender}
-                    handleLowerValue={handleLowerValue}
-                    lowerValue={lowerValue}
-                    handleUpperValue={handleUpperValue}
-                    upperValue={upperValue}
-                    handleRangeClear={handleRangeClear}
-                    handleFullClear={handleFullClear}
-                  />
-                </div>
-                <div className="w-1h relative h-10 md:flex hidden">
-                  <Rangefilter
-                    filterState={filterState}
-                    currentFilterState="Hour1"
-                    handleFilter={handleFilter}
-                    handleFilterExit={handleFilterExit}
-                    name="1h%"
-                    handleRangeRender={handleRangeRender}
-                    handleLowerValue={handleLowerValue}
-                    lowerValue={lowerValue}
-                    handleUpperValue={handleUpperValue}
-                    upperValue={upperValue}
-                    handleRangeClear={handleRangeClear}
-                    handleFullClear={handleFullClear}
-                  />
-                </div>
-                <div className="w-24h relative h-10 md:flex hidden">
-                  <Rangefilter
-                    filterState={filterState}
-                    currentFilterState="Hour24"
-                    handleFilter={handleFilter}
-                    handleFilterExit={handleFilterExit}
-                    name="24h%"
-                    handleRangeRender={handleRangeRender}
-                    handleLowerValue={handleLowerValue}
-                    lowerValue={lowerValue}
-                    handleUpperValue={handleUpperValue}
-                    upperValue={upperValue}
-                    handleRangeClear={handleRangeClear}
-                    handleFullClear={handleFullClear}
-                  />
-                </div>
-                <div className="w-7d relative h-10 md:flex hidden">
-                  <Rangefilter
-                    filterState={filterState}
-                    currentFilterState="Day7"
-                    handleFilter={handleFilter}
-                    handleFilterExit={handleFilterExit}
-                    name="7d%"
-                    handleRangeRender={handleRangeRender}
-                    handleLowerValue={handleLowerValue}
-                    lowerValue={lowerValue}
-                    handleUpperValue={handleUpperValue}
-                    upperValue={upperValue}
-                    handleRangeClear={handleRangeClear}
-                  />
-                </div>
+                <div className="w-1h relative md:flex hidden">1h%</div>
+                <div className="w-24h relative md:flex hidden">24h%</div>
+                <div className="w-7d relative md:flex hidden">7d%</div>
               </div>
             </div>
-            <div className="w-volume xl:flex hidden 2xl:text-base text-sm">
+            <div className="w-volume xl:flex hidden 2xl:text-base text-sm mr-3">
               <span>24h Volume / Market Cap</span>
             </div>
             <div className="w-volume xl:flex hidden 2xl:text-base text-sm">
@@ -427,7 +253,25 @@ export default function Navcoin() {
             <div className="w-last7 flex">
               <span>Last 7d</span>
             </div>
+            <button
+              className="flex items-center dark:bg-slate-800 sm:p-2 p-1 rounded-md dark:hover:bg-slate-600 border border-gray-600"
+              onClick={() => setFilterFocus(!filterFocus)}
+            >
+              <span className="sm:block hidden mr-1">Filter</span>
+              <Filtericon />
+            </button>
           </li>
+          {loading && (
+            <div>
+              {[...Array(100)].map((_, i) => (
+                <Skeleton
+                  key={i}
+                  classTail="dark:bg-slate-800 text-black dark:text-white bg-gray-300 h-14 flex items-center rounded-md mb-4"
+                  style={{ animationDelay: `${i * 0.05}s` }}
+                />
+              ))}
+            </div>
+          )}
           <div id="scrollableDiv" className="h-150 overflow-auto">
             <InfiniteScroll
               dataLength={dataMap.length}
@@ -454,9 +298,13 @@ export default function Navcoin() {
                       <div className="w-number md:flex justify-center hidden">
                         <span>{index + 1}</span>
                       </div>
-                      <div className="w-filter flex items-center">
+                      <div className="w-filter flex items-center mr-3">
                         <div className="w-name flex mx-3 items-center">
-                          <Defaulticon coin={coin.symbol} height="h-8" margin="mr-2" />
+                          <Defaulticon
+                            coin={coin.symbol}
+                            height="h-8"
+                            margin="mr-2"
+                          />
                           <span className="hidden sm:block">
                             {coin.name} ({coin.symbol})
                           </span>
@@ -526,7 +374,7 @@ export default function Navcoin() {
                             </div>
                           )}
                         </div>
-                        <div className="w-1h justify-left md:flex hidden">
+                        <div className="w-1h justify-left md:flex hidden items-center">
                           <Updownarrow coin={coinQuote.percent_change_1h} />
                           <span
                             className={
@@ -538,7 +386,7 @@ export default function Navcoin() {
                             {Math.abs(coinQuote.percent_change_1h.toFixed(2))}%
                           </span>
                         </div>
-                        <div className="w-24h justify-left md:flex hidden">
+                        <div className="w-24h justify-left md:flex hidden items-center">
                           <Updownarrow coin={coinQuote.percent_change_24h} />
                           <span
                             className={
@@ -550,7 +398,7 @@ export default function Navcoin() {
                             {Math.abs(coinQuote.percent_change_24h.toFixed(2))}%
                           </span>
                         </div>
-                        <div className="w-7d justify-left md:flex hidden">
+                        <div className="w-7d justify-left md:flex hidden items-center">
                           <Updownarrow coin={coinQuote.percent_change_7d} />
                           <span
                             className={
@@ -596,7 +444,7 @@ export default function Navcoin() {
             </InfiniteScroll>
           </div>
         </ul>
-      )}
+      </div>
     </div>
   );
 }

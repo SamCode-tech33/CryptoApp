@@ -24,6 +24,21 @@ path {
   stroke-linejoin: round;
 }
 
+@keyframes blink {
+  0% { opacity: 0.9; }
+  25% { opacity: 0.6; }
+  50% { opacity: 0.2; }
+  75% {opacity: 0.6;}
+  100% { opacity: 0.9; }
+}
+
+.blinking-load {
+  animation-name: blink;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
 .w-half {
   width: 41.5vw
 }
@@ -239,8 +254,12 @@ path {
   border-top-color: white;
   animation: spin 0.3s ease-in-out infinite;
   position: absolute;
-  top: 50%;
+  top: 85%;
   left: 50%;
+}
+
+.filter-focus {
+  transform: translate(-50%, -50%);
 }
 
 .w-number {

@@ -94,9 +94,7 @@ const Navsearch = () => {
   );
 
   const dispatch = useDispatch<AppDispatch>();
-  const { data, loading, error } = useSelector(
-    (state: RootState) => state.coins
-  );
+  const { data, loading } = useSelector((state: RootState) => state.coins);
 
   const handleInputChange = (e: any) => {
     dispatch(changeSearch(e.target.value));
@@ -130,66 +128,56 @@ const Navsearch = () => {
           clipRule="evenodd"
         />
       </svg>
-      {error ? (
-        <p className="text-red-600">
-          An error has occured, please try again later...
-        </p>
-      ) : (
-        <div
-          className={
-            isOpen
-              ? "border absolute z-10 dark:bg-slate-900 w-full overflow-y-scroll max-h-96 bg-slate-300"
-              : "hidden"
-          }
-        >
-          {loading && <div className="loading"></div>}
-          {data
-            .filter((coin) =>
-              coin.name.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-            .map((coin) => {
-              if (!coin.quote?.[currency]) {
-                return null;
-              }
-              let coinQuote;
-              if (coin.quote?.[currency]) {
-                coinQuote = coin.quote?.[currency];
-              } else {
-                coinQuote = coin.quote.USD;
-              }
-              const coinPrice = addCommas(coinQuote.price);
-              return (
-                <Link
-                  href={`/coins/${coin.id}`}
-                  key={coin.id}
-                  className="p-2 hover:bg-slate-400 dark:hover:bg-gray-700 rounded flex justify-between sm:flex-row flex-col"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <div className="flex items-center">
-                    <Defaulticon
-                      coin={coin.symbol}
-                      height="h-4"
-                      margin="mr-2"
-                    />
-                    <span className="hidden sm:block">
-                      {coin.name} ({coin.symbol})
-                    </span>
-                    <span className="sm:hidden block">
-                      {coin.name.split(" ")[0]}
-                    </span>
-                  </div>
-                  <span>
-                    {currencySymbol}{coinPrice}
-                  </span>
-                </Link>
-              );
-            })}
-          {data.filter((coin) =>
+      <div
+        className={
+          isOpen
+            ? "border absolute z-10 dark:bg-slate-900 w-full overflow-y-scroll max-h-96 bg-slate-300"
+            : "hidden"
+        }
+      >
+        {data
+          .filter((coin) =>
             coin.name.toLowerCase().includes(searchTerm.toLowerCase())
-          ).length === 0 &&
-            !loading && <p className="block p-2">No coin found...</p>}
-        </div>
-      )}
+          )
+          .map((coin) => {
+            if (!coin.quote?.[currency]) {
+              return null;
+            }
+            let coinQuote;
+            if (coin.quote?.[currency]) {
+              coinQuote = coin.quote?.[currency];
+            } else {
+              coinQuote = coin.quote.USD;
+            }
+            const coinPrice = addCommas(coinQuote.price);
+            return (
+              <Link
+                href={`/coins/${coin.id}`}
+                key={coin.id}
+                className="p-2 hover:bg-slate-400 dark:hover:bg-gray-700 rounded flex justify-between sm:flex-row flex-col"
+                onClick={() => setIsOpen(false)}
+              >
+                <div className="flex items-center">
+                  <Defaulticon coin={coin.symbol} height="h-4" margin="mr-2" />
+                  <span className="hidden sm:block">
+                    {coin.name} ({coin.symbol})
+                  </span>
+                  <span className="sm:hidden block">
+                    {coin.name.split(" ")[0]}
+                  </span>
+                </div>
+                <span>
+                  {currencySymbol}
+                  {coinPrice}
+                </span>
+              </Link>
+            );
+          })}
+        {data.filter((coin) =>
+          coin.name.toLowerCase().includes(searchTerm.toLowerCase())
+        ).length === 0 &&
+          !loading && <p className="block p-2">No coin found...</p>}
+      </div>
     </div>
   );
 };
