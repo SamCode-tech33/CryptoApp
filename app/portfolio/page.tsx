@@ -27,6 +27,7 @@ import DatePicker from "react-datepicker";
 import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import { Notification } from "../components/notifications";
+import { Skeleton } from "../components/Skeleton";
 
 export default function Portfolio() {
   const dispatch = useDispatch<AppDispatch>();
@@ -57,16 +58,13 @@ export default function Portfolio() {
   const [coinPrice, setCoinPrice] = useState(0);
   const [buyWith, setBuyWith] = useState(currency);
   const [isBuyWithSelect, setIsBuyWithSelect] = useState(false);
-  const [purchaseHeader, setPurchaseHeader] = useState("Purchase Amount");
+  const [purchaseHeader, setPurchaseHeader] = useState("Purchase Amount:");
   const [startDate, setStartDate] = useState(new Date());
   const [dateUnix, setDateUnix] = useState(Date.now());
   const [purchaseAmountChosen, setPurchaseAmountChosen] = useState(false);
   const [assetHeader, setAssetHeader] = useState("");
   const [noPurchase, setNoPurchase] = useState(false);
   const [purchaseNotNumber, setPurchaseNotNumber] = useState(false);
-  const [isCoinAssetsSelect, setIsCoinAssetsSelect] = useState(false);
-  const [assetSearchTerm, setAssetSearchTerm] = useState("");
-  const [openFundsAdd, setOpenFundsAdd] = useState(false);
   const [addFundsAmount, setAddFundsAmount] = useState("");
   const [isSelling, setIsSelling] = useState(false);
   const [sellAmount, setSellAmount] = useState("");
@@ -80,7 +78,7 @@ export default function Portfolio() {
   const getCoinPriceOnDate = async () => {
     try {
       const { data } = await axios.get(
-        `/api/specificDay?fsym=${coinSymbol}&tsym=${currency}&toTs=${dateUnix}`
+        `/api/specificDay?fsym=${coinSymbol}&tsym=${currency}&limit=${1}&toTs=${dateUnix}`
       );
       const dayPrice = (data.Data.Data[1].low + data.Data.Data[1].high) / 2;
       setCoinPrice(dayPrice);
@@ -177,7 +175,7 @@ export default function Portfolio() {
       setIsAddingAsset(false);
       setAssetHeader("");
       setPurchaseAmount("");
-      setPurchaseHeader("Purchase Amount");
+      setPurchaseHeader("Purchase Amount:");
       setBuyWith(currency);
       setNoti(true);
       setNotiMessage("Purchase Completed");
@@ -196,10 +194,14 @@ export default function Portfolio() {
   const handleAddFunds = () => {
     if (Number(addFundsAmount)) {
       dispatch(addFunds(addFundsAmount));
-      setOpenFundsAdd(false);
       setAddFundsAmount("");
+      setNoti(true);
+      setNotiMessage(`Added ${currencySymbol}${addFundsAmount} to Account.`);
+      setTimeout(() => {
+        setNotiMessage("");
+        setNoti(false);
+      }, 2500);
     } else {
-      setOpenFundsAdd(false);
       setAddFundsAmount("");
     }
   };
@@ -274,7 +276,7 @@ export default function Portfolio() {
   }, [coinPrice]);
 
   return (
-    <div className="bg-gray-200 sm:pt-1 dark:bg-slate-900 port-height">
+    <div className="bg-gray-200 sm:pt-1 dark:bg-slate-900 port-height mt-4">
       <Notification
         noti={noti}
         message={errNoti ? `Error: ${notiMessage}` : `Success: ${notiMessage}`}
@@ -367,12 +369,12 @@ export default function Portfolio() {
             <div className="w-full h-full flex items-center sm:justify-between justify-center dark:bg-slate-800 p-2 rounded-md bg-violet-300 relative">
               <div className="flex items-center">
                 <Defaulticon
-                  coin={coinSymbol}
+                  coin={"default"}
                   height="xl:h-8 lg:h-6 h-4"
                   margin="mr-2"
                 />
                 <span className="ml-2 xl:text-base lg:text-sm text-xs sm:block hidden">
-                  {coinName} ({coinSymbol})
+                  Select Coin:
                 </span>
                 <span className="ml-2 xl:text-base lg:text-sm text-xs sm:hidden block">
                   {coinSymbol}
@@ -391,7 +393,7 @@ export default function Portfolio() {
               <div
                 className={
                   isCoinSelect
-                    ? "border absolute z-10 dark:bg-slate-900 overflow-y-scroll max-h-96 bg-slate-300 left-1/2 top-full w-1/2"
+                    ? "border absolute z-20 dark:bg-slate-900 overflow-y-scroll max-h-96 bg-slate-300 left-1/2 top-full w-1/2"
                     : "hidden"
                 }
               >
@@ -426,7 +428,7 @@ export default function Portfolio() {
                           </div>
                           <span>
                             {currencySymbol}
-                            {addCommas(coinPrice)}
+                            {addCommas(coin.quote[currency].price)}
                           </span>
                         </div>
                       );
@@ -434,7 +436,7 @@ export default function Portfolio() {
               </div>
             </div>
             <button
-              className="w-full h-full flex items-center sm:justify-between justify-center dark:bg-slate-800 p-2 rounded-md dark:hover:bg-slate-600 mt-4 bg-violet-300 hover:bg-violet-400"
+              className="w-full h-full relative flex items-center sm:justify-between justify-center dark:bg-slate-800 p-2 rounded-md dark:hover:bg-slate-600 mt-4 bg-violet-300 hover:bg-violet-400"
               onClick={() => {
                 setIsPurchaseSelect(!isPurchaseSelect);
                 setIsCoinSelect(false);
@@ -453,104 +455,110 @@ export default function Portfolio() {
                 </span>
               )}
               <Uparrow isOpen={isPurchaseSelect} />
-            </button>
-            <div
-              className={
-                isPurchaseSelect && coinSymbol !== ""
-                  ? "border absolute z-10 dark:bg-slate-900 md:h-32 h-64 w-full flex flex-col justify-around bg-slate-300"
-                  : "hidden"
-              }
-            >
-              <div className="flex md:items-center items-start justify-between md:flex-row flex-col ml-4">
-                <input
-                  type="text"
-                  value={purchaseAmount}
-                  placeholder="Purchase Amount. . ."
-                  className="w-1/2 p-2 rounded-sm dark:bg-slate-700 dark:text-white dark:caret-white text-left md:block hidden"
-                  onChange={(e) => setPurchaseAmount(e.target.value)}
-                />
-                <input
-                  type="text"
-                  value={purchaseAmount}
-                  placeholder="#. . ."
-                  className="w-2/3 p-2 rounded-sm dark:bg-slate-700 dark:text-white dark:caret-white text-left block md:hidden"
-                  onChange={(e) => setPurchaseAmount(e.target.value)}
-                />
-                <div
-                  className="sm:w-20 w-2/3 flex items-center justify-between dark:bg-slate-700 dark:hover:bg-slate-600 rounded-md p-2 bg-white hover:bg-violet-300 mt-4 md:mt-0 relative cursor-pointer"
-                  onClick={() => setIsBuyWithSelect(!isBuyWithSelect)}
-                >
-                  <span>{buyWith}</span> <Uparrow isOpen={isBuyWithSelect} />
+              <div
+                className={
+                  isPurchaseSelect && coinSymbol !== ""
+                    ? "border absolute z-10 dark:bg-slate-900 md:h-32 h-64 w-full flex flex-col justify-around bg-slate-300 left-0 top-full"
+                    : "hidden"
+                }
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex md:items-center items-start justify-between md:flex-row flex-col ml-4">
+                  <input
+                    type="text"
+                    value={purchaseAmount}
+                    placeholder="Purchase Amount. . ."
+                    className="w-1/2 p-2 rounded-sm dark:bg-slate-700 dark:text-white dark:caret-white text-left md:block hidden"
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => setPurchaseAmount(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    value={purchaseAmount}
+                    placeholder="#. . ."
+                    className="w-2/3 p-2 rounded-sm dark:bg-slate-700 dark:text-white dark:caret-white text-left block md:hidden"
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => setPurchaseAmount(e.target.value)}
+                  />
                   <div
-                    className={
-                      isBuyWithSelect
-                        ? "absolute z-10 dark:bg-slate-800 flex flex-col w-full bg-white buy-with-abs rounded-md"
-                        : "hidden"
-                    }
+                    className="sm:w-20 w-2/3 flex items-center justify-between dark:bg-slate-700 dark:hover:bg-slate-600 rounded-md p-2 bg-white hover:bg-violet-300 mt-4 md:mt-0 relative cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsBuyWithSelect(!isBuyWithSelect);
+                    }}
                   >
-                    <button
-                      className="p-2 dark:hover:bg-slate-600 hover:bg-violet-300 rounded-md"
-                      onClick={() => {
-                        setBuyWith(currency);
-                        setIsBuyWithSelect(false);
-                      }}
+                    <span>{buyWith}</span> <Uparrow isOpen={isBuyWithSelect} />
+                    <div
+                      className={
+                        isBuyWithSelect
+                          ? "absolute z-10 dark:bg-slate-800 flex flex-col w-full bg-white buy-with-abs rounded-md"
+                          : "hidden"
+                      }
                     >
-                      {currency}
-                    </button>
-                    <button
-                      className=" p-2 dark:hover:bg-slate-600 hover:bg-violet-300 rounded-md"
-                      onClick={() => {
-                        setBuyWith(coinSymbol);
-                        setIsBuyWithSelect(false);
-                      }}
-                    >
-                      {coinSymbol}
-                    </button>
+                      <div
+                        className="p-2 dark:hover:bg-slate-600 hover:bg-violet-300 rounded-md cursor-pointer"
+                        onClick={() => {
+                          setBuyWith(currency);
+                          setIsBuyWithSelect(false);
+                        }}
+                      >
+                        {currency}
+                      </div>
+                      <div
+                        className=" p-2 dark:hover:bg-slate-600 hover:bg-violet-300 rounded-md cursor-pointer"
+                        onClick={() => {
+                          setBuyWith(coinSymbol);
+                          setIsBuyWithSelect(false);
+                        }}
+                      >
+                        {coinSymbol}
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className="sm:w-16 w-2/3 dark:bg-slate-700 p-2 rounded-lg mr-4 cursor-pointer dark:hover:bg-slate-500 bg-white hover:bg-violet-300 mt-4 md:mt-0 flex justify-center"
+                    onClick={() => handlePurchase()}
+                  >
+                    <Arrowright />
                   </div>
                 </div>
-                <button
-                  className="sm:w-16 w-2/3 dark:bg-slate-700 p-2 rounded-lg mr-4 dark:hover:bg-slate-500 bg-white hover:bg-violet-300 mt-4 md:mt-0 flex justify-center"
-                  onClick={() => handlePurchase()}
-                >
-                  <Arrowright />
-                </button>
+                <div className="flex items-center mx-6 justify-between md:flex-row flex-col sm:text-base text-xs">
+                  {buyWith === currency ? (
+                    <div className="flex">
+                      <span className="mr-1">{currency}: </span>
+                      <span>
+                        {currencySymbol}
+                        {addCommas(Number(purchaseAmount))}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex">
+                      <span className="mr-1">{coinSymbol}: </span>
+                      <span>{purchaseAmount}</span>
+                    </div>
+                  )}
+                  {buyWith === currency ? (
+                    <div className="flex">
+                      <span className="mr-1">{coinSymbol}: </span>
+                      <span>
+                        {(Number(purchaseAmount) / coinPrice).toFixed(6)}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex">
+                      <span className="mr-1">{currency}: </span>
+                      <span>
+                        {currencySymbol}
+                        {addCommas(Number(purchaseAmount) * coinPrice)}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center mx-6 justify-between md:flex-row flex-col sm:text-base text-xs">
-                {buyWith === currency ? (
-                  <div className="flex">
-                    <span className="mr-1">{currency}: </span>
-                    <span>
-                      {currencySymbol}
-                      {addCommas(Number(purchaseAmount))}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex">
-                    <span className="mr-1">{coinSymbol}: </span>
-                    <span>{purchaseAmount}</span>
-                  </div>
-                )}
-                {buyWith === currency ? (
-                  <div className="flex">
-                    <span className="mr-1">{coinSymbol}: </span>
-                    <span>
-                      {(Number(purchaseAmount) / coinPrice).toFixed(6)}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex">
-                    <span className="mr-1">{currency}: </span>
-                    <span>
-                      {currencySymbol}
-                      {addCommas(Number(purchaseAmount) * coinPrice)}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
+            </button>
             <div className="flex items-center sm:justify-between justify-center dark:bg-slate-800 p-2 rounded-md mt-4 bg-violet-300 hover:bg-violet-400">
               <span className="ml-2 xl:text-base lg:text-sm text-xs sm:block hidden">
-                Purchase Date
+                Purchase Date:
               </span>
               <div className="relative">
                 <DatePicker
@@ -637,514 +645,476 @@ export default function Portfolio() {
               </span>
             </div>
           </div>
-          <div className="lg:w-2/3 flex lg:justify-end w-full lg:text-base text-xs mx-4">
-            <div>
-              <div
-                className="w-full lg:w-full flex items-center justify-between dark:bg-slate-600 py-4 px-2 sm:px-4 rounded-md cursor-pointer dark:hover:bg-slate-400 bg-violet-300 hover:bg-violet-400"
-                onClick={() => {
-                  setIsCoinAssetsSelect(!isCoinAssetsSelect);
-                }}
-              >
-                <div className="flex">
-                  <span>Coins Owned</span>
-                </div>
-                <Uparrow isOpen={isCoinAssetsSelect} />
-              </div>
-              {isCoinAssetsSelect && (
-                <div className="border absolute z-10 dark:bg-slate-900 overflow-y-scroll h-80 border-black dark:border-white bg-slate-300">
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    value={searchTerm}
-                    onChange={(e) => setAssetSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 p-2 rounded-sm dark:bg-slate-600 text-white dark:caret-white border-black border"
-                  />
-                  {portfolio.length &&
-                    portfolio
-                      .filter((asset) =>
-                        asset.coinName
-                          .toLowerCase()
-                          .includes(assetSearchTerm.toLowerCase())
-                      )
-                      .map((asset) => {
-                        return (
-                          <div
-                            key={asset.date + asset.coinSymbol}
-                            className="p-3 dark:hover:bg-slate-600 cursor-pointer flex justify-between hover:bg-slate-400 lg:flex-row flex-col"
-                          >
-                            <div className="flex items-center">
-                              <Defaulticon
-                                coin={asset.coinSymbol}
-                                height="h-4"
-                                margin="mr-2"
-                              />
-                              <span>
-                                {asset.coinSymbol} - {asset.coinAmount}
-                              </span>
-                            </div>
-                            <span className="ml-6">
-                              {currencySymbol}
-                              {addCommas(asset.currencyAmount)}
-                            </span>
-                          </div>
-                        );
-                      })}
-                </div>
-              )}
+          <div className="lg:w-2/3 w-full flex lg:justify-end justify-start lg:text-base text-xs mx-2 items-center">
+            <div className="2xl:text-base xl:text-sm text-xs">
+              Crypto Purchases require, sufficient funding:
             </div>
-            <div>
-              {!openFundsAdd ? (
-                <button
-                  className="flex sm:w-full w-2/3 mx-4 justify-between items-center dark:bg-slate-600 dark:hover:bg-slate-400 sm:p-4 p-2 rounded-md bg-violet-300 hover:bg-violet-400"
-                  onClick={() => setOpenFundsAdd(true)}
+            <div className="ml-4 w-full">
+              <form
+                className="lg:p-4 p-3 dark:bg-slate-900 flex 2xl:w-64 rounded-md bg-violet-200 lg:w-48 md:w-56 sm:w-40 w-36"
+                onSubmit={handleAddFunds}
+              >
+                <input
+                  type="text"
+                  placeholder="Add Funds..."
+                  value={addFundsAmount}
+                  onChange={(e) => setAddFundsAmount(e.target.value)}
+                  className="w-full 2xl:p-2 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white p-1"
+                />
+                <div
+                  onClick={handleAddFunds}
+                  className="2xl:p-2 p-1 ml-3 rounded-md dark:bg-slate-600 dark:hover:bg-slate-500 cursor-pointer"
                 >
-                  <span>Add Funds</span>
-                  <Sellicon />
-                </button>
-              ) : (
-                <div className="p-4 dark:bg-slate-900 flex w-64 rounded-md bg-slate-300 relative z-10">
-                  <input
-                    type="text"
-                    placeholder="Add Funds..."
-                    value={addFundsAmount}
-                    onChange={(e) => setAddFundsAmount(e.target.value)}
-                    className="w-full p-2 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white"
-                  />
-                  <button
-                    onClick={handleAddFunds}
-                    className="p-2 ml-3 rounded-md dark:bg-slate-600"
-                  >
-                    <Arrowright />
-                  </button>
+                  <Arrowright />
                 </div>
-              )}
+              </form>
             </div>
           </div>
         </div>
       </div>
-      <div className="flex flex-col lg:mx-32 md:mx-16 mx-4">
-        {loading && <div className="loading"></div>}
-        {data.length &&
-          portfolio.map((asset) => {
-            const coin = data.find((coin) => coin.name === asset.coinName);
-            const coinQuote = coin.quote?.[currency];
-            if (!coin || !coinQuote) return null;
-            const capToVol = (
-              (coinQuote.volume_24h / coinQuote.market_cap) *
-              100
-            ).toFixed(1);
-            const circToMax = coin.circulating_supply / coin.max_supply;
-            const priceChange24 =
-              (coinQuote.percent_change_24h / 100) * coinQuote.price;
-            let coinMax = coin.max_supply;
-            if (coin.max_supply === null) {
-              coinMax = "∞";
-            }
-            return (
-              <div
-                className="dark:bg-slate-800 rounded-lg mb-6 flex justify-between p-5 relative bg-white"
-                key={asset.coinSymbol}
-              >
-                <div className=" dark:bg-slate-700 w-72 rounded-md flex-col items-center justify-center bg-violet-200 hidden lg:flex">
-                  <div className="mb-16">
+      {loading ? (
+        <div>
+          {[...Array(10)].map((_, i) => (
+            <Skeleton
+              key={i}
+              classTail="dark:bg-slate-800 rounded-lg mb-6 flex justify-between p-5 relative bg-white lg:mx-32 md:mx-16 mx-4 h-96"
+              style={{ animationDelay: `${i * 0.05}s` }}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col lg:mx-32 md:mx-16 mx-4 z-10">
+          {data.length &&
+            portfolio.map((asset) => {
+              const coin = data.find((coin) => coin.name === asset.coinName);
+              const coinQuote = coin.quote?.[currency];
+              if (!coin || !coinQuote) return null;
+              const capToVol = (
+                (coinQuote.volume_24h / coinQuote.market_cap) *
+                100
+              ).toFixed(1);
+              const circToMax = coin.circulating_supply / coin.max_supply;
+              const priceChange24 =
+                (coinQuote.percent_change_24h / 100) * coinQuote.price;
+              let coinMax = coin.max_supply;
+              if (coin.max_supply === null) {
+                coinMax = "∞";
+              }
+              return (
+                <div
+                  className="dark:bg-slate-800 rounded-lg mb-6 flex justify-between p-5 relative bg-white"
+                  key={asset.coinSymbol}
+                >
+                  <div className=" dark:bg-slate-700 w-72 rounded-md flex-col items-center justify-center bg-violet-200 hidden lg:flex">
+                    <div className="mb-16">
+                      <Defaulticon
+                        coin={asset.coinSymbol}
+                        height="h-16"
+                        margin="mr-0"
+                      />
+                    </div>
+                    <span className="xl:text-3xl mt-4">
+                      {asset.coinName} {asset.coinSymbol}
+                    </span>
+                  </div>
+                  <div className="lg:hidden absolute left-emblem">
                     <Defaulticon
                       coin={asset.coinSymbol}
-                      height="h-16"
+                      height="h-10"
                       margin="mr-0"
                     />
                   </div>
-                  <span className="xl:text-3xl mt-4">
-                    {asset.coinName} {asset.coinSymbol}
-                  </span>
-                </div>
-                <div className="lg:hidden absolute left-emblem">
-                  <Defaulticon
-                    coin={asset.coinSymbol}
-                    height="h-10"
-                    margin="mr-0"
-                  />
-                </div>
-                <div className="flex flex-col w-full">
-                  <div className="flex flex-col mx-0 lg:mx-4 border-b-2 border-gray-400 pb-6 2xl:text-base text-sm w-full">
-                    <div className="flex justify-between mb-4">
-                      <div className="text-2xl md:block hidden">
-                        <div>Market Price</div>
-                        <div className="text-xs">Purchased {asset.date}</div>
-                      </div>
-                      <div className="text-xs block md:hidden">
-                        <div>
-                          {asset.coinName} ({asset.coinSymbol})
+                  <div className="flex flex-col w-full">
+                    <div className="flex flex-col mx-0 lg:mx-4 border-b-2 border-gray-400 pb-6 2xl:text-base text-sm w-full">
+                      <div className="flex justify-between mb-4">
+                        <div className="text-2xl md:block hidden">
+                          <div>Market Price</div>
+                          <div className="text-xs">Purchased {asset.date}</div>
                         </div>
-                        <div className="opacity-50">Purchased</div>
-                        <div className="opacity-50">{asset.date}</div>
-                      </div>
-                      <div className="mr-12 sm:mr-20 lg:mr-5">
-                        {isSelling && (
-                          <div className="absolute z-10 dark:bg-slate-900 p-3 rounded-md left-1/2 top-1/3 flex flex-col items-center bg-slate-300">
-                            <span>Amount to sell?</span>
-                            <div className="flex items-center my-4">
-                              <input
-                                type="text"
-                                value={sellAmount}
-                                placeholder="Sale Amount. . ."
-                                className="w-2/3 p-2 rounded-sm dark:bg-slate-700 dark:text-white dark:caret-white ml-4 text-left bg-white"
-                                onChange={(e) => setSellAmount(e.target.value)}
-                              />
-                              <button
-                                className="flex items-center dark:bg-slate-700 rounded-md p-2 mx-4 dark:hover:bg-slate-400 bg-white hover:bg-violet-300"
-                                onClick={() =>
-                                  setIsSellWithSelect(!isSellWithSelect)
-                                }
-                              >
-                                <span>{sellWith}</span>{" "}
-                                <Uparrow isOpen={isSellWithSelect} />
-                              </button>
-                              <div className="relative">
-                                <div
-                                  className={
-                                    isSellWithSelect
-                                      ? "absolute z-10 dark:bg-slate-600 top-5 -left-22 flex flex-col bg-white"
-                                      : "hidden"
+                        <div className="text-xs block md:hidden">
+                          <div>
+                            {asset.coinName} ({asset.coinSymbol})
+                          </div>
+                          <div className="opacity-50">Purchased</div>
+                          <div className="opacity-50">{asset.date}</div>
+                        </div>
+                        <div className="mr-12 sm:mr-20 lg:mr-5">
+                          {isSelling && (
+                            <div className="absolute z-10 dark:bg-slate-900 p-3 rounded-md left-1/2 top-1/3 flex flex-col items-center bg-slate-300">
+                              <span>Amount to sell?</span>
+                              <div className="flex items-center my-4">
+                                <input
+                                  type="text"
+                                  value={sellAmount}
+                                  placeholder="Sale Amount. . ."
+                                  className="w-2/3 p-2 rounded-sm dark:bg-slate-700 dark:text-white dark:caret-white ml-4 text-left bg-white"
+                                  onChange={(e) =>
+                                    setSellAmount(e.target.value)
+                                  }
+                                />
+                                <button
+                                  className="flex items-center dark:bg-slate-700 rounded-md p-2 mx-4 dark:hover:bg-slate-400 bg-white hover:bg-violet-300"
+                                  onClick={() =>
+                                    setIsSellWithSelect(!isSellWithSelect)
                                   }
                                 >
-                                  <button
-                                    className="py-2 px-4 dark:hover:bg-slate-400 hover:bg-violet-300"
-                                    onClick={() => {
-                                      setSellWith(currency);
-                                      setIsSellWithSelect(false);
-                                    }}
+                                  <span>{sellWith}</span>{" "}
+                                  <Uparrow isOpen={isSellWithSelect} />
+                                </button>
+                                <div className="relative">
+                                  <div
+                                    className={
+                                      isSellWithSelect
+                                        ? "absolute z-10 dark:bg-slate-600 top-5 -left-22 flex flex-col bg-white"
+                                        : "hidden"
+                                    }
                                   >
-                                    {currency}
-                                  </button>
-                                  <button
-                                    className=" py-2 px-4 dark:hover:bg-slate-400 hover:bg-violet-300"
-                                    onClick={() => {
-                                      setSellWith(coinSymbol);
-                                      setIsSellWithSelect(false);
-                                    }}
-                                  >
-                                    {coinSymbol}
-                                  </button>
+                                    <button
+                                      className="py-2 px-4 dark:hover:bg-slate-400 hover:bg-violet-300"
+                                      onClick={() => {
+                                        setSellWith(currency);
+                                        setIsSellWithSelect(false);
+                                      }}
+                                    >
+                                      {currency}
+                                    </button>
+                                    <button
+                                      className=" py-2 px-4 dark:hover:bg-slate-400 hover:bg-violet-300"
+                                      onClick={() => {
+                                        setSellWith(coinSymbol);
+                                        setIsSellWithSelect(false);
+                                      }}
+                                    >
+                                      {coinSymbol}
+                                    </button>
+                                  </div>
                                 </div>
+                                <button
+                                  className="p-3 rounded-md dark:bg-slate-600 bg-white dark:hover:bg-slate-400 hover:bg-violet-300"
+                                  onClick={() => {
+                                    let soldAmount;
+                                    let soldCoinAmount;
+                                    if (sellWith === currency) {
+                                      soldAmount = sellAmount;
+                                      soldCoinAmount =
+                                        (Number(sellAmount) / coinPrice) *
+                                        asset.coinAmount;
+                                    } else {
+                                      soldAmount =
+                                        Number(sellAmount) * coinPrice;
+                                      soldCoinAmount = sellAmount;
+                                    }
+                                    handleSale(
+                                      soldAmount,
+                                      soldCoinAmount,
+                                      asset.currencyAmount,
+                                      asset.coinSymbol,
+                                      asset.coinName,
+                                      asset.date,
+                                      asset.coinAmount,
+                                      asset.id
+                                    );
+                                  }}
+                                >
+                                  <Arrowright />
+                                </button>
                               </div>
-                              <button
-                                className="p-3 rounded-md dark:bg-slate-600 bg-white dark:hover:bg-slate-400 hover:bg-violet-300"
-                                onClick={() => {
-                                  let soldAmount;
-                                  let soldCoinAmount;
-                                  if (sellWith === currency) {
-                                    soldAmount = sellAmount;
-                                    soldCoinAmount =
-                                      (Number(sellAmount) / coinPrice) *
-                                      asset.coinAmount;
-                                  } else {
-                                    soldAmount = Number(sellAmount) * coinPrice;
-                                    soldCoinAmount = sellAmount;
+                              <div className="flex items-center mx-6">
+                                {sellWith === currency ? (
+                                  <div className="flex mr-4">
+                                    <span className="mr-1">{currency}: </span>
+                                    <span>
+                                      {currencySymbol}{" "}
+                                      {addCommas(Number(sellAmount))}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <div className="flex mr-4">
+                                    <span className="mr-1">{coinSymbol}: </span>
+                                    <span>{addCommas(Number(sellAmount))}</span>
+                                  </div>
+                                )}
+                                {sellWith === currency ? (
+                                  <div className="flex ml-4">
+                                    <span className="mr-1">{coinSymbol}: </span>
+                                    <span>
+                                      {(Number(sellAmount) / coinPrice).toFixed(
+                                        6
+                                      )}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <div className="flex ml-4">
+                                    <span className="mr-1">{currency}: </span>
+                                    <span>
+                                      {currencySymbol}{" "}
+                                      {addCommas(
+                                        Number(sellAmount) * coinPrice
+                                      )}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          {isDeleting && (
+                            <div className="absolute z-10 dark:bg-slate-900 p-4 rounded-md flex flex-col items-center left-1/2 top-1/3 bg-slate-300">
+                              <span>
+                                By deleting this, you agree to sell the entire
+                                asset
+                              </span>
+                              <div className="flex w-full justify-around">
+                                <button
+                                  className="p-3 dark:bg-slate-600 dark:hover:bg-slate-400 my-4 rounded-lg bg-violet-300 hover:bg-violet-400"
+                                  onClick={() =>
+                                    handleDelete(asset.currencyAmount, asset.id)
                                   }
-                                  handleSale(
-                                    soldAmount,
-                                    soldCoinAmount,
-                                    asset.currencyAmount,
-                                    asset.coinSymbol,
-                                    asset.coinName,
-                                    asset.date,
-                                    asset.coinAmount,
-                                    asset.id
-                                  );
-                                }}
-                              >
-                                <Arrowright />
-                              </button>
+                                >
+                                  Delete & Sell
+                                </button>
+                                <button
+                                  className="p-3 dark:bg-slate-600 dark:hover:bg-slate-400 my-4 rounded-lg bg-violet-300 hover:bg-violet-400"
+                                  onClick={() => setIsDeleting(false)}
+                                >
+                                  Cancel
+                                </button>
+                              </div>
                             </div>
-                            <div className="flex items-center mx-6">
-                              {sellWith === currency ? (
-                                <div className="flex mr-4">
-                                  <span className="mr-1">{currency}: </span>
-                                  <span>
-                                    {currencySymbol}{" "}
-                                    {addCommas(Number(sellAmount))}
-                                  </span>
-                                </div>
-                              ) : (
-                                <div className="flex mr-4">
-                                  <span className="mr-1">{coinSymbol}: </span>
-                                  <span>{addCommas(Number(sellAmount))}</span>
-                                </div>
-                              )}
-                              {sellWith === currency ? (
-                                <div className="flex ml-4">
-                                  <span className="mr-1">{coinSymbol}: </span>
-                                  <span>
-                                    {(Number(sellAmount) / coinPrice).toFixed(
-                                      6
-                                    )}
-                                  </span>
-                                </div>
-                              ) : (
-                                <div className="flex ml-4">
-                                  <span className="mr-1">{currency}: </span>
-                                  <span>
-                                    {currencySymbol}{" "}
-                                    {addCommas(Number(sellAmount) * coinPrice)}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                        {isDeleting && (
-                          <div className="absolute z-10 dark:bg-slate-900 p-4 rounded-md flex flex-col items-center left-1/2 top-1/3 bg-slate-300">
-                            <span>
-                              By deleting this, you agree to sell the entire
-                              asset
+                          )}
+                          <button
+                            className="p-2 dark:bg-slate-600 rounded-md dark:hover:bg-slate-400 lg:mr-2 mr-0.5 bg-violet-300 hover:bg-violet-400"
+                            onClick={() => setIsSelling(!isSelling)}
+                          >
+                            <Sellicon />
+                          </button>
+                          <button
+                            className="p-2 dark:bg-slate-600 rounded-md dark:hover:bg-slate-400 lg:ml-2 ml-0.5 bg-violet-300 hover:bg-violet-400"
+                            onClick={() => setIsDeleting(!isDeleting)}
+                          >
+                            <Trashicon />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center w-full">
+                        <div className="xl:flex-row flex flex-col mr-4 h-full w-full">
+                          <div className="flex flex-col items-center justify-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full xl:mb-0 mb-4 xl:mr-4 h-full">
+                            <span className="md:underline md:text-sm text-xs opacity-50 md:opacity-100 mb-2">
+                              Current Price
                             </span>
-                            <div className="flex w-full justify-around">
-                              <button
-                                className="p-3 dark:bg-slate-600 dark:hover:bg-slate-400 my-4 rounded-lg bg-violet-300 hover:bg-violet-400"
-                                onClick={() =>
-                                  handleDelete(asset.currencyAmount, asset.id)
+                            <span>
+                              {currencySymbol}
+                              {addCommas(coinQuote.price)}
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-center justify-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full h-full">
+                            <span className="md:underline md:text-sm text-xs opacity-50 md:opacity-100 mb-2">
+                              Price Change 24h
+                            </span>
+                            <div className="flex items-center">
+                              <Updownarrow coin={priceChange24} />
+                              <span
+                                className={
+                                  priceChange24 >= 0
+                                    ? "text-green-500"
+                                    : "text-red-500"
                                 }
                               >
-                                Delete & Sell
-                              </button>
-                              <button
-                                className="p-3 dark:bg-slate-600 dark:hover:bg-slate-400 my-4 rounded-lg bg-violet-300 hover:bg-violet-400"
-                                onClick={() => setIsDeleting(false)}
-                              >
-                                Cancel
-                              </button>
+                                {currencySymbol}
+                                {addCommas(Math.abs(priceChange24))}
+                              </span>
                             </div>
                           </div>
-                        )}
-                        <button
-                          className="p-2 dark:bg-slate-600 rounded-md dark:hover:bg-slate-400 lg:mr-2 mr-0.5 bg-violet-300 hover:bg-violet-400"
-                          onClick={() => setIsSelling(!isSelling)}
-                        >
-                          <Sellicon />
-                        </button>
-                        <button
-                          className="p-2 dark:bg-slate-600 rounded-md dark:hover:bg-slate-400 lg:ml-2 ml-0.5 bg-violet-300 hover:bg-violet-400"
-                          onClick={() => setIsDeleting(!isDeleting)}
-                        >
-                          <Trashicon />
-                        </button>
+                        </div>
+                        <div className="xl:flex-row flex flex-col w-full mr-4">
+                          <div className="flex flex-col items-center justify-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full xl:mr-4">
+                            <span className="md:underline md:text-sm text-xs opacity-50 md:opacity-100">
+                              Volume - Market Cap
+                            </span>
+                            <div className="flex items-center lg:flex-col flex-row">
+                              <div className="mt-2 md:block hidden">
+                                <div className="bg-gray-400 lg:w-40 w-20 h-2 lg:h-3 rounded-lg">
+                                  <div
+                                    className={
+                                      Number(capToVol) > 4
+                                        ? "bg-green-500 h-2 lg:h-3 rounded-lg"
+                                        : "bg-red-500 h-2 lg:h-3 rounded-lg"
+                                    }
+                                    style={{
+                                      width:
+                                        Number(capToVol) > 8
+                                          ? `${capToVol}%`
+                                          : "8%",
+                                    }}
+                                  ></div>
+                                </div>
+                              </div>
+                              <span className="text-green-500 ml-2 lg:ml-0 mt-2">
+                                {capToVol}%
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-center justify-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full xl:mt-0 mt-4">
+                            <span className="underline md:block hidden">
+                              Circ Supply - Max Supply
+                            </span>
+                            <span className="md:text-sm text-xs opacity-50 md:opacity-100 md:hidden block">
+                              Circulating - Max
+                            </span>
+                            <div className="flex items-center lg:flex-col flex-row">
+                              <div className="mt-2 md:block hidden">
+                                <div className="bg-gray-400 lg:w-40 w-20 h-2 lg:h-3 rounded-lg">
+                                  <div
+                                    className="dark:bg-teal-400 bg-teal-500 h-2 lg:h-3 rounded-lg"
+                                    style={{
+                                      width:
+                                        Number(circToMax * 100) > 8
+                                          ? `${circToMax * 100}%`
+                                          : "8%",
+                                    }}
+                                  ></div>
+                                </div>
+                              </div>
+                              <span className="dark:text-teal-400 text-teal-500 ml-2 lg:ml-0 mt-2 lg:block hidden">
+                                {
+                                  addCommas(coin.circulating_supply).split(
+                                    "."
+                                  )[0]
+                                }{" "}
+                                / {addCommas(coin.max_supply).split(".")[0]}
+                              </span>
+                              {coinMax === "∞" ? (
+                                <span className="dark:text-teal-400 text-teal-500 ml-2 lg:ml-0 mt-2 block lg:hidden">
+                                  {
+                                    addCommas(
+                                      coin.circulating_supply / 1000000
+                                    ).split(".")[0]
+                                  }
+                                  M / ∞
+                                </span>
+                              ) : (
+                                <span className="dark:text-teal-400 text-teal-500 ml-2 lg:ml-0 mt-2 block lg:hidden">
+                                  {
+                                    addCommas(
+                                      coin.circulating_supply / 1000000
+                                    ).split(".")[0]
+                                  }
+                                  M /{" "}
+                                  {
+                                    addCommas(coin.max_supply / 1000000).split(
+                                      "."
+                                    )[0]
+                                  }{" "}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex justify-between items-center w-full">
-                      <div className="xl:flex-row flex flex-col mr-4 h-full w-full">
-                        <div className="flex flex-col items-center justify-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full xl:mb-0 mb-4 xl:mr-4 h-full">
-                          <span className="md:underline md:text-sm text-xs opacity-50 md:opacity-100 mb-2">
-                            Current Price
-                          </span>
-                          <span>
-                            {currencySymbol}
-                            {addCommas(coinQuote.price)}
-                          </span>
+                    <div className="flex flex-col lg:ml-4 pt-6 2xl:text-base text-sm w-full">
+                      <div className="justify-between mb-4 md:flex hidden">
+                        <h1 className="text-2xl">Your Holdings</h1>
+                      </div>
+                      <div className="flex justify-between w-full">
+                        <div className="flex w-full xl:flex-row flex-col mr-4">
+                          <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full h-full mr-4 mb-4">
+                            <span className="md:text-sm text-xs opacity-50 md:opacity-100 mb-2 md:underline">
+                              Coins Held
+                            </span>
+                            <span>{asset.coinAmount.toFixed(5)}</span>
+                          </div>
+                          <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full h-full">
+                            <span className="md:text-sm text-xs opacity-50 md:opacity-100 mb-2 md:underline">
+                              Value at Purchase
+                            </span>
+                            <div className="flex items-center">
+                              <span>
+                                {currencySymbol}
+                                {addCommas(asset.currencyAmount)}
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex flex-col items-center justify-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full h-full">
-                          <span className="md:underline md:text-sm text-xs opacity-50 md:opacity-100 mb-2">
-                            Price Change 24h
-                          </span>
-                          <div className="flex items-center">
-                            <Updownarrow coin={priceChange24} />
+                        <div className="flex w-full xl:flex-row flex-col mr-4">
+                          <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full h-full mr-4 mb-4">
+                            <span className="md:text-sm text-xs opacity-50 md:opacity-100 mb-2 md:underline">
+                              Current Fiat Value
+                            </span>
                             <span
                               className={
-                                priceChange24 >= 0
+                                Number(coinQuote.price) *
+                                  Number(asset.coinAmount) >
+                                Number(asset.currencyAmount)
                                   ? "text-green-500"
                                   : "text-red-500"
                               }
                             >
                               {currencySymbol}
-                              {addCommas(Math.abs(priceChange24))}
+                              {addCommas(coinQuote.price * asset.coinAmount)}
                             </span>
                           </div>
-                        </div>
-                      </div>
-                      <div className="xl:flex-row flex flex-col w-full mr-4">
-                        <div className="flex flex-col items-center justify-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full xl:mr-4">
-                          <span className="md:underline md:text-sm text-xs opacity-50 md:opacity-100">
-                            Volume - Market Cap
-                          </span>
-                          <div className="flex items-center lg:flex-col flex-row">
-                            <div className="mt-2 md:block hidden">
-                              <div className="bg-gray-400 lg:w-40 w-20 h-2 lg:h-3 rounded-lg">
-                                <div
-                                  className={
-                                    Number(capToVol) > 4
-                                      ? "bg-green-500 h-2 lg:h-3 rounded-lg"
-                                      : "bg-red-500 h-2 lg:h-3 rounded-lg"
+                          <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 sm:p-2 p-1 rounded-md w-full h-full">
+                            <span className="md:text-sm text-xs opacity-50 md:opacity-100 sm:mb-2 md:underline">
+                              Value Change
+                            </span>
+                            <div className="flex items-center sm:flex-row flex-col">
+                              <div className="flex items-center">
+                                <Updownarrow
+                                  coin={
+                                    Number(coinQuote.price) *
+                                      Number(asset.coinAmount) -
+                                    Number(asset.currencyAmount)
                                   }
-                                  style={{
-                                    width:
-                                      Number(capToVol) > 8
-                                        ? `${capToVol}%`
-                                        : "8%",
-                                  }}
-                                ></div>
+                                />
+                                <span
+                                  className={
+                                    Number(coinQuote.price) *
+                                      Number(asset.coinAmount) >
+                                    Number(asset.currencyAmount)
+                                      ? "text-green-500 sm:mr-3"
+                                      : "text-red-500 sm:mr-3"
+                                  }
+                                >
+                                  {" "}
+                                  {currencySymbol}
+                                  {addCommas(
+                                    Math.abs(
+                                      Number(coinQuote.price) *
+                                        Number(asset.coinAmount) -
+                                        Number(asset.currencyAmount)
+                                    )
+                                  )}
+                                </span>
                               </div>
-                            </div>
-                            <span className="text-green-500 ml-2 lg:ml-0 mt-2">
-                              {capToVol}%
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex flex-col items-center justify-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full xl:mt-0 mt-4">
-                          <span className="underline md:block hidden">
-                            Circ Supply - Max Supply
-                          </span>
-                          <span className="md:text-sm text-xs opacity-50 md:opacity-100 md:hidden block">
-                            Circulating - Max
-                          </span>
-                          <div className="flex items-center lg:flex-col flex-row">
-                            <div className="mt-2 md:block hidden">
-                              <div className="bg-gray-400 lg:w-40 w-20 h-2 lg:h-3 rounded-lg">
-                                <div
-                                  className="dark:bg-teal-400 bg-teal-500 h-2 lg:h-3 rounded-lg"
-                                  style={{
-                                    width:
-                                      Number(circToMax * 100) > 8
-                                        ? `${circToMax * 100}%`
-                                        : "8%",
-                                  }}
-                                ></div>
-                              </div>
-                            </div>
-                            <span className="dark:text-teal-400 text-teal-500 ml-2 lg:ml-0 mt-2 lg:block hidden">
-                              {addCommas(coin.circulating_supply).split(".")[0]}{" "}
-                              / {addCommas(coin.max_supply).split(".")[0]}
-                            </span>
-                            {coinMax === "∞" ? (
-                              <span className="dark:text-teal-400 text-teal-500 ml-2 lg:ml-0 mt-2 block lg:hidden">
-                                {
-                                  addCommas(
-                                    coin.circulating_supply / 1000000
-                                  ).split(".")[0]
-                                }
-                                M / ∞
-                              </span>
-                            ) : (
-                              <span className="dark:text-teal-400 text-teal-500 ml-2 lg:ml-0 mt-2 block lg:hidden">
-                                {
-                                  addCommas(
-                                    coin.circulating_supply / 1000000
-                                  ).split(".")[0]
-                                }
-                                M /{" "}
-                                {
-                                  addCommas(coin.max_supply / 1000000).split(
-                                    "."
-                                  )[0]
-                                }{" "}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col lg:ml-4 pt-6 2xl:text-base text-sm w-full">
-                    <div className="justify-between mb-4 md:flex hidden">
-                      <h1 className="text-2xl">Your Holdings</h1>
-                    </div>
-                    <div className="flex justify-between w-full">
-                      <div className="flex w-full xl:flex-row flex-col mr-4">
-                        <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full h-full mr-4 mb-4">
-                          <span className="md:text-sm text-xs opacity-50 md:opacity-100 mb-2 md:underline">
-                            Coins Held
-                          </span>
-                          <span>{asset.coinAmount.toFixed(5)}</span>
-                        </div>
-                        <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full h-full">
-                          <span className="md:text-sm text-xs opacity-50 md:opacity-100 mb-2 md:underline">
-                            Value at Purchase
-                          </span>
-                          <div className="flex items-center">
-                            <span>
-                              {currencySymbol}
-                              {addCommas(asset.currencyAmount)}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex w-full xl:flex-row flex-col mr-4">
-                        <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full h-full mr-4 mb-4">
-                          <span className="md:text-sm text-xs opacity-50 md:opacity-100 mb-2 md:underline">
-                            Current Fiat Value
-                          </span>
-                          <span
-                            className={
-                              Number(coinQuote.price) *
-                                Number(asset.coinAmount) >
-                              Number(asset.currencyAmount)
-                                ? "text-green-500"
-                                : "text-red-500"
-                            }
-                          >
-                            {currencySymbol}
-                            {addCommas(coinQuote.price * asset.coinAmount)}
-                          </span>
-                        </div>
-                        <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 sm:p-2 p-1 rounded-md w-full h-full">
-                          <span className="md:text-sm text-xs opacity-50 md:opacity-100 sm:mb-2 md:underline">
-                            Value Change
-                          </span>
-                          <div className="flex items-center sm:flex-row flex-col">
-                            <div className="flex items-center">
-                              <Updownarrow
-                                coin={
-                                  Number(coinQuote.price) *
-                                    Number(asset.coinAmount) -
-                                  Number(asset.currencyAmount)
-                                }
-                              />
-                              <span
-                                className={
-                                  Number(coinQuote.price) *
-                                    Number(asset.coinAmount) >
-                                  Number(asset.currencyAmount)
-                                    ? "text-green-500 sm:mr-3"
-                                    : "text-red-500 sm:mr-3"
-                                }
-                              >
-                                {" "}
-                                {currencySymbol}
-                                {addCommas(
-                                  Math.abs(
+                              <div className="flex items-center">
+                                <Updownarrow
+                                  coin={
                                     Number(coinQuote.price) *
                                       Number(asset.coinAmount) -
-                                      Number(asset.currencyAmount)
-                                  )
-                                )}
-                              </span>
-                            </div>
-                            <div className="flex items-center">
-                              <Updownarrow
-                                coin={
-                                  Number(coinQuote.price) *
-                                    Number(asset.coinAmount) -
-                                  Number(asset.currencyAmount)
-                                }
-                              />
-                              <span
-                                className={
-                                  Number(coinQuote.price) *
-                                    Number(asset.coinAmount) >
-                                  Number(asset.currencyAmount)
-                                    ? "text-green-500"
-                                    : "text-red-500"
-                                }
-                              >
-                                {(
-                                  (Math.abs(
+                                    Number(asset.currencyAmount)
+                                  }
+                                />
+                                <span
+                                  className={
                                     Number(coinQuote.price) *
-                                      Number(asset.coinAmount) -
-                                      Number(asset.currencyAmount)
-                                  ) /
-                                    Number(asset.currencyAmount)) *
-                                  100
-                                ).toFixed(3)}
-                                %
-                              </span>
+                                      Number(asset.coinAmount) >
+                                    Number(asset.currencyAmount)
+                                      ? "text-green-500"
+                                      : "text-red-500"
+                                  }
+                                >
+                                  {(
+                                    (Math.abs(
+                                      Number(coinQuote.price) *
+                                        Number(asset.coinAmount) -
+                                        Number(asset.currencyAmount)
+                                    ) /
+                                      Number(asset.currencyAmount)) *
+                                    100
+                                  ).toFixed(3)}
+                                  %
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -1152,10 +1122,10 @@ export default function Portfolio() {
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-      </div>
+              );
+            })}
+        </div>
+      )}
       <button
         className="rounded-3xl dark:bg-violet-800 lg:px-16 md:px-12 p-3 dark:hover:bg-violet-600 bg-violet-200 hover:bg-violet-400 sm:hidden sticky-add border border-slate-500"
         onClick={() => setIsAddingAsset(!isAddingAsset)}

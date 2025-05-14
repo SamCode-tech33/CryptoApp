@@ -34,7 +34,7 @@ const Bargraph = ({
   return (
     <div
       ref={ref}
-      className="h-80 w-full dark:bg-slate-800 rounded-md flex justify-end flex-col bg-white relative xl:ml-2"
+      className="h-80 w-full dark:bg-slate-800 rounded-md flex justify-end flex-col bg-white relative xl:ml-2 px-1"
     >
       <div className={compare.length ? "flex ml-4" : "flex mb-6 ml-4"}>
         <div>

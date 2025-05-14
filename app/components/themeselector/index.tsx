@@ -22,21 +22,27 @@ export function ModeToggle() {
           <span className="sr-only">Toggle theme</span>
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          <div className="cursor-pointer w-full h-full bg-slate-300 p-2 rounded-md hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-600">
-            Light
-          </div>
+      <DropdownMenuContent
+        align="end"
+        className="dark:!bg-slate-800 !text-center !bg-slate-300 !w-20 !min-w-0"
+      >
+        <DropdownMenuItem
+          onClick={() => setTheme("light")}
+          className="cursor-pointer bg-slate-300 p-2 rounded-md hover:bg-slate-400 dark:bg-slate-800 dark:hover:!bg-slate-600 justify-center"
+        >
+          Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          <div className="cursor-pointer w-full h-full bg-slate-300 p-2 rounded-md hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-600">
-            Dark
-          </div>
+        <DropdownMenuItem
+          onClick={() => setTheme("dark")}
+          className="cursor-pointer bg-slate-300 p-2 rounded-md hover:bg-slate-400 dark:bg-slate-800 dark:hover:!bg-slate-600 justify-center"
+        >
+          Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          <div className="cursor-pointer w-full h-full bg-slate-300 p-2 rounded-md hover:bg-slate-400 dark:bg-slate-800 dark:hover:bg-slate-600">
-            System
-          </div>
+        <DropdownMenuItem
+          onClick={() => setTheme("system")}
+          className="cursor-pointer bg-slate-300 p-2 rounded-md hover:bg-slate-400 dark:bg-slate-800 dark:hover:!bg-slate-600 justify-center"
+        >
+          System
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

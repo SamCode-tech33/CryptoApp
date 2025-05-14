@@ -208,7 +208,7 @@ export const Copy = ({ site, handleCopy, copy, siteName }: any) => {
         }}
         className="w-full"
       >
-        <p className="text-sm">{site}</p>
+        <p className="text-sm break-all">{site}</p>
       </Link>
       <button
         onClick={() => {

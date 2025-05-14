@@ -13,7 +13,7 @@ import { usePathname } from "next/navigation";
 const Navlinks = () => {
   const pathname = usePathname();
   return (
-    <div className="flex justify-between items-center lg:px-36 md:px-16 sm:px-8 px-3 bg-white py-3 dark:bg-slate-800">
+    <div className="flex justify-between items-center lg:px-36 md:px-14 px-4 bg-white py-3 dark:bg-slate-800">
       <Link href="/">
         <div className="flex h-4 items-center">
           <Logo />

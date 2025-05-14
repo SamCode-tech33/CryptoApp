@@ -11,6 +11,7 @@ import axios from "axios";
 import { changeGraph } from "@/lib/symbolSlice";
 import { changeTimePeriod } from "@/lib/timeSlice";
 import { Skeleton } from "../components/Skeleton";
+import { Notification } from "../components/notifications";
 
 export default function Convertor() {
   const dispatch = useDispatch<AppDispatch>();
@@ -45,6 +46,9 @@ export default function Convertor() {
   const [isOpenRight, setIsOpenRight] = useState<boolean>(false);
   const [searchTermLeft, setSearchTermLeft] = useState("");
   const [searchTermRight, setSearchTermRight] = useState("");
+  const [errNoti, setErrNoti] = useState(false);
+  const [notiMessage, setNotiMessage] = useState("");
+  const [convertAmount, setConvertAmount] = useState("");
 
   const getCoinsHistory = async (symbol: string) => {
     setLoad(true);
@@ -65,13 +69,35 @@ export default function Convertor() {
   };
 
   const changeMenuTriggerLeft = (id: string, name: string) => {
-    setMenuTriggerLeft(name);
-    setMenuIconLeft(id);
+    if (menuTriggerRight !== name) {
+      setMenuTriggerLeft(name);
+      setMenuIconLeft(id);
+      setConvertAmount("");
+      setConvertedNum("0.000");
+    } else {
+      setErrNoti(true);
+      setNotiMessage("Cannot convert between same coin");
+      setTimeout(() => {
+        setNotiMessage("");
+        setErrNoti(false);
+      }, 2500);
+    }
   };
 
   const changeMenuTriggerRight = (id: string, name: string) => {
-    setMenuTriggerRight(name);
-    setMenuIconRight(id);
+    if (menuTriggerLeft !== name) {
+      setMenuTriggerRight(name);
+      setMenuIconRight(id);
+      setConvertAmount("");
+      setConvertedNum("0.000");
+    } else {
+      setErrNoti(true);
+      setNotiMessage("Cannot convert between same coin");
+      setTimeout(() => {
+        setNotiMessage("");
+        setErrNoti(false);
+      }, 2500);
+    }
   };
 
   const changePriceLeft = (coinPrice: any) => {
@@ -82,10 +108,10 @@ export default function Convertor() {
     setSelectedPriceRight(coinPrice);
   };
 
-  const handleCalculate = (e: any) => {
-    setConversionValue(e.target.value);
+  const handleCalculate = () => {
+    setConversionValue(convertAmount);
     const converted = (
-      (e.target.value * Number(selectedPriceLeft.split(",").join(""))) /
+      (Number(convertAmount) * Number(selectedPriceLeft.split(",").join(""))) /
       Number(selectedPriceRight.split(",").join(""))
     ).toFixed(3);
     setConvertedNum(converted);
@@ -148,6 +174,10 @@ export default function Convertor() {
 
   return (
     <div className="xl:mx-32 lg:mx-24 md:mx-8 mx-4 mt-4">
+      <Notification
+        message={errNoti ? `Error: ${notiMessage}` : `Success: ${notiMessage}`}
+        error={errNoti}
+      />
       <div className="sm:flex w-full hidden">
         <Link href="/coins" className="mb-6">
           <button className="dark:bg-slate-800 p-3 rounded-sm dark:hover:bg-slate-600 lg:w-72 sm:w-48 bg-violet-300 hover:bg-violet-400">
@@ -170,25 +200,23 @@ export default function Convertor() {
           </div>
           <div className="flex w-full justify-center items-center 2xl:flex-row flex-col">
             <div className="w-full dark:bg-slate-800 h-52 2xl:mr-4 rounded-md my-6 bg-white">
-              <p className="lg:ml-10 ml-4 mt-4 mb-4">You sell</p>
-              <div className="border-b-2 border-gray-400 pb-4 lg:mx-8 mx-4 mb-4">
+              <p className="lg:ml-10 ml-4 mt-4 mb-2 lg:text-lg text-base">
+                You sell
+              </p>
+              <div className="border-b-2 border-gray-400 pb-2 lg:mx-8 mx-4 mb-2">
                 <div className="dark:bg-slate-800 p-2.5 rounded-md flex justify-between items-center">
                   <div className="flex items-center justify-between relative w-2/3">
-                    <div className="flex items-center">
-                      <Defaulticon
-                        coin={menuIconLeft}
-                        height="h-8"
-                        margin="mr-2"
-                      />
-                      <span className="md:block hidden">{menuTriggerLeft}</span>
-                      <span className="md:hidden block">
-                        {menuTriggerLeft
-                          .split(" ")[1]
-                          .split("(")
-                          .join("")
-                          .split(")")
-                          .join("")}
-                      </span>
+                    <div className="flex flex-col items-start">
+                      <div className="flex items-center mb-2">
+                        <Defaulticon
+                          coin={menuIconLeft}
+                          height="md:h-6 h-4"
+                          margin="mr-2"
+                        />
+                        <span className="md:text-base text-xs">
+                          {menuTriggerLeft}
+                        </span>
+                      </div>
                       <input
                         type="text"
                         placeholder="Select Coin..."
@@ -198,7 +226,7 @@ export default function Convertor() {
                         onBlur={() =>
                           setTimeout(() => setIsOpenLeft(false), 200)
                         }
-                        className="px-4 py-2 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white ml-6 bg-gray-300"
+                        className="px-4 md:py-2 py-1 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white bg-gray-300 md:w-auto w-48"
                       />
                     </div>
                     <div
@@ -257,12 +285,21 @@ export default function Convertor() {
                         })}
                     </div>
                   </div>
-                  <input
-                    type="text"
-                    placeholder="Amount . . ."
-                    className="dark:bg-slate-600 px-4 py-2 rounded-md dark:caret-white bg-gray-300"
-                    onChange={handleCalculate}
-                  />
+                  <div>
+                    <div className="mb-2 md:text-base text-xs">
+                      Enter Amount to Convert:
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Amount . . ."
+                      value={convertAmount}
+                      className="px-4 md:py-2 py-1 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white bg-gray-300 md:w-auto w-48"
+                      onChange={(e) => {
+                        handleCalculate();
+                        setConvertAmount(e.target.value);
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
               {loading ? (
@@ -286,27 +323,23 @@ export default function Convertor() {
               )}
             </div>
             <div className="w-full dark:bg-slate-800 h-52 2xl:ml-4 rounded-md mb-6 2xl:mt-6 bg-white">
-              <p className="lg:ml-10 ml-4 mt-4 mb-4">You buy</p>
-              <div className="border-b-2 border-gray-400 pb-4 lg:mx-8 mx-4 mb-4">
+              <p className="lg:ml-10 ml-4 mt-4 mb-2 lg:text-lg text-base">
+                You buy
+              </p>
+              <div className="border-b-2 border-gray-400 pb-2 lg:mx-8 mx-4 mb-2">
                 <div className="dark:bg-slate-800 p-2.5 rounded-md flex justify-between items-center">
                   <div className="flex items-center justify-between relative w-2/3">
-                    <div className="flex items-center">
-                      <Defaulticon
-                        coin={menuIconRight}
-                        height="h-8"
-                        margin="mr-2"
-                      />
-                      <span className="md:block hidden">
-                        {menuTriggerRight}
-                      </span>
-                      <span className="md:hidden block">
-                        {menuTriggerRight
-                          .split(" ")[1]
-                          .split("(")
-                          .join("")
-                          .split(")")
-                          .join("")}
-                      </span>
+                    <div className="flex flex-col items-start">
+                      <div className="flex items-center mb-2">
+                        <Defaulticon
+                          coin={menuIconRight}
+                          height="md:h-6 h-4"
+                          margin="mr-2"
+                        />
+                        <span className="md:text-base text-xs">
+                          {menuTriggerRight}
+                        </span>
+                      </div>
                       <input
                         type="text"
                         placeholder="Select Coin..."
@@ -316,7 +349,7 @@ export default function Convertor() {
                         onBlur={() =>
                           setTimeout(() => setIsOpenRight(false), 200)
                         }
-                        className="px-4 py-2 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white bg-gray-300 ml-6"
+                        className="px-4 md:py-2 py-1 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white bg-gray-300 md:w-auto w-48"
                       />
                     </div>
                     <div
@@ -375,8 +408,11 @@ export default function Convertor() {
                         })}
                     </div>
                   </div>
-                  <div className="dark:bg-slate-600 rounded-md p-2 w-1/3 text-right border border-gray-600 flex items-center justify-end">
-                    <span>
+                  <div className="rounded-md p-2 text-right flex flex-col items-end">
+                    <span className="mb-2 md:text-base text-xs">
+                      Converted Amount:
+                    </span>
+                    <span className="md:text-base text-sm">
                       {convertedNum} {menuIconRight}
                     </span>
                   </div>

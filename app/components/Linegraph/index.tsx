@@ -54,7 +54,7 @@ const Linegraph = ({
   return (
     <div
       ref={ref}
-      className="h-80 w-full dark:bg-slate-800 rounded-md flex justify-end flex-col bg-white relative mb-4 xl:mr-2 xl:mb-0"
+      className="h-80 w-full dark:bg-slate-800 rounded-md flex justify-end flex-col bg-white relative mb-4 xl:mr-2 xl:mb-0 px-1"
     >
       {compare.length ? (
         <h1 className="ml-6 mt-2 text-lg">
