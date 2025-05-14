@@ -226,7 +226,7 @@ export default function Convertor() {
                         onBlur={() =>
                           setTimeout(() => setIsOpenLeft(false), 200)
                         }
-                        className="px-4 md:py-2 py-1 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white bg-gray-300 md:w-auto w-48"
+                        className="px-4 md:py-2 py-1 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white bg-gray-300 md:w-auto w-36"
                       />
                     </div>
                     <div
@@ -293,7 +293,7 @@ export default function Convertor() {
                       type="text"
                       placeholder="Amount . . ."
                       value={convertAmount}
-                      className="px-4 md:py-2 py-1 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white bg-gray-300 md:w-auto w-48"
+                      className="px-4 md:py-2 py-1 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white bg-gray-300 md:w-auto w-36"
                       onChange={(e) => {
                         handleCalculate();
                         setConvertAmount(e.target.value);
@@ -349,7 +349,7 @@ export default function Convertor() {
                         onBlur={() =>
                           setTimeout(() => setIsOpenRight(false), 200)
                         }
-                        className="px-4 md:py-2 py-1 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white bg-gray-300 md:w-auto w-48"
+                        className="px-4 md:py-2 py-1 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white bg-gray-300 md:w-auto w-36"
                       />
                     </div>
                     <div
@@ -423,7 +423,7 @@ export default function Convertor() {
               ) : (
                 <div className="flex justify-between mx-8">
                   <span>
-                    1 {menuIconRight} = {currencySymbol} {selectedPriceRight}
+                    1 {menuIconRight} = {currencySymbol}{selectedPriceRight}
                   </span>
                   <span>
                     {convertedNum.length
