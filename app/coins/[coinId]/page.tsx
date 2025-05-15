@@ -13,19 +13,13 @@ import {
 } from "@/app/components/Utility";
 import axios from "axios";
 import { Copy } from "@/app/components/svgComps";
-import { Skeleton } from "@/app/components/Skeleton";
 
 export default function Coin({ params }: any) {
   const [coinsInfo, setCoinsInfo] = useState<any>({});
   const [coin, setCoin] = useState<any>(null);
   const [loading1, setLoading1] = useState(false);
+  const [error1, setError1] = useState(false);
   const [copy, setCopy] = useState("");
-  const [high, setHigh] = useState(0);
-  const [low, setLow] = useState(0);
-  const [loading2, setLoading2] = useState(false);
-  const [error2, setError2] = useState(false);
-  const [highDate, setHighDate] = useState({});
-  const [lowDate, setLowDate] = useState({});
   const copyNoteRef = useRef<any>(null);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -40,34 +34,6 @@ export default function Coin({ params }: any) {
   const currencySymbol = useSelector(
     (state: RootState) => state.currency.currencySymbol
   );
-
-  const getCoinPriceOnDate = async () => {
-    setLoading2(true);
-    try {
-      const { data } = await axios.get(
-        `/api/specificDay?fsym=${
-          coin.symbol
-        }&tsym=${currency}&limit=${2000}&toTs=${Date.now()}`
-      );
-      const history = data.Data.Data;
-      const allTimeHigh = history.reduce(
-        (max: any, item: any) => (item.high > max.high ? item : max),
-        history[0]
-      );
-      const allTimeLow = history.reduce(
-        (min: any, item: any) => (item.low < min.low ? item : min),
-        history[0]
-      );
-      setHigh(allTimeHigh.high);
-      setLow(allTimeLow.low);
-      setHighDate(new Date(allTimeHigh.time * 1000));
-      setLowDate(new Date(allTimeLow.time * 1000));
-      //eslint-disable-next-line
-    } catch (error) {
-      setError2(true);
-    }
-    setLoading2(false);
-  };
 
   const handleCopy = (id: string) => {
     if (copyNoteRef.current) {
@@ -84,14 +50,16 @@ export default function Coin({ params }: any) {
       const { data } = await axios.get(`/api/coinsInfo?id=${coinId}`);
       setCoinsInfo(data.data);
       //eslint-disable-next-line
-    } catch (error) {}
+    } catch (error) {
+      setError1(true);
+    }
     setLoading1(false);
   };
 
   useEffect(() => {
     dispatch(fetchCoins({ start: 1, limit: 400, convert: currency }));
     getCoinsInfo(coinId.coinId);
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (data.length) {
@@ -99,14 +67,8 @@ export default function Coin({ params }: any) {
     }
   }, [data]);
 
-  useEffect(() => {
-    if (coin !== null) {
-      getCoinPriceOnDate();
-    }
-  }, [coin]);
-
   return (
-    <div className="h-full">
+    <div>
       {loading && <div className="loading"></div>}
       {error ? (
         <p>
@@ -115,9 +77,9 @@ export default function Coin({ params }: any) {
       ) : (
         <div>
           {coin && (
-            <div className="xl:mx-32 lg:mx-16 md:mx-8 sm:mx-4 mx-2 mt-8 h-full">
-              <div className="flex justify-between md:flex-row flex-col h-full">
-                <div className="p-7 dark:bg-slate-800 rounded-lg w-full md:w-1/2 bg-white md:mr-8">
+            <div className="xl:mx-32 lg:mx-16 md:mx-8 sm:mx-4 mx-2">
+              <div className="flex justify-between md:flex-row flex-col">
+                <div className="p-7 dark:bg-slate-800 rounded-lg xl:w-1/3 bg-white md:mr-8">
                   <div className="flex items-center">
                     <Defaulticon
                       coin={coin.symbol}
@@ -162,14 +124,8 @@ export default function Coin({ params }: any) {
                       %
                     </span>
                   </div>
-                  <div className="mt-4 flex items-center">
+                  <div className="mt-4">
                     <span className="mr-4">1h change:</span>
-                    <Updownarrow
-                      coin={
-                        coin.quote?.[currency].percent_change_1h ||
-                        coin.quote.USD.percent_change_1h
-                      }
-                    />
                     <span
                       className={
                         coin.quote?.[currency].percent_change_1h > 0
@@ -177,84 +133,58 @@ export default function Coin({ params }: any) {
                           : "text-red-600 text-lg"
                       }
                     >
-                      {currencySymbol}
+                      {currencySymbol}{" "}
                       {addCommas(
-                        Math.abs(
-                          Number(
-                            (coin.quote?.[currency].price *
-                              coin.quote?.[currency].percent_change_1h) /
-                              100
-                          )
-                        )
+                        (coin.quote?.[currency].price *
+                          coin.quote?.[currency].percent_change_1h) /
+                          100
                       ) ||
                         addCommas(
-                          Math.abs(
-                            Number(
-                              (coin.quote.USD.price *
-                                coin.quote.USD.percent_change_1h) /
-                                100
-                            )
-                          )
+                          (coin.quote.USD.price *
+                            coin.quote.USD.percent_change_1h) /
+                            100
                         )}
                     </span>
                   </div>
-                  {error2 && (
-                    <p className="text-red-700">
-                      There has been an error, please check again later.
-                    </p>
-                  )}
-                  {loading2 ? (
-                    <Skeleton classTail="mt-12 pt-12 dark:bg-slate-600 bg-gray-300 h-32 w-full rounded-md" />
-                  ) : (
-                    <div className="mt-12 pt-12 border-t-2 border-slate-600">
-                      <div className="mb-4">
-                        <div className="flex justify-between">
-                          <div className="flex">
-                            <Staticarrow
-                              color="#11D861"
-                              way="m4.5 15.75 7.5-7.5 7.5 7.5"
-                            />
-                            <span>All time high:</span>
-                          </div>
-                          <span>
-                            {currencySymbol}
-                            {addCommas(high)}
-                          </span>
-                        </div>
-                        <span className="text-sm ml-7">
-                          {highDate.toString().split("G")[0]}
-                        </span>
-                      </div>
+                  <div className="mt-12 pt-12 border-t-2 border-slate-600">
+                    <div className="mb-4">
                       <div className="flex justify-between">
                         <div className="flex">
                           <Staticarrow
-                            color="#E9190F"
-                            way="m19.5 8.25-7.5 7.5-7.5-7.5"
+                            color="#11D861"
+                            way="m4.5 15.75 7.5-7.5 7.5 7.5"
                           />
-                          <span>All time low:</span>
+                          <span>All time high:</span>
                         </div>
-                        <span>
-                          {currencySymbol}
-                          {addCommas(low)}
-                        </span>
+                        <span>{currencySymbol} 108,360</span>
                       </div>
-                      <span className="text-sm ml-7">
-                        {lowDate.toString().split("G")[0]}
-                      </span>
+                      <span className="text-sm ml-7">Input date here</span>
                     </div>
-                  )}
+                    <div className="flex justify-between">
+                      <div className="flex">
+                        <Staticarrow
+                          color="#E9190F"
+                          way="m19.5 8.25-7.5 7.5-7.5-7.5"
+                        />
+                        <span>All time low:</span>
+                      </div>
+                      <span>{currencySymbol} 88,420</span>
+                    </div>
+                    <span className="text-sm ml-7">Input date here</span>
+                  </div>
                 </div>
-                {error && (
-                  <p>There has been an error, please check again later.</p>
-                )}
-                {loading1 ? (
-                  <Skeleton classTail="h-96 w-full md:w-2/3 md:ml-8 mt-8 md:mt-0 xl:mr-32 2xl:mr-64 bg-gray-300 dark:bg-slate-600 rounded-md" />
+                {loading1 && <div>loading. . .</div>}
+                {error ? (
+                  <p>
+                    The following error has occured: {error1}, please check
+                    again later
+                  </p>
                 ) : (
-                  <div className="md:ml-8 mt-8 md:mt-0 xl:mr-32 2xl:mr-64 w-full md:w-2/3">
+                  <div className="md:ml-8 mt-8 md:mt-0 xl:mr-32 2xl:mr-64">
                     <p>{coinSite?.description}</p>
                     <div className="mt-12 text-center max-w-96">
                       {coinSite?.urls.technical_doc[0] && (
-                        <div className="dark:bg-slate-800 dark:hover:bg-slate-700 p-4 rounded-md mb-8 bg-white hover:bg-violet-300">
+                        <div className="dark:bg-slate-800 p-4 rounded-md mb-8 bg-white">
                           <Copy
                             site={coinSite?.urls.technical_doc[0]}
                             handleCopy={handleCopy}
@@ -264,7 +194,7 @@ export default function Coin({ params }: any) {
                         </div>
                       )}
                       {coinSite?.urls.message_board[0] && (
-                        <div className="dark:bg-slate-800 dark:hover:bg-slate-700 p-4 rounded-md mb-8 bg-white hover:bg-violet-300">
+                        <div className="dark:bg-slate-800 p-4 rounded-md mb-8 bg-white">
                           <Copy
                             site={coinSite?.urls.message_board[0]}
                             handleCopy={handleCopy}
@@ -274,7 +204,7 @@ export default function Coin({ params }: any) {
                         </div>
                       )}
                       {coinSite?.urls.source_code[0] && (
-                        <div className="dark:bg-slate-800 dark:hover:bg-slate-700 p-4 rounded-md mb-8 bg-white hover:bg-violet-300">
+                        <div className="dark:bg-slate-800 p-4 rounded-md mb-8 bg-white">
                           <Copy
                             site={coinSite?.urls.source_code[0]}
                             handleCopy={handleCopy}

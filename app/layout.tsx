@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="dark:bg-slate-900 bg-gray-200 pb-20">
+      <body className="dark:bg-slate-950 bg-gray-200">
         <PersistGate loading={null} persistor={persistor}>
           <ThemeProvider
             attribute="class"
@@ -27,8 +27,8 @@ export default function RootLayout({
           >
             <StoreProvider>
               <Globalheader />
-              <div className="sticky top-0 left-1/2 z-10">
-                <Suspense>
+              <div className="mb-8 mt-2">
+                <Suspense fallback={<div className="loading"></div>}>
                   <Navlinks />
                 </Suspense>
               </div>
