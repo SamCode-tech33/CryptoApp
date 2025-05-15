@@ -298,7 +298,7 @@ export default function Portfolio() {
       <div
         className={
           isAddingAsset
-            ? "absolute dark:bg-slate-900 w-2/3 h-1/2 left-add-asset top-1/4 rounded-md border dark:border-white border-black z-10 bg-white"
+            ? "absolute dark:bg-slate-900 sm:w-2/3 w-11/12 h-1/2 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-md border dark:border-white border-black z-10 bg-white"
             : "hidden"
         }
       >
@@ -366,18 +366,18 @@ export default function Portfolio() {
             </div>
           </div>
           <div className="h-3/5 w-3/5 rounded-md">
-            <div className="w-full h-full flex items-center sm:justify-between justify-center dark:bg-slate-800 p-2 rounded-md bg-violet-300 relative">
+            <div className="w-full h-full flex items-center justify-between dark:bg-slate-800 p-2 rounded-md bg-violet-300 relative">
               <div className="flex items-center">
                 <Defaulticon
                   coin={"default"}
                   height="xl:h-8 lg:h-6 h-4"
-                  margin="mr-2"
+                  margin="sm:mr-2 mr-1"
                 />
-                <span className="ml-2 xl:text-base lg:text-sm text-xs sm:block hidden">
+                <span className="sm:ml-2 ml-1 xl:text-base lg:text-sm text-xs sm:block hidden">
                   Select Coin:
                 </span>
-                <span className="ml-2 xl:text-base lg:text-sm text-xs sm:hidden block">
-                  {coinSymbol}
+                <span className="sm:ml-2 ml-1 xl:text-base lg:text-sm text-xs sm:hidden block">
+                  Select:
                 </span>
               </div>
               <input
@@ -388,7 +388,7 @@ export default function Portfolio() {
                 onFocus={() => setIsCoinSelect(true)}
                 onBlur={() => setTimeout(() => setIsCoinSelect(false), 200)}
                 id="searchBar"
-                className="w-1/2 pl-10 pr-4 p-2 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white"
+                className="w-1/2 md:pl-10 pl-2 pr-4 md:p-2 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white"
               />
               <div
                 className={
@@ -458,12 +458,12 @@ export default function Portfolio() {
               <div
                 className={
                   isPurchaseSelect && coinSymbol !== ""
-                    ? "border absolute z-10 dark:bg-slate-900 md:h-32 h-64 w-full flex flex-col justify-around bg-slate-300 left-0 top-full"
+                    ? "border absolute z-10 dark:bg-slate-900 lg:h-32 h-64 w-full flex flex-col justify-around bg-slate-300 left-0 top-full"
                     : "hidden"
                 }
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="flex md:items-center items-start justify-between md:flex-row flex-col ml-4">
+                <div className="flex items-center justify-between lg:flex-row flex-col lg:ml-4">
                   <input
                     type="text"
                     value={purchaseAmount}
@@ -481,7 +481,7 @@ export default function Portfolio() {
                     onChange={(e) => setPurchaseAmount(e.target.value)}
                   />
                   <div
-                    className="sm:w-20 w-2/3 flex items-center justify-between dark:bg-slate-700 dark:hover:bg-slate-600 rounded-md p-2 bg-white hover:bg-violet-300 mt-4 md:mt-0 relative cursor-pointer"
+                    className="sm:w-20 w-2/3 flex items-center justify-between dark:bg-slate-700 dark:hover:bg-slate-600 rounded-md p-2 bg-white hover:bg-violet-300 mt-4 lg:mt-0 relative cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
                       setIsBuyWithSelect(!isBuyWithSelect);
@@ -516,7 +516,7 @@ export default function Portfolio() {
                     </div>
                   </div>
                   <div
-                    className="sm:w-16 w-2/3 dark:bg-slate-700 p-2 rounded-lg mr-4 cursor-pointer dark:hover:bg-slate-500 bg-white hover:bg-violet-300 mt-4 md:mt-0 flex justify-center"
+                    className="sm:w-16 w-2/3 dark:bg-slate-700 p-2 rounded-lg lg:mr-4 cursor-pointer dark:hover:bg-slate-500 bg-white hover:bg-violet-300 mt-4 lg:mt-0 flex justify-center"
                     onClick={() => handlePurchase()}
                   >
                     <Arrowright />
