@@ -10,15 +10,12 @@ import queryString from "query-string";
 import InfiniteScroll from "react-infinite-scroll-component";
 import axios from "axios";
 import { Filtericon, Uparrow } from "../svgComps";
-import { Rangefilter } from "../rangeFilter";
 import { Coinbar } from "../coinBarSlide";
+import { Coinfilter } from "../Coinfilter";
+import { Skeleton } from "../Skeleton";
 
 export default function Navcoin() {
-  const [filterState, setFilterState] = useState<any>("");
-  const [filterValue, setFilterValue] = useState<any>("");
   const [query, setQuery] = useState<any>({});
-  const [lowerValue, setLowerValue] = useState<any>("");
-  const [upperValue, setUpperValue] = useState<any>("");
   const [dataMap, setDataMap] = useState<any>([]);
   const [start, setStart] = useState<number>(1);
   const [dataSet, setDataSet] = useState<any>([]);
@@ -26,6 +23,7 @@ export default function Navcoin() {
   const [error, setError] = useState<any>(false);
   const [percentSelected, setPercentSelected] = useState("1h%");
   const [percentOpen, setPercentOpen] = useState(false);
+  const [filterFocus, setFilterFocus] = useState(false);
 
   const currency = useSelector(
     (state: RootState) => state.currency.currencyType
@@ -53,85 +51,12 @@ export default function Navcoin() {
     }
   };
 
-  const handleFilter = (filter: string) => {
-    setFilterState(filter);
-    setLowerValue("");
-    setUpperValue("");
-  };
-
-  const handleFilterExit = () => {
-    setFilterState("");
-  };
-
-  const handleFilterRender = (e: any) => {
-    const newValue = e.target.value;
-    setFilterValue(newValue);
-    if (!filterState) return;
-    if (!newValue) {
-      delete query["Name"];
-      const newSearch = queryString.stringify(query);
-      window.history.replaceState({}, "", `${location.pathname}?${newSearch}`);
-    } else if (location.search && !Object.hasOwn(query, filterState)) {
-      window.history.replaceState(
-        {},
-        "",
-        `${location.href}&${filterState}=${newValue}`
-      );
-    } else if (Object.hasOwn(query, filterState)) {
-      const urlArray = Object.entries(query)[0];
-      const foundValue = urlArray.find(
-        (el) => urlArray.indexOf(el) === urlArray.indexOf(filterState) + 1
-      ) as string;
-      const urlRipper = location.search
-        .split(foundValue)
-        .toSpliced(1, 0, newValue)
-        .join("");
-      window.history.replaceState({}, "", `${urlRipper}`);
-    } else {
-      window.history.replaceState(
-        {},
-        "",
-        `${location.pathname}?${filterState}=${newValue}`
-      );
-    }
-    setDataMap(dataSet);
-    setQuery(queryString.parse(location.search));
-  };
-
-  const handleLowerValue = (e: any) => {
-    setLowerValue(e.target.value);
-  };
-
-  const handleUpperValue = (e: any) => {
-    setUpperValue(e.target.value);
-  };
-
-  const handleRangeRender = (e: any) => {
-    e.preventDefault();
-    if (!filterState || !lowerValue || !upperValue) return;
-    if (location.search && !Object.hasOwn(query, filterState)) {
-      window.history.replaceState(
-        {},
-        "",
-        `${location.href}&${filterState}=${lowerValue}_${upperValue}`
-      );
-    } else if (Object.hasOwn(query, filterState)) {
-      const urlArray = Object.entries(query)[0];
-      const foundValue = urlArray.find(
-        (el) => urlArray.indexOf(el) === urlArray.indexOf(filterState) + 1
-      ) as string;
-      const urlRipper = location.search
-        .split(foundValue)
-        .toSpliced(1, 0, `${lowerValue}_${upperValue}`)
-        .join("");
-      window.history.replaceState({}, "", `${urlRipper}`);
-    } else {
-      window.history.replaceState(
-        {},
-        "",
-        `${location.pathname}?${filterState}=${lowerValue}_${upperValue}`
-      );
-    }
+  const handleFilterRender = (locationString: string) => {
+    window.history.replaceState(
+      {},
+      "",
+      `${location.pathname}?${locationString}`
+    );
     setDataMap(dataSet);
     setQuery(queryString.parse(location.search));
   };
@@ -139,10 +64,6 @@ export default function Navcoin() {
   const handleFullClear = () => {
     if (location.search) {
       window.history.replaceState({}, "", `${location.pathname}`);
-      setLowerValue("");
-      setUpperValue("");
-      setFilterState("");
-      setFilterValue("");
       setQuery({});
       setDataMap(dataSet);
     } else {
@@ -150,28 +71,15 @@ export default function Navcoin() {
     }
   };
 
-  const handleRangeClear = (range: string) => {
-    if (location.search) {
-      delete query[range];
-      setLowerValue("");
-      setUpperValue("");
-      const newSearch = queryString.stringify(query);
-      window.history.replaceState({}, "", `${location.pathname}?${newSearch}`);
-      setQuery(queryString.parse(location.search));
-      setDataMap(dataSet);
-      retainQuery();
-    }
-  };
-
   const retainQuery = () => {
-    if (query.Name && dataMap.length) {
+    if (query.q && dataMap.length) {
       setDataMap((prevDataMap: any) =>
         prevDataMap.filter((coin: any) =>
-          coin.name.toLowerCase().includes(query.Name.toLowerCase())
+          coin.name.toLowerCase().includes(query.q.toLowerCase())
         )
       );
     }
-    if (query.Price && dataMap.length) {
+    if (query.price && dataMap.length) {
       setDataMap((prevDataMap: any) =>
         prevDataMap.filter((coin: any) => {
           let coinQuote;
@@ -181,13 +89,13 @@ export default function Navcoin() {
             coinQuote = coin.quote.USD;
           }
           return (
-            coinQuote.price > parseFloat(query.Price.split("_")[0]) &&
-            coinQuote.price < parseFloat(query.Price.split("_")[1])
+            coinQuote.price > parseFloat(query.price.split("_")[0]) &&
+            coinQuote.price < parseFloat(query.price.split("_")[1])
           );
         })
       );
     }
-    if (query.Hour1 && dataMap.length) {
+    if (query.hour1 && dataMap.length) {
       setDataMap((prevDataMap: any) =>
         prevDataMap.filter((coin: any) => {
           let coinQuote;
@@ -198,13 +106,13 @@ export default function Navcoin() {
           }
           return (
             coinQuote.percent_change_1h >
-              parseFloat(query.Hour1.split("_")[0]) &&
-            coinQuote.percent_change_1h < parseFloat(query.Hour1.split("_")[1])
+              parseFloat(query.hour1.split("_")[0]) &&
+            coinQuote.percent_change_1h < parseFloat(query.hour1.split("_")[1])
           );
         })
       );
     }
-    if (query.Hour24 && dataMap.length) {
+    if (query.hour24 && dataMap.length) {
       setDataMap((prevDataMap: any) =>
         prevDataMap.filter((coin: any) => {
           let coinQuote;
@@ -215,14 +123,14 @@ export default function Navcoin() {
           }
           return (
             coinQuote.percent_change_24h >
-              parseFloat(query.Hour24.split("_")[0]) &&
+              parseFloat(query.hour24.split("_")[0]) &&
             coinQuote.percent_change_24h <
-              parseFloat(query.Hour24.split("_")[1])
+              parseFloat(query.hour24.split("_")[1])
           );
         })
       );
     }
-    if (query.Day7 && dataMap.length) {
+    if (query.day7 && dataMap.length) {
       setDataMap((prevDataMap: any) =>
         prevDataMap.filter((coin: any) => {
           let coinQuote;
@@ -233,8 +141,8 @@ export default function Navcoin() {
           }
           return (
             coinQuote.percent_change_7d >
-              parseFloat(query.Day7.split("_")[0]) &&
-            coinQuote.percent_change_7d < parseFloat(query.Day7.split("_")[1])
+              parseFloat(query.day7.split("_")[0]) &&
+            coinQuote.percent_change_7d < parseFloat(query.day7.split("_")[1])
           );
         })
       );
@@ -256,6 +164,10 @@ export default function Navcoin() {
   }, [start]);
 
   useEffect(() => {
+    setQuery(queryString.parse(location.search));
+  }, [filterFocus]);
+
+  useEffect(() => {
     setStart(1);
     setDataSet([]);
     getCoins();
@@ -272,170 +184,99 @@ export default function Navcoin() {
   }, [query, dataSet]);
 
   return (
-    <div className="mt-8 relative">
-      {loading && <div className="loading"></div>}
-      {error ? (
-        <p>The following {error} occured. Please try again later.</p>
-      ) : (
-        <ul className="2xl:mx-32 xl:mx-24 lg:mx-20 mx-2">
+    <div>
+      {filterFocus && (
+        <div className="dark:bg-slate-800 border border-gray-600 fixed filter-focus z-10 flex items-center justify-center top-1/2 left-1/2 sm:p-8 py-8 bg-slate-300">
+          <Coinfilter
+            handleFilterRender={handleFilterRender}
+            handleFullClear={handleFullClear}
+            closeFocus={() => setFilterFocus(false)}
+          />
+        </div>
+      )}
+      <div className="mt-8 relative">
+        {error && <p>The following {error} occured. Please try again later.</p>}
+        <ul className="lg:mx-20 mx-2">
           <li className="text-black dark:text-white h-12 flex items-center">
-            <div className="justify-center mr-4 w-number md:flex hidden">
+            <div className="w-number md:block hidden text-center">
               <span>#</span>
             </div>
-            <div className="w-filter">
-              <div className="items-center w-full flex">
-                <h1 className="md:hidden block ml-4 w-5/12 mr-1.5 sm:mr-10 md:mr-0">
-                  Market overview
-                </h1>
-                <div
-                  className="relative ml-6 md:hidden flex items-center dark:bg-slate-600 rounded-md border p-1 cursor-pointer dark:hover:bg-slate-400"
-                  onClick={() => setPercentOpen(!percentOpen)}
-                >
-                  <span className="">{percentSelected}</span>
-                  <Uparrow isOpen={percentOpen} />
-                  {percentOpen && (
-                    <div className="absolute dark:bg-slate-950 rounded-md border top-full -left-0.5">
-                      <div
-                        className="dark:hover:bg-slate-600 p-3 cursor-pointer rounded-md"
-                        onClick={handlePercentSelect}
-                      >
-                        1h%
-                      </div>
-                      <div
-                        className="dark:hover:bg-slate-600 p-3 cursor-pointer rounded-md"
-                        onClick={handlePercentSelect}
-                      >
-                        24h%
-                      </div>
-                      <div
-                        className="dark:hover:bg-slate-600 p-3 cursor-pointer rounded-md"
-                        onClick={handlePercentSelect}
-                      >
-                        7d%
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className="w-name md:flex hidden">
-                  <div
-                    className={
-                      filterState === "Name"
-                        ? "flex items-center p-2 rounded-sm dark:hover:bg-slate-600 h-20 z-10 hover:bg-slate-300"
-                        : "flex items-center p-2 rounded-sm dark:hover:bg-slate-800"
-                    }
-                    onMouseEnter={() => handleFilter("Name")}
-                    onMouseLeave={handleFilterExit}
-                  >
-                    <span>Name</span>
-                    <Filtericon />
+            <h1 className="md:hidden block w-name sm:mr-0 mr-2">
+              Market overview
+            </h1>
+            <div className="w-price sm:mr-0 mr-5 md:hidden">
+              <div
+                className="relative md:hidden flex items-center justify-between dark:bg-slate-600 rounded-md border p-1 cursor-pointer dark:hover:bg-slate-400 w-20"
+                onClick={() => setPercentOpen(!percentOpen)}
+              >
+                <span className="ml-0.5">{percentSelected}</span>
+                <Uparrow isOpen={percentOpen} />
+                {percentOpen && (
+                  <div className="absolute dark:bg-slate-800 rounded-md border top-full -left-0.5 w-full text-center">
                     <div
-                      className={
-                        filterState === "Name"
-                          ? "flex items-center flex-col"
-                          : "hidden"
-                      }
+                      className="dark:hover:bg-slate-600 p-3 cursor-pointer rounded-md"
+                      onClick={handlePercentSelect}
                     >
-                      <form className="flex ml-2 h-8 z-10" action="">
-                        <input
-                          type="text"
-                          className="dark:bg-slate-600 rounded-sm w-32 mr-1 dark:caret-white border-gray-300 border p-1 mb-2"
-                          value={filterValue}
-                          onChange={handleFilterRender}
-                          placeholder="Coin..."
-                        />
-                      </form>
-                      <button
-                        className="flex justify-left items-center dark:bg-slate-800 p-1 rounded-sm dark:hover:bg-slate-400 bg-violet-300 hover:bg-violet-400"
-                        onClick={handleFullClear}
-                      >
-                        <span className="text-sm">Clear All</span>
-                      </button>
+                      1h%
+                    </div>
+                    <div
+                      className="dark:hover:bg-slate-600 p-3 cursor-pointer rounded-md"
+                      onClick={handlePercentSelect}
+                    >
+                      24h%
+                    </div>
+                    <div
+                      className="dark:hover:bg-slate-600 p-3 cursor-pointer rounded-md"
+                      onClick={handlePercentSelect}
+                    >
+                      7d%
                     </div>
                   </div>
-                </div>
-                <div className="w-price relative h-10 md:flex hidden mr-1">
-                  <Rangefilter
-                    filterState={filterState}
-                    currentFilterState="Price"
-                    handleFilter={handleFilter}
-                    handleFilterExit={handleFilterExit}
-                    name="Price"
-                    handleRangeRender={handleRangeRender}
-                    handleLowerValue={handleLowerValue}
-                    lowerValue={lowerValue}
-                    handleUpperValue={handleUpperValue}
-                    upperValue={upperValue}
-                    handleRangeClear={handleRangeClear}
-                    handleFullClear={handleFullClear}
-                  />
-                </div>
-                <div className="w-1h relative h-10 md:flex hidden">
-                  <Rangefilter
-                    filterState={filterState}
-                    currentFilterState="Hour1"
-                    handleFilter={handleFilter}
-                    handleFilterExit={handleFilterExit}
-                    name="1h%"
-                    handleRangeRender={handleRangeRender}
-                    handleLowerValue={handleLowerValue}
-                    lowerValue={lowerValue}
-                    handleUpperValue={handleUpperValue}
-                    upperValue={upperValue}
-                    handleRangeClear={handleRangeClear}
-                    handleFullClear={handleFullClear}
-                  />
-                </div>
-                <div className="w-24h relative h-10 md:flex hidden">
-                  <Rangefilter
-                    filterState={filterState}
-                    currentFilterState="Hour24"
-                    handleFilter={handleFilter}
-                    handleFilterExit={handleFilterExit}
-                    name="24h%"
-                    handleRangeRender={handleRangeRender}
-                    handleLowerValue={handleLowerValue}
-                    lowerValue={lowerValue}
-                    handleUpperValue={handleUpperValue}
-                    upperValue={upperValue}
-                    handleRangeClear={handleRangeClear}
-                    handleFullClear={handleFullClear}
-                  />
-                </div>
-                <div className="w-7d relative h-10 md:flex hidden">
-                  <Rangefilter
-                    filterState={filterState}
-                    currentFilterState="Day7"
-                    handleFilter={handleFilter}
-                    handleFilterExit={handleFilterExit}
-                    name="7d%"
-                    handleRangeRender={handleRangeRender}
-                    handleLowerValue={handleLowerValue}
-                    lowerValue={lowerValue}
-                    handleUpperValue={handleUpperValue}
-                    upperValue={upperValue}
-                    handleRangeClear={handleRangeClear}
-                  />
-                </div>
+                )}
               </div>
             </div>
-            <div className="w-volume xl:flex hidden 2xl:text-base text-sm">
+            <div className="w-name md:block hidden">Name</div>
+            <div className="w-price relative md:block hidden">Price</div>
+            <div className="w-1h relative md:block hidden">1h%</div>
+            <div className="w-24h relative md:block hidden">24h%</div>
+            <div className="w-7d relative md:block hidden mr-2">7d%</div>
+            <div className="w-volume xl:flex hidden 2xl:text-base text-sm mr-4">
               <span>24h Volume / Market Cap</span>
             </div>
-            <div className="w-volume xl:flex hidden 2xl:text-base text-sm">
+            <div className="w-volume xl:flex hidden 2xl:text-base text-sm mr-1">
               <span>Circulating Coins / Total Supply</span>
             </div>
-            <div className="w-last7 flex">
+            <div className="w-last7 flex sm:mr-8">
               <span>Last 7d</span>
             </div>
+            <button
+              className="flex items-center dark:bg-slate-800 sm:p-2 p-1 rounded-md dark:hover:bg-slate-600 border border-gray-600 bg-violet-200 hover:bg-violet-300"
+              onClick={() => setFilterFocus(!filterFocus)}
+            >
+              <span className="sm:block hidden mr-1 lg:text-base text-sm">
+                Filter
+              </span>
+              <Filtericon />
+            </button>
           </li>
-          <div id="scrollableDiv" className="h-150 overflow-auto">
+          {loading && (
+            <div>
+              {[...Array(100)].map((_, i) => (
+                <Skeleton
+                  key={i}
+                  classTail="dark:bg-slate-800 text-black dark:text-white bg-gray-300 h-14 flex items-center rounded-md mb-4"
+                  style={{ animationDelay: `${i * 0.05}s` }}
+                />
+              ))}
+            </div>
+          )}
+          <div>
             <InfiniteScroll
               dataLength={dataMap.length}
               next={fetchNext}
               hasMore={true}
               loader={<div className="loading"></div>}
-              scrollableTarget="scrollableDiv"
-              scrollThreshold={0.9}
+              scrollThreshold={0.95}
             >
               {dataMap.map((coin: any, index: number) => {
                 if (!coin.quote?.[currency]) {
@@ -450,118 +291,114 @@ export default function Navcoin() {
                 const coinPrice = addCommas(coinQuote.price);
                 return (
                   <Link href={`coins/${coin.id}`} key={coin.name + coin.id}>
-                    <li className="dark:bg-slate-800 text-black dark:text-white bg-white h-14 flex items-center rounded-md dark:hover:bg-slate-700 hover:bg-violet-200">
-                      <div className="w-number md:flex justify-center hidden">
+                    <li className="dark:bg-slate-800 text-black dark:text-white bg-white h-14 flex items-center rounded-md dark:hover:bg-slate-700 hover:bg-violet-200 2xl:text-base text-sm">
+                      <div className="w-number md:block text-center hidden">
                         <span>{index + 1}</span>
                       </div>
-                      <div className="w-filter flex items-center">
-                        <div className="w-name flex mx-3 items-center">
-                          <Defaulticon coin={coin.symbol} height="h-8" margin="mr-2" />
-                          <span className="hidden sm:block">
-                            {coin.name} ({coin.symbol})
+                      <div className="w-name flex items-center">
+                        <Defaulticon
+                          coin={coin.symbol}
+                          height="h-8"
+                          margin="mr-2"
+                        />
+                        <span className="hidden sm:block">
+                          {coin.name} ({coin.symbol})
+                        </span>
+                        <div className="w-full flex flex-col sm:hidden">
+                          <span>{coin.symbol}</span>
+                          <span className="text-sm opacity-30">
+                            {coin.name.split(" ")[0]}
                           </span>
-                          <div className="w-full flex flex-col sm:hidden">
-                            <span>{coin.symbol}</span>
-                            <span className="text-sm opacity-30">
-                              {coin.name.split(" ")[0]}
+                        </div>
+                      </div>
+                      <div className="w-price text-sm 2xl:text-base flex flex-col price-pad">
+                        <div className="w-full text-start">
+                          {currencySymbol}
+                          {coinPrice}
+                        </div>
+                        {percentSelected === "1h%" && (
+                          <div className="md:hidden flex w-full items-center text-xs">
+                            <Updownarrow coin={coinQuote.percent_change_1h} />
+                            <span
+                              className={
+                                coinQuote.percent_change_1h > 0
+                                  ? "text-green-500"
+                                  : "text-red-600"
+                              }
+                            >
+                              {Math.abs(coinQuote.percent_change_1h.toFixed(2))}
+                              %
                             </span>
                           </div>
-                        </div>
-                        <div className="w-price text-sm sm:text-base flex flex-col 2xl:mr-4 xl:mr-7 md:mr-7 price-pad">
-                          <div className="text-end w-full">
-                            {currencySymbol}
-                            {coinPrice}
+                        )}
+                        {percentSelected === "24h%" && (
+                          <div className="ml-2 md:hidden flex w-20">
+                            <Updownarrow coin={coinQuote.percent_change_24h} />
+                            <span
+                              className={
+                                coinQuote.percent_change_24h > 0
+                                  ? "text-green-500"
+                                  : "text-red-600"
+                              }
+                            >
+                              {Math.abs(
+                                coinQuote.percent_change_24h.toFixed(2)
+                              )}
+                              %
+                            </span>
                           </div>
-                          {percentSelected === "1h%" && (
-                            <div className="md:hidden flex w-full justify-end">
-                              <Updownarrow coin={coinQuote.percent_change_1h} />
-                              <span
-                                className={
-                                  coinQuote.percent_change_1h > 0
-                                    ? "text-green-500"
-                                    : "text-red-600"
-                                }
-                              >
-                                {Math.abs(
-                                  coinQuote.percent_change_1h.toFixed(2)
-                                )}
-                                %
-                              </span>
-                            </div>
-                          )}
-                          {percentSelected === "24h%" && (
-                            <div className="ml-2 md:hidden flex w-20">
-                              <Updownarrow
-                                coin={coinQuote.percent_change_24h}
-                              />
-                              <span
-                                className={
-                                  coinQuote.percent_change_24h > 0
-                                    ? "text-green-500"
-                                    : "text-red-600"
-                                }
-                              >
-                                {Math.abs(
-                                  coinQuote.percent_change_24h.toFixed(2)
-                                )}
-                                %
-                              </span>
-                            </div>
-                          )}
-                          {percentSelected === "7d%" && (
-                            <div className="ml-2 md:hidden flex w-20">
-                              <Updownarrow coin={coinQuote.percent_change_7d} />
-                              <span
-                                className={
-                                  coinQuote.percent_change_7d > 0
-                                    ? "text-green-500"
-                                    : "text-red-600"
-                                }
-                              >
-                                {Math.abs(
-                                  coinQuote.percent_change_7d.toFixed(2)
-                                )}
-                                %
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="w-1h justify-left md:flex hidden">
-                          <Updownarrow coin={coinQuote.percent_change_1h} />
-                          <span
-                            className={
-                              coinQuote.percent_change_1h > 0
-                                ? "text-green-500"
-                                : "text-red-600"
-                            }
-                          >
-                            {Math.abs(coinQuote.percent_change_1h.toFixed(2))}%
-                          </span>
-                        </div>
-                        <div className="w-24h justify-left md:flex hidden">
-                          <Updownarrow coin={coinQuote.percent_change_24h} />
-                          <span
-                            className={
-                              coinQuote.percent_change_24h > 0
-                                ? "text-green-500"
-                                : "text-red-600"
-                            }
-                          >
-                            {Math.abs(coinQuote.percent_change_24h.toFixed(2))}%
-                          </span>
-                        </div>
-                        <div className="w-7d justify-left md:flex hidden">
-                          <Updownarrow coin={coinQuote.percent_change_7d} />
-                          <span
-                            className={
-                              coinQuote.percent_change_7d > 0
-                                ? "text-green-500"
-                                : "text-red-600"
-                            }
-                          >
-                            {Math.abs(coinQuote.percent_change_7d.toFixed(2))}%
-                          </span>
-                        </div>
+                        )}
+                        {percentSelected === "7d%" && (
+                          <div className="ml-2 md:hidden flex w-20">
+                            <Updownarrow coin={coinQuote.percent_change_7d} />
+                            <span
+                              className={
+                                coinQuote.percent_change_7d > 0
+                                  ? "text-green-500"
+                                  : "text-red-600"
+                              }
+                            >
+                              {Math.abs(coinQuote.percent_change_7d.toFixed(2))}
+                              %
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="w-1h justify-left md:flex hidden items-center">
+                        <Updownarrow coin={coinQuote.percent_change_1h} />
+                        <span
+                          className={
+                            coinQuote.percent_change_1h > 0
+                              ? "text-green-500"
+                              : "text-red-600"
+                          }
+                        >
+                          {Math.abs(coinQuote.percent_change_1h.toFixed(2))}%
+                        </span>
+                      </div>
+                      <div className="w-24h justify-left md:flex hidden items-center">
+                        <Updownarrow coin={coinQuote.percent_change_24h} />
+                        <span
+                          className={
+                            coinQuote.percent_change_24h > 0
+                              ? "text-green-500"
+                              : "text-red-600"
+                          }
+                        >
+                          {Math.abs(coinQuote.percent_change_24h.toFixed(2))}%
+                        </span>
+                      </div>
+                      <div className="w-7d justify-left md:flex hidden items-center">
+                        <Updownarrow coin={coinQuote.percent_change_7d} />
+                        <span
+                          className={
+                            coinQuote.percent_change_7d > 0
+                              ? "text-green-500"
+                              : "text-red-600"
+                          }
+                        >
+                          {Math.abs(coinQuote.percent_change_7d.toFixed(2))}%
+                        </span>
                       </div>
                       <Coinbar
                         currencySymbol={currencySymbol}
@@ -579,7 +416,7 @@ export default function Navcoin() {
                         coinQuote={coinQuote}
                         first={false}
                       />
-                      {dataSet.length > 0 && coin.symbol === "BTC" && (
+                      {dataSet.length > 0 && index < 10 && (
                         <Sevendaygraph
                           symbol={coin.symbol.toUpperCase()}
                           sevenDay={
@@ -589,6 +426,7 @@ export default function Navcoin() {
                           }
                         />
                       )}
+                      <div></div>
                     </li>
                   </Link>
                 );
@@ -596,7 +434,7 @@ export default function Navcoin() {
             </InfiniteScroll>
           </div>
         </ul>
-      )}
+      </div>
     </div>
   );
 }

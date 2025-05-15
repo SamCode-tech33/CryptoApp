@@ -10,7 +10,8 @@ import Linegraph from "../components/Linegraph";
 import axios from "axios";
 import { changeGraph } from "@/lib/symbolSlice";
 import { changeTimePeriod } from "@/lib/timeSlice";
-import { Uparrow } from "../components/svgComps";
+import { Skeleton } from "../components/Skeleton";
+import { Notification } from "../components/notifications";
 
 export default function Convertor() {
   const dispatch = useDispatch<AppDispatch>();
@@ -33,7 +34,7 @@ export default function Convertor() {
   const [menuIconRight, setMenuIconRight] = useState("ETH");
   const [selectedPriceLeft, setSelectedPriceLeft] = useState<string>("");
   const [selectedPriceRight, setSelectedPriceRight] = useState<string>("");
-  const [convertedNum, setConvertedNum] = useState("");
+  const [convertedNum, setConvertedNum] = useState("0.000");
   const [today, setToday] = useState("");
   const [selectedTime, setSelectedTime] = useState<string>("minutes 5 288");
   const [load, setLoad] = useState(false);
@@ -45,6 +46,9 @@ export default function Convertor() {
   const [isOpenRight, setIsOpenRight] = useState<boolean>(false);
   const [searchTermLeft, setSearchTermLeft] = useState("");
   const [searchTermRight, setSearchTermRight] = useState("");
+  const [errNoti, setErrNoti] = useState(false);
+  const [notiMessage, setNotiMessage] = useState("");
+  const [convertAmount, setConvertAmount] = useState("");
 
   const getCoinsHistory = async (symbol: string) => {
     setLoad(true);
@@ -65,13 +69,35 @@ export default function Convertor() {
   };
 
   const changeMenuTriggerLeft = (id: string, name: string) => {
-    setMenuTriggerLeft(name);
-    setMenuIconLeft(id);
+    if (menuTriggerRight !== name) {
+      setMenuTriggerLeft(name);
+      setMenuIconLeft(id);
+      setConvertAmount("");
+      setConvertedNum("0.000");
+    } else {
+      setErrNoti(true);
+      setNotiMessage("Cannot convert between same coin");
+      setTimeout(() => {
+        setNotiMessage("");
+        setErrNoti(false);
+      }, 2500);
+    }
   };
 
   const changeMenuTriggerRight = (id: string, name: string) => {
-    setMenuTriggerRight(name);
-    setMenuIconRight(id);
+    if (menuTriggerLeft !== name) {
+      setMenuTriggerRight(name);
+      setMenuIconRight(id);
+      setConvertAmount("");
+      setConvertedNum("0.000");
+    } else {
+      setErrNoti(true);
+      setNotiMessage("Cannot convert between same coin");
+      setTimeout(() => {
+        setNotiMessage("");
+        setErrNoti(false);
+      }, 2500);
+    }
   };
 
   const changePriceLeft = (coinPrice: any) => {
@@ -82,10 +108,10 @@ export default function Convertor() {
     setSelectedPriceRight(coinPrice);
   };
 
-  const handleCalculate = (e: any) => {
-    setConversionValue(e.target.value);
+  const handleCalculate = () => {
+    setConversionValue(convertAmount);
     const converted = (
-      (e.target.value * Number(selectedPriceLeft.split(",").join(""))) /
+      (Number(convertAmount) * Number(selectedPriceLeft.split(",").join(""))) /
       Number(selectedPriceRight.split(",").join(""))
     ).toFixed(3);
     setConvertedNum(converted);
@@ -112,7 +138,7 @@ export default function Convertor() {
       style = "py-1 rounded-md px-3 dark:bg-violet-800 bg-violet-300";
     } else {
       style =
-        "py-1 rounded-md px-3 Hover:dark:bg-violet-800 hover:bg-violet-300";
+        "py-1 rounded-md px-3 dark:hover:bg-violet-800 hover:bg-violet-300";
     }
     return style;
   };
@@ -147,7 +173,11 @@ export default function Convertor() {
   }, [menuIconLeft, selectedTime, menuIconRight, currency]);
 
   return (
-    <div className="xl:mx-32 lg:mx-24 md:mx-8 mx-4">
+    <div className="lg:mx-36 md:mx-14 mx-4 mt-4">
+      <Notification
+        message={errNoti ? `Error: ${notiMessage}` : `Success: ${notiMessage}`}
+        error={errNoti}
+      />
       <div className="sm:flex w-full hidden">
         <Link href="/coins" className="mb-6">
           <button className="dark:bg-slate-800 p-3 rounded-sm dark:hover:bg-slate-600 lg:w-72 sm:w-48 bg-violet-300 hover:bg-violet-400">
@@ -169,249 +199,256 @@ export default function Convertor() {
             <p className="text-gray-500">{today}</p>
           </div>
           <div className="flex w-full justify-center items-center 2xl:flex-row flex-col">
-            {loading && <div className="loading"></div>}
             <div className="w-full dark:bg-slate-800 h-52 2xl:mr-4 rounded-md my-6 bg-white">
-              <p className="lg:ml-10 ml-4 mt-4 mb-4">You sell</p>
-              <div className="border-b-2 border-gray-400 pb-4 lg:mx-8 mb-4 mx-4">
-                <div className="flex justify-between items-center">
-                  <button
-                    className="dark:bg-slate-800 dark:hover:bg-slate-600 p-2.5 rounded-md bg-violet-300 hover:bg-violet-400"
-                    onClick={() => setIsOpenLeft(!isOpenLeft)}
-                  >
-                    <div className="flex items-center justify-between">
-                      <Defaulticon
-                        coin={menuIconLeft}
-                        height="h-8"
-                        margin="mr-2"
-                      />
-                      <div className="flex items-center">
-                        <span className="md:block hidden">
+              <p className="lg:ml-10 ml-4 mt-4 mb-2 lg:text-lg text-base">
+                You sell
+              </p>
+              <div className="border-b-2 border-gray-400 pb-2 lg:mx-8 mx-4 mb-2">
+                <div className="dark:bg-slate-800 p-2.5 rounded-md flex justify-between items-center">
+                  <div className="flex items-center justify-between relative w-2/3">
+                    <div className="flex flex-col items-start">
+                      <div className="flex items-center mb-2">
+                        <Defaulticon
+                          coin={menuIconLeft}
+                          height="md:h-6 h-4"
+                          margin="mr-2"
+                        />
+                        <span className="md:text-base text-xs">
                           {menuTriggerLeft}
                         </span>
-                        <span className="md:hidden block">
-                          {menuTriggerLeft
-                            .split(" ")[1]
-                            .split("(")
-                            .join("")
-                            .split(")")
-                            .join("")}
-                        </span>
-                        <Uparrow isOpen={isOpenLeft} />
                       </div>
+                      <input
+                        type="text"
+                        placeholder="Select Coin..."
+                        value={searchTermLeft}
+                        onChange={(e) => setSearchTermLeft(e.target.value)}
+                        onFocus={() => setIsOpenLeft(true)}
+                        onBlur={() =>
+                          setTimeout(() => setIsOpenLeft(false), 200)
+                        }
+                        className="px-4 md:py-2 py-1 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white bg-gray-300 md:w-auto w-36"
+                      />
                     </div>
-                  </button>
-                  <input
-                    type="text"
-                    value={conversionValue}
-                    className="dark:bg-slate-600 rounded-md p-4 lg:h-12 h-8 lg:w-80 w-40 text-right dark:caret-white bg-white border-gray-600 border"
-                    placeholder={menuIconLeft}
-                    onChange={handleCalculate}
-                  />
-                </div>
-                <div
-                  className={
-                    isOpenLeft
-                      ? "border absolute z-10 dark:bg-slate-900 overflow-y-scroll h-96 bg-slate-300"
-                      : "hidden"
-                  }
-                >
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    value={searchTermLeft}
-                    onChange={(e) => setSearchTermLeft(e.target.value)}
-                    className="w-full pl-10 pr-4 p-2 rounded-sm dark:bg-slate-800 dark:text-white dark:caret-white bg-white"
-                  />
-                  {data
-                    .filter((coin) =>
-                      coin.name
-                        .toLowerCase()
-                        .includes(searchTermLeft.toLowerCase())
-                    )
-                    .map((coin) => {
-                      if (!coin.quote?.[currency]) {
-                        return null;
+                    <div
+                      className={
+                        isOpenLeft
+                          ? "border absolute z-10 dark:bg-slate-900 overflow-y-scroll h-96 bg-slate-300 top-full w-5/6"
+                          : "hidden"
                       }
-                      let coinQuote;
-                      if (coin.quote?.[currency]) {
-                        coinQuote = coin.quote?.[currency];
-                      } else {
-                        coinQuote = coin.quote.USD;
-                      }
-                      const coinPrice = addCommas(coinQuote.price);
-                      return (
-                        <div
-                          className="cursor-pointer dark:hover:bg-slate-600 p-2 flex justify-between hover:bg-slate-400"
-                          key={coin.symbol + coin.id}
-                          id={coin.symbol}
-                          onClick={() => {
-                            const id = coin.symbol;
-                            const name =
-                              coin.name + " " + "(" + coin.symbol + ")";
-                            changeMenuTriggerLeft(id, name);
-                            changePriceLeft(coinPrice);
-                            handleClick(id);
-                          }}
-                        >
-                          <div className="flex items-center">
-                            <Defaulticon
-                              coin={coin.symbol}
-                              height="h-6"
-                              margin="mr-2"
-                            />
-                            <span>
-                              {coin.name} ({coin.symbol})
-                            </span>
-                          </div>
-                          <span>
-                            {currencySymbol} {coinPrice}
-                          </span>
-                        </div>
-                      );
-                    })}
+                    >
+                      {data
+                        .filter((coin) =>
+                          coin.name
+                            .toLowerCase()
+                            .includes(searchTermLeft.toLowerCase())
+                        )
+                        .map((coin) => {
+                          if (!coin.quote?.[currency]) {
+                            return null;
+                          }
+                          let coinQuote;
+                          if (coin.quote?.[currency]) {
+                            coinQuote = coin.quote?.[currency];
+                          } else {
+                            coinQuote = coin.quote.USD;
+                          }
+                          const coinPrice = addCommas(coinQuote.price);
+                          return (
+                            <div
+                              className="cursor-pointer dark:hover:bg-slate-600 p-2 flex justify-between hover:bg-slate-400"
+                              key={coin.symbol + coin.id}
+                              onClick={() => {
+                                const id = coin.symbol;
+                                const name =
+                                  coin.name + " " + "(" + coin.symbol + ")";
+                                changeMenuTriggerLeft(id, name);
+                                changePriceLeft(coinPrice);
+                                handleClick(id);
+                              }}
+                            >
+                              <div className="flex items-center">
+                                <Defaulticon
+                                  coin={coin.symbol}
+                                  height="h-6"
+                                  margin="mr-2"
+                                />
+                                <span>
+                                  {coin.name} ({coin.symbol})
+                                </span>
+                              </div>
+                              <span>
+                                {currencySymbol}
+                                {coinPrice}
+                              </span>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mb-2 md:text-base text-xs">
+                      Enter Amount to Convert:
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Amount . . ."
+                      value={convertAmount}
+                      className="px-4 md:py-2 py-1 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white bg-gray-300 md:w-auto w-36"
+                      onChange={(e) => {
+                        handleCalculate();
+                        setConvertAmount(e.target.value);
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="flex justify-between mx-8">
-                <span>
-                  1 {menuIconLeft} = {currencySymbol} {selectedPriceLeft}
-                </span>
-                <span>
-                  {convertedNum.length
-                    ? `Value = ${currencySymbol} ` +
-                      addCommas(
-                        Number(selectedPriceRight.split(",").join("")) *
-                          Number(convertedNum)
-                      )
-                    : ""}
-                </span>
-              </div>
+              {loading ? (
+                <Skeleton classTail="h-6 dark:bg-slate-600 rounded-md flex justify-between bg-gray-300 mx-8" />
+              ) : (
+                <div className="flex justify-between mx-8">
+                  <span>
+                    1 {menuIconLeft} = {currencySymbol}
+                    {selectedPriceLeft}
+                  </span>
+                  <span>
+                    {convertedNum.length
+                      ? `Value = ${currencySymbol}` +
+                        addCommas(
+                          Number(selectedPriceLeft.split(",").join("")) *
+                            Number(conversionValue)
+                        )
+                      : ""}
+                  </span>
+                </div>
+              )}
             </div>
             <div className="w-full dark:bg-slate-800 h-52 2xl:ml-4 rounded-md mb-6 2xl:mt-6 bg-white">
-              {loading && <div className="loading"></div>}
-              <p className="lg:ml-10 ml-4 mt-4 mb-4">You buy</p>
-              <div className="border-b-2 border-gray-400 pb-4 lg:mx-8 mx-4 mb-4">
-                <div className="flex justify-between items-center">
-                  <button
-                    className="dark:bg-slate-800 dark:hover:bg-slate-600 p-2.5 rounded-md bg-violet-300 hover:bg-violet-400"
-                    onClick={() => setIsOpenRight(!isOpenRight)}
-                  >
-                    <div className="flex items-center justify-between">
-                      <Defaulticon
-                        coin={menuIconRight}
-                        height="h-8"
-                        margin="mr-2"
-                      />
-                      <div className="flex items-center">
-                        <span className="md:block hidden">
+              <p className="lg:ml-10 ml-4 mt-4 mb-2 lg:text-lg text-base">
+                You buy
+              </p>
+              <div className="border-b-2 border-gray-400 pb-2 lg:mx-8 mx-4 mb-2">
+                <div className="dark:bg-slate-800 p-2.5 rounded-md flex justify-between items-center">
+                  <div className="flex items-center justify-between relative w-2/3">
+                    <div className="flex flex-col items-start">
+                      <div className="flex items-center mb-2">
+                        <Defaulticon
+                          coin={menuIconRight}
+                          height="md:h-6 h-4"
+                          margin="mr-2"
+                        />
+                        <span className="md:text-base text-xs">
                           {menuTriggerRight}
                         </span>
-                        <span className="md:hidden block">
-                          {menuTriggerRight
-                            .split(" ")[1]
-                            .split("(")
-                            .join("")
-                            .split(")")
-                            .join("")}
-                        </span>
-                        <Uparrow isOpen={isOpenRight} />
                       </div>
+                      <input
+                        type="text"
+                        placeholder="Select Coin..."
+                        value={searchTermRight}
+                        onChange={(e) => setSearchTermRight(e.target.value)}
+                        onFocus={() => setIsOpenRight(true)}
+                        onBlur={() =>
+                          setTimeout(() => setIsOpenRight(false), 200)
+                        }
+                        className="px-4 md:py-2 py-1 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white bg-gray-300 md:w-auto w-36"
+                      />
                     </div>
-                    <span className="sr-only">Toggle theme</span>
-                  </button>
-                  <div className="dark:bg-slate-600 rounded-md p-4 lg:h-12 h-8 lg:w-80 w-40 text-right border border-gray-600 flex items-center justify-end">
-                    <span>
+                    <div
+                      className={
+                        isOpenRight
+                          ? "border absolute z-10 dark:bg-slate-900 overflow-y-scroll h-96 bg-slate-300 top-full w-5/6"
+                          : "hidden"
+                      }
+                    >
+                      {data
+                        .filter((coin) =>
+                          coin.name
+                            .toLowerCase()
+                            .includes(searchTermRight.toLowerCase())
+                        )
+                        .map((coin) => {
+                          if (!coin.quote?.[currency]) {
+                            return null;
+                          }
+                          let coinQuote;
+                          if (coin.quote?.[currency]) {
+                            coinQuote = coin.quote?.[currency];
+                          } else {
+                            coinQuote = coin.quote.USD;
+                          }
+                          const coinPrice = addCommas(coinQuote.price);
+                          return (
+                            <div
+                              className="cursor-pointer dark:hover:bg-slate-600 p-2 flex justify-between hover:bg-slate-400"
+                              key={coin.symbol + coin.id}
+                              onClick={() => {
+                                const id = coin.symbol;
+                                const name =
+                                  coin.name + " " + "(" + coin.symbol + ")";
+                                changeMenuTriggerRight(id, name);
+                                changePriceRight(coinPrice);
+                                handleClick(id);
+                              }}
+                            >
+                              <div className="flex items-center">
+                                <Defaulticon
+                                  coin={coin.symbol}
+                                  height="h-6"
+                                  margin="mr-2"
+                                />
+                                <span>
+                                  {coin.name} ({coin.symbol})
+                                </span>
+                              </div>
+                              <span>
+                                {currencySymbol}
+                                {coinPrice}
+                              </span>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+                  <div className="rounded-md p-2 text-right flex flex-col items-end">
+                    <span className="mb-2 md:text-base text-xs">
+                      Converted Amount:
+                    </span>
+                    <span className="md:text-base text-sm">
                       {convertedNum} {menuIconRight}
                     </span>
                   </div>
                 </div>
-                <div
-                  className={
-                    isOpenRight
-                      ? "border absolute z-10 dark:bg-slate-900 overflow-y-scroll h-96 bg-slate-300"
-                      : "hidden"
-                  }
-                >
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    value={searchTermRight}
-                    onChange={(e) => setSearchTermRight(e.target.value)}
-                    className="w-full pl-10 pr-4 p-2 rounded-sm dark:bg-slate-800 dark:text-white dark:caret-white bg-white"
-                  />
-                  {data
-                    .filter((coin) =>
-                      coin.name
-                        .toLowerCase()
-                        .includes(searchTermRight.toLowerCase())
-                    )
-                    .map((coin) => {
-                      if (!coin.quote?.[currency]) {
-                        return null;
-                      }
-                      let coinQuote;
-                      if (coin.quote?.[currency]) {
-                        coinQuote = coin.quote?.[currency];
-                      } else {
-                        coinQuote = coin.quote.USD;
-                      }
-                      const coinPrice = addCommas(coinQuote.price);
-                      return (
-                        <div
-                          className="cursor-pointer dark:hover:bg-slate-600 p-2 flex justify-between hover:bg-slate-400"
-                          key={coin.symbol + coin.id}
-                          onClick={() => {
-                            const id = coin.symbol;
-                            const name =
-                              coin.name + " " + "(" + coin.symbol + ")";
-                            changeMenuTriggerRight(id, name);
-                            changePriceRight(coinPrice);
-                            handleClick(id);
-                          }}
-                        >
-                          <div className="flex items-center">
-                            <Defaulticon
-                              coin={coin.symbol}
-                              height="h-6"
-                              margin="mr-2"
-                            />
-                            <span>
-                              {coin.name} ({coin.symbol})
-                            </span>
-                          </div>
-                          <span>
-                            {currencySymbol} {coinPrice}
-                          </span>
-                        </div>
-                      );
-                    })}
+              </div>
+              {loading ? (
+                <Skeleton classTail="h-6 dark:bg-slate-600 rounded-md flex justify-between bg-gray-300 mx-8" />
+              ) : (
+                <div className="flex justify-between mx-8">
+                  <span>
+                    1 {menuIconRight} = {currencySymbol}{selectedPriceRight}
+                  </span>
+                  <span>
+                    {convertedNum.length
+                      ? `Value = ${currencySymbol}` +
+                        addCommas(
+                          Number(selectedPriceRight.split(",").join("")) *
+                            Number(convertedNum)
+                        )
+                      : ""}
+                  </span>
                 </div>
-              </div>
-              <div className="flex justify-between mx-8">
-                <span>
-                  1 {menuIconRight} = {currencySymbol} {selectedPriceRight}
-                </span>
-                <span>
-                  {convertedNum.length
-                    ? `Value = ${currencySymbol} ` +
-                      addCommas(
-                        Number(selectedPriceRight.split(",").join("")) *
-                          Number(convertedNum)
-                      )
-                    : ""}
-                </span>
-              </div>
+              )}
             </div>
           </div>
-          <div className="h-72 dark:bg-slate-800 rounded-md flex justify-end flex-col w-full bg-white">
-            {load && <div className="loading"></div>}
-            {err ? (
-              <span>There has been an error, please come back later</span>
-            ) : (
+          {load ? (
+            <Skeleton classTail="h-72 dark:bg-slate-800 rounded-md flex justify-end flex-col w-full bg-gray-300" />
+          ) : (
+            <div className="h-72 dark:bg-slate-800 rounded-md flex justify-end flex-col w-full bg-white">
+              {err && <p>There has been an error, please come back later</p>}
+
               <Linegraph
                 coinHistory={coinHistory}
                 limit={limit}
                 rendered={rendered}
-                symbol={menuIconLeft}
+                coinName={menuIconLeft + " to " + menuIconRight}
                 selectedTime={selectedTime}
                 coinCompare={[]}
                 compare={""}
@@ -422,8 +459,8 @@ export default function Convertor() {
                 onConverter={true}
                 rightSym={menuIconRight}
               />
-            )}
-          </div>
+            </div>
+          )}
           <div className="flex my-6 justify-between dark:bg-slate-800 p-2 rounded-md h-12 items-center lg:w-80 xl:w-96 bg-white">
             <button
               onClick={handleTime}
