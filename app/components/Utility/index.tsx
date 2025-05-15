@@ -258,9 +258,8 @@ export const CustomizedLabel = (props: any) => {
   return (
     <text
       x={x + width / 2}
-      y={y + height + 12}
-      dy={11}
-      fill="gray"
+      y={215}
+      fill="rgb(148 163 184)"
       fontSize={13}
       textAnchor="middle"
     >
