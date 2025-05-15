@@ -54,10 +54,10 @@ path {
 .lg-mx-22 {
   margin: 20px 2px;
   @media (min-width: 768px) {
-    margin: 20px 40px;
+    margin: 20px 2px;
   }
   @media (min-width: 1024px) {
-    margin: 20px 112px;
+    margin: 20px 74px;
   }
 }
 

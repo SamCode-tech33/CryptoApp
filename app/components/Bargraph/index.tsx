@@ -73,7 +73,7 @@ const Bargraph = ({
           barGap={0}
           stackOffset="sign"
         >
-          <XAxis dataKey="index" />
+          <XAxis hide={true} />
           <YAxis hide={true} />
           <Tooltip
             offset={10}
