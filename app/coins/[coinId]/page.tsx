@@ -162,8 +162,14 @@ export default function Coin({ params }: any) {
                       %
                     </span>
                   </div>
-                  <div className="mt-4">
+                  <div className="mt-4 flex items-center">
                     <span className="mr-4">1h change:</span>
+                    <Updownarrow
+                      coin={
+                        coin.quote?.[currency].percent_change_1h ||
+                        coin.quote.USD.percent_change_1h
+                      }
+                    />
                     <span
                       className={
                         coin.quote?.[currency].percent_change_1h > 0
@@ -171,16 +177,24 @@ export default function Coin({ params }: any) {
                           : "text-red-600 text-lg"
                       }
                     >
-                      {currencySymbol}{" "}
+                      {currencySymbol}
                       {addCommas(
-                        (coin.quote?.[currency].price *
-                          coin.quote?.[currency].percent_change_1h) /
-                          100
+                        Math.abs(
+                          Number(
+                            (coin.quote?.[currency].price *
+                              coin.quote?.[currency].percent_change_1h) /
+                              100
+                          )
+                        )
                       ) ||
                         addCommas(
-                          (coin.quote.USD.price *
-                            coin.quote.USD.percent_change_1h) /
-                            100
+                          Math.abs(
+                            Number(
+                              (coin.quote.USD.price *
+                                coin.quote.USD.percent_change_1h) /
+                                100
+                            )
+                          )
                         )}
                     </span>
                   </div>

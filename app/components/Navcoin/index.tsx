@@ -250,7 +250,7 @@ export default function Navcoin() {
               <span>Last 7d</span>
             </div>
             <button
-              className="flex items-center dark:bg-slate-800 sm:p-2 p-1 rounded-md dark:hover:bg-slate-600 border border-gray-600"
+              className="flex items-center dark:bg-slate-800 sm:p-2 p-1 rounded-md dark:hover:bg-slate-600 border border-gray-600 bg-violet-200 hover:bg-violet-300"
               onClick={() => setFilterFocus(!filterFocus)}
             >
               <span className="sm:block hidden mr-1 lg:text-base text-sm">
