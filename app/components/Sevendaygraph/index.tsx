@@ -11,8 +11,6 @@ import {
 import { addCommas, CustomToolTipMini } from "../Utility";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
-import { useElementSize } from "../windowSizing";
-import { Skeleton } from "../Skeleton";
 
 export const Sevendaygraph = ({
   symbol,
@@ -24,7 +22,6 @@ export const Sevendaygraph = ({
   const [coinHistory, setCoinHistory] = useState<any>([]);
   const [err, setErr] = useState<boolean>(false);
   const [load, setLoad] = useState<boolean>(false);
-  const { ref, size } = useElementSize();
 
   const currency = useSelector(
     (state: RootState) => state.currency.currencyType
@@ -70,12 +67,12 @@ export const Sevendaygraph = ({
   }, []);
 
   return (
-    <div className="w-last7" ref={ref}>
-      {err && <div className="text-red-800 m-auto">Insufficient Data</div>}
-      {load ? (
-        <Skeleton classTail="w-seven-graph h-12 rounded-sm flex md:ml-2 xl:ml-0 dark:bg-slate-600 bg-gray-300" />
-      ) : (
-        <div className="w-seven-graph h-12 rounded-sm flex md:ml-2 xl:ml-0">
+    <div className="w-last7">
+      <div className="sm:w-32 w-22 h-12 rounded-sm flex">
+        {load && <div className="loading"></div>}
+        {err ? (
+          <div className="text-red-800 m-auto">Insufficient Data</div>
+        ) : (
           <ResponsiveContainer height="100%">
             <AreaChart data={pdata}>
               <defs>
@@ -99,9 +96,7 @@ export const Sevendaygraph = ({
                 offset={10}
                 separator=""
                 content={<CustomToolTipMini />}
-                position={{ x: size.width + 5, y: 5 }}
-                active={true}
-                cursor={false}
+                position={{ x: 130, y: 0 }}
               />
               <Area
                 type="monotone"
@@ -113,8 +108,8 @@ export const Sevendaygraph = ({
               />
             </AreaChart>
           </ResponsiveContainer>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

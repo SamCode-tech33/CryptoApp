@@ -5,11 +5,10 @@ export async function GET(req) {
   const tsym = searchParams.get("tsym");
   const fsym = searchParams.get("fsym");
   const toTs = searchParams.get("toTs");
-  const limit = searchParams.get("limit");
 
   try {
     const { data } = await axios.get(
-      `https://min-api.cryptocompare.com/data/v2/histoday?fsym=${fsym}&tsym=${tsym}&limit=${limit}&toTs=${toTs}`,
+      `https://min-api.cryptocompare.com/data/v2/histoday?fsym=${fsym}&tsym=${tsym}&limit=1&toTs=${toTs}`,
       {
         headers: {
           "x-api-key": process.env.CDC_API_KEY,

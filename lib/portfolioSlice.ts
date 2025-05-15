@@ -8,7 +8,7 @@ interface portfolioState {
 
 const initialState: portfolioState = {
   portfolio: [],
-  totalFunds: 20000000,
+  totalFunds: 100000,
   assetValue: 0,
 };
 

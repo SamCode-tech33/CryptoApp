@@ -13,7 +13,7 @@ import { usePathname } from "next/navigation";
 const Navlinks = () => {
   const pathname = usePathname();
   return (
-    <div className="flex justify-between items-center lg:px-36 md:px-14 pl-5 pr-4 bg-white py-3 dark:bg-slate-800">
+    <div className="flex justify-between items-center lg:px-36 md:px-16 sm:px-8 px-3 bg-white py-4 dark:bg-slate-900">
       <Link href="/">
         <div className="flex h-4 items-center">
           <Logo />
@@ -94,7 +94,9 @@ const Navsearch = () => {
   );
 
   const dispatch = useDispatch<AppDispatch>();
-  const { data, loading } = useSelector((state: RootState) => state.coins);
+  const { data, loading, error } = useSelector(
+    (state: RootState) => state.coins
+  );
 
   const handleInputChange = (e: any) => {
     dispatch(changeSearch(e.target.value));
@@ -106,7 +108,7 @@ const Navsearch = () => {
   }, [currency]);
 
   return (
-    <div className="relative xl:w-80 lg:w-52 w-36">
+    <div className="relative xl:w-80 lg:w-52 w-40">
       <input
         type="text"
         placeholder="Search..."
@@ -114,7 +116,7 @@ const Navsearch = () => {
         onChange={handleInputChange}
         onFocus={() => setIsOpen(true)}
         onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-        className="w-full pl-9 pr-4 p-2 rounded-sm dark:bg-slate-700 text-white dark:caret-white bg-slate-300"
+        className="w-full pl-9 pr-4 p-2 rounded-sm dark:bg-slate-800 text-white dark:caret-white bg-slate-300"
       />
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -128,56 +130,66 @@ const Navsearch = () => {
           clipRule="evenodd"
         />
       </svg>
-      <div
-        className={
-          isOpen
-            ? "border absolute z-10 dark:bg-slate-900 w-full overflow-y-scroll max-h-96 bg-slate-300"
-            : "hidden"
-        }
-      >
-        {data
-          .filter((coin) =>
+      {error ? (
+        <p className="text-red-600">
+          An error has occured, please try again later...
+        </p>
+      ) : (
+        <div
+          className={
+            isOpen
+              ? "border absolute z-10 dark:bg-slate-900 w-full overflow-y-scroll h-96 bg-slate-300"
+              : "hidden"
+          }
+        >
+          {loading && <div className="loading"></div>}
+          {data
+            .filter((coin) =>
+              coin.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((coin) => {
+              if (!coin.quote?.[currency]) {
+                return null;
+              }
+              let coinQuote;
+              if (coin.quote?.[currency]) {
+                coinQuote = coin.quote?.[currency];
+              } else {
+                coinQuote = coin.quote.USD;
+              }
+              const coinPrice = addCommas(coinQuote.price);
+              return (
+                <Link
+                  href={`/coins/${coin.id}`}
+                  key={coin.id}
+                  className="p-2 hover:bg-slate-400 dark:hover:bg-gray-700 rounded flex justify-between sm:flex-row flex-col"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <div className="flex items-center">
+                    <Defaulticon
+                      coin={coin.symbol}
+                      height="h-4"
+                      margin="mr-2"
+                    />
+                    <span className="hidden sm:block">
+                      {coin.name} ({coin.symbol})
+                    </span>
+                    <span className="sm:hidden block">
+                      {coin.name.split(" ")[0]}
+                    </span>
+                  </div>
+                  <span>
+                    {currencySymbol} {coinPrice}
+                  </span>
+                </Link>
+              );
+            })}
+          {data.filter((coin) =>
             coin.name.toLowerCase().includes(searchTerm.toLowerCase())
-          )
-          .map((coin) => {
-            if (!coin.quote?.[currency]) {
-              return null;
-            }
-            let coinQuote;
-            if (coin.quote?.[currency]) {
-              coinQuote = coin.quote?.[currency];
-            } else {
-              coinQuote = coin.quote.USD;
-            }
-            const coinPrice = addCommas(coinQuote.price);
-            return (
-              <Link
-                href={`/coins/${coin.id}`}
-                key={coin.id}
-                className="p-2 hover:bg-slate-400 dark:hover:bg-gray-700 rounded flex justify-between sm:flex-row flex-col"
-                onClick={() => setIsOpen(false)}
-              >
-                <div className="flex items-center">
-                  <Defaulticon coin={coin.symbol} height="h-4" margin="mr-2" />
-                  <span className="hidden sm:block">
-                    {coin.name} ({coin.symbol})
-                  </span>
-                  <span className="sm:hidden block">
-                    {coin.name.split(" ")[0]}
-                  </span>
-                </div>
-                <span>
-                  {currencySymbol}
-                  {coinPrice}
-                </span>
-              </Link>
-            );
-          })}
-        {data.filter((coin) =>
-          coin.name.toLowerCase().includes(searchTerm.toLowerCase())
-        ).length === 0 &&
-          !loading && <p className="block p-2">No coin found...</p>}
-      </div>
+          ).length === 0 &&
+            !loading && <p className="block p-2">No coin found...</p>}
+        </div>
+      )}
     </div>
   );
 };
