@@ -36,13 +36,13 @@ const Bargraph = ({
       ref={ref}
       className="h-80 w-full dark:bg-slate-800 rounded-md flex justify-end flex-col bg-white relative xl:ml-2 px-1"
     >
-      <div className={compare.length ? "flex ml-4" : "flex mb-6 ml-4"}>
+      <div className={compare.length ? "flex ml-1" : "flex mb-6 ml-1"}>
         <div>
           <div className="flex">
             <h1 className="text-lg ml-2 text-violet-500">{coinName}</h1>
             <h1
               className={
-                compare.length ? "text-lg ml-2 value-comp-tool" : "hidden"
+                compare.length ? "text-lg ml-1 value-comp-tool" : "hidden"
               }
             >
               / {coinName}
@@ -79,7 +79,7 @@ const Bargraph = ({
             offset={10}
             separator=""
             content={<CustomTooltip currency="USD" />}
-            position={{ x: size.width - 142, y: -107 }}
+            position={{ x: size.width - 140, y: -107 }}
             cursor={{ fill: "transparent" }}
           />
           {compare.length && (

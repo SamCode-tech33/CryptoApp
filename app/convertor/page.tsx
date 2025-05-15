@@ -173,7 +173,7 @@ export default function Convertor() {
   }, [menuIconLeft, selectedTime, menuIconRight, currency]);
 
   return (
-    <div className="xl:mx-32 lg:mx-24 md:mx-8 mx-4 mt-4">
+    <div className="lg:mx-36 md:mx-14 mx-4 mt-4">
       <Notification
         message={errNoti ? `Error: ${notiMessage}` : `Success: ${notiMessage}`}
         error={errNoti}
@@ -448,7 +448,7 @@ export default function Convertor() {
                 coinHistory={coinHistory}
                 limit={limit}
                 rendered={rendered}
-                symbol={menuIconLeft}
+                coinName={menuIconLeft + " to " + menuIconRight}
                 selectedTime={selectedTime}
                 coinCompare={[]}
                 compare={""}

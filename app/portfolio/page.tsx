@@ -283,7 +283,7 @@ export default function Portfolio() {
         error={errNoti}
       />
       <div className="sm:mb-8 sm:mt-4">
-        <div className="lg:mx-32 md:mx-16 mx-4 flex justify-between items-center">
+        <div className="lg:mx-36 md:mx-14 mx-4 flex justify-between items-center">
           <h1 className="lg:text-3xl md:text-2xl sm:text-xl sm:block hidden">
             Portfolio
           </h1>
@@ -605,69 +605,73 @@ export default function Portfolio() {
           </div>
         </div>
       </div>
-      <div className="dark:bg-slate-800 rounded-lg mb-4 flex justify-between p-5 lg:mx-32 md:mx-16 mx-4 items-center bg-white relative">
-        <div className=" dark:bg-slate-600 rounded-md lg:flex flex-col items-center bg-violet-200 mr-4 w-72 hidden">
-          <div className="my-4">
-            <Bankicon />
+      <div className="dark:bg-slate-800 rounded-lg mb-4 flex p-5 lg:mx-36 md:mx-14 mx-4 items-center bg-white relative">
+        <div className="w-full flex justify-between">
+          <div className=" dark:bg-slate-600 rounded-md xl:flex flex-col items-center bg-violet-200 mr-4 w-64 hidden">
+            <div className="my-4">
+              <Bankicon />
+            </div>
+            <span className="text-xl mb-4">Bank</span>
           </div>
-          <span className="text-xl mb-4">Bank</span>
-        </div>
-        <div className=" absolute lg:hidden bank-abs">
-          <Bankicon />
-        </div>
-        <div className="flex lg:flex-row justify-between flex-col-reverse w-full items-center">
-          <div className="flex w-full justify-between lg:mt-0 mt-4">
-            <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 rounded-md mr-4 w-1/2 p-2 md:text-sm text-xs">
-              <span className="md:underline opacity-50 md:opacity-100 my-2">
-                Bank Funds
-              </span>
-              <span>
-                {currencySymbol}
-                {addCommas(totalFunds)}
-              </span>
+          <div className="flex lg:flex-row justify-between flex-col-reverse items-center w-funds-add">
+            <div className="flex justify-between lg:mt-0 mt-4 w-funds">
+              <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 rounded-md mr-4 w-1/2 p-2 md:text-sm text-xs">
+                <span className="md:underline opacity-50 md:opacity-100 my-2">
+                  Bank Funds
+                </span>
+                <span>
+                  {currencySymbol}
+                  {addCommas(totalFunds)}
+                </span>
+              </div>
+              <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 rounded-md mr-4 w-1/2 p-2 md:text-sm text-xs">
+                <span className="md:underline opacity-50 md:opacity-100 my-2">
+                  Crypto-Asset Value
+                </span>
+                <span>
+                  {currencySymbol}
+                  {addCommas(assetValue)}
+                </span>
+              </div>
+              <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 rounded-md mr-4 w-1/2 p-2 md:text-sm text-xs">
+                <span className="md:underline opacity-50 md:opacity-100 my-2">
+                  Total Wealth
+                </span>
+                <span>
+                  {currencySymbol}
+                  {addCommas(totalFunds + assetValue)}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 rounded-md mr-4 w-1/2 p-2 md:text-sm text-xs">
-              <span className="md:underline opacity-50 md:opacity-100 my-2">
-                Crypto-Asset Value
-              </span>
-              <span>
-                {currencySymbol}
-                {addCommas(assetValue)}
-              </span>
-            </div>
-            <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 rounded-md mr-4 w-1/2 p-2 md:text-sm text-xs">
-              <span className="md:underline opacity-50 md:opacity-100 my-2">
-                Total Wealth
-              </span>
-              <span>
-                {currencySymbol}
-                {addCommas(totalFunds + assetValue)}
-              </span>
-            </div>
-          </div>
-          <div className="lg:w-2/3 w-full flex lg:justify-end justify-start lg:text-base text-xs mx-2 items-center">
-            <div className="2xl:text-base xl:text-sm text-xs">
-              Crypto Purchases require, sufficient funding:
-            </div>
-            <div className="ml-4 w-full">
-              <form
-                className="lg:p-4 p-3 dark:bg-slate-900 flex 2xl:w-64 rounded-md bg-violet-200 lg:w-48 md:w-56 sm:w-40 w-36"
-                onSubmit={handleAddFunds}
-              >
-                <input
-                  type="text"
-                  placeholder="Add Funds..."
-                  value={addFundsAmount}
-                  onChange={(e) => setAddFundsAmount(e.target.value)}
-                  className="w-full 2xl:p-2 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white p-1"
-                />
-                <div
-                  onClick={handleAddFunds}
-                  className="2xl:p-2 p-1 ml-3 rounded-md dark:bg-slate-600 dark:hover:bg-slate-500 cursor-pointer"
-                >
-                  <Arrowright />
+            <div className="w-add flex justify-between lg:text-base text-xs mx-1 items-center">
+              <div className="flex items-center ml-0.5">
+                <div className="2xl:text-base xl:text-sm text-xs">
+                  Crypto Purchases require, sufficient funding:
                 </div>
-              </form>
+                <div className="ml-4">
+                  <form
+                    className="lg:p-4 p-3 dark:bg-slate-900 flex 2xl:w-64 rounded-md bg-violet-200 lg:w-48 md:w-56 sm:w-40 w-36"
+                    onSubmit={handleAddFunds}
+                  >
+                    <input
+                      type="text"
+                      placeholder="Add Funds..."
+                      value={addFundsAmount}
+                      onChange={(e) => setAddFundsAmount(e.target.value)}
+                      className="w-full 2xl:p-2 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white p-1"
+                    />
+                    <div
+                      onClick={handleAddFunds}
+                      className="2xl:p-2 p-1 ml-3 rounded-md dark:bg-slate-600 dark:hover:bg-slate-500 cursor-pointer"
+                    >
+                      <Arrowright />
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <div className="block xl:hidden m-bank">
+                <Bankicon />
+              </div>
             </div>
           </div>
         </div>
@@ -677,13 +681,13 @@ export default function Portfolio() {
           {[...Array(10)].map((_, i) => (
             <Skeleton
               key={i}
-              classTail="dark:bg-slate-800 rounded-lg mb-6 flex justify-between p-5 relative bg-white lg:mx-32 md:mx-16 mx-4 h-96"
+              classTail="dark:bg-slate-800 rounded-lg mb-6 flex justify-between p-5 relative bg-white lg:mx-36 md:mx-14 mx-4 h-96"
               style={{ animationDelay: `${i * 0.05}s` }}
             />
           ))}
         </div>
       ) : (
-        <div className="flex flex-col lg:mx-32 md:mx-16 mx-4 z-10">
+        <div className="flex flex-col lg:mx-36 md:mx-14 mx-4 z-10">
           {data.length &&
             portfolio.map((asset) => {
               const coin = data.find((coin) => coin.name === asset.coinName);
@@ -717,13 +721,6 @@ export default function Portfolio() {
                       {asset.coinName} {asset.coinSymbol}
                     </span>
                   </div>
-                  <div className="lg:hidden absolute left-emblem">
-                    <Defaulticon
-                      coin={asset.coinSymbol}
-                      height="h-10"
-                      margin="mr-0"
-                    />
-                  </div>
                   <div className="flex flex-col w-full">
                     <div className="flex flex-col mx-0 lg:mx-4 border-b-2 border-gray-400 pb-6 2xl:text-base text-sm w-full">
                       <div className="flex justify-between mb-4">
@@ -738,16 +735,29 @@ export default function Portfolio() {
                           <div className="opacity-50">Purchased</div>
                           <div className="opacity-50">{asset.date}</div>
                         </div>
-                        <div className="mr-12 sm:mr-20 lg:mr-5">
+                        <div className="mr-4 flex items-center">
                           {isSelling && (
-                            <div className="absolute z-10 dark:bg-slate-900 p-3 rounded-md left-1/2 top-1/3 flex flex-col items-center bg-slate-300">
-                              <span>Amount to sell?</span>
+                            <div className="absolute z-10 dark:bg-slate-900 p-5 rounded-md left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center bg-slate-300">
+                              <div className="flex justify-between items-center w-full">
+                                <span>Amount to sell?</span>
+                                <button
+                                  onClick={() => {
+                                    {
+                                      setIsSelling(false);
+                                      setSellAmount("");
+                                    }
+                                  }}
+                                  className="dark:bg-slate-700 dark:hover:bg-slate-500 p-1 rounded-lg"
+                                >
+                                  <Xmark />
+                                </button>
+                              </div>
                               <div className="flex items-center my-4">
                                 <input
                                   type="text"
                                   value={sellAmount}
                                   placeholder="Sale Amount. . ."
-                                  className="w-2/3 p-2 rounded-sm dark:bg-slate-700 dark:text-white dark:caret-white ml-4 text-left bg-white"
+                                  className="w-2/3 p-2 rounded-sm dark:bg-slate-700 dark:text-white dark:caret-white text-left bg-white"
                                   onChange={(e) =>
                                     setSellAmount(e.target.value)
                                   }
@@ -774,6 +784,7 @@ export default function Portfolio() {
                                       onClick={() => {
                                         setSellWith(currency);
                                         setIsSellWithSelect(false);
+                                        setSellAmount("");
                                       }}
                                     >
                                       {currency}
@@ -790,7 +801,7 @@ export default function Portfolio() {
                                   </div>
                                 </div>
                                 <button
-                                  className="p-3 rounded-md dark:bg-slate-600 bg-white dark:hover:bg-slate-400 hover:bg-violet-300"
+                                  className="p-2.5 rounded-md dark:bg-slate-600 bg-white dark:hover:bg-slate-400 hover:bg-violet-300"
                                   onClick={() => {
                                     let soldAmount;
                                     let soldCoinAmount;
@@ -858,7 +869,7 @@ export default function Portfolio() {
                             </div>
                           )}
                           {isDeleting && (
-                            <div className="absolute z-10 dark:bg-slate-900 p-4 rounded-md flex flex-col items-center left-1/2 top-1/3 bg-slate-300">
+                            <div className="absolute z-10 dark:bg-slate-900 p-4 rounded-md flex flex-col items-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-300">
                               <span>
                                 By deleting this, you agree to sell the entire
                                 asset
@@ -882,17 +893,26 @@ export default function Portfolio() {
                             </div>
                           )}
                           <button
-                            className="p-2 dark:bg-slate-600 rounded-md dark:hover:bg-slate-400 lg:mr-2 mr-0.5 bg-violet-300 hover:bg-violet-400"
+                            className="p-2 dark:bg-slate-600 rounded-md dark:hover:bg-slate-400 lg:mr-2 mr-1 bg-violet-300 hover:bg-violet-400 flex items-center"
                             onClick={() => setIsSelling(!isSelling)}
                           >
+                            <span className="mr-1">Sell</span>
                             <Sellicon />
                           </button>
                           <button
-                            className="p-2 dark:bg-slate-600 rounded-md dark:hover:bg-slate-400 lg:ml-2 ml-0.5 bg-violet-300 hover:bg-violet-400"
+                            className="p-2 dark:bg-slate-600 rounded-md dark:hover:bg-slate-400 lg:ml-2 ml-1 bg-violet-300 hover:bg-violet-400 flex items-center"
                             onClick={() => setIsDeleting(!isDeleting)}
                           >
+                            <span className="mr-1">Delete</span>
                             <Trashicon />
                           </button>
+                        </div>
+                        <div className="lg:hidden">
+                          <Defaulticon
+                            coin={asset.coinSymbol}
+                            height="h-10"
+                            margin="mt-1"
+                          />
                         </div>
                       </div>
                       <div className="flex justify-between items-center w-full">

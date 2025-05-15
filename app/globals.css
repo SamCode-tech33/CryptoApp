@@ -197,8 +197,8 @@ path {
 }
 
 .left-emblem {
-  top: 4%;
-  left: 86.5%;
+  top: 5%;
+  left: 89%;
 }
 
 @media (min-width: 640px) {
@@ -388,6 +388,56 @@ path {
 @keyframes spin {
   to {
     transform: rotate(360deg)
+  }
+}
+
+.w-bank {
+  width: 15.3%;
+}
+
+.w-funds-add {
+  width: 100%;
+}
+
+@media (min-width: 1280px) {
+  .w-funds-add {
+    width: 84.7%;
+  }
+}
+
+.w-funds {
+  width: 100%;
+}
+
+@media (min-width: 1280px) {
+  .w-funds {
+    width: 60%;
+  }
+}
+
+.w-add {
+  width: 100%;
+}
+
+@media (min-width: 1280px) {
+  .w-add {
+    width: 40%;
+  }
+}
+
+.m-bank {
+  margin: 0 0 0 16px;
+}
+
+@media (min-width: 400px) {
+  .m-bank {
+    margin: 0 16px 0 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .m-bank {
+    margin: 0 0 0 16px;
   }
 }
 

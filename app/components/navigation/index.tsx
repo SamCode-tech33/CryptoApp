@@ -13,7 +13,7 @@ import { usePathname } from "next/navigation";
 const Navlinks = () => {
   const pathname = usePathname();
   return (
-    <div className="flex justify-between items-center lg:px-36 md:px-14 px-4 bg-white py-3 dark:bg-slate-800">
+    <div className="flex justify-between items-center lg:px-36 md:px-14 pl-5 pr-4 bg-white py-3 dark:bg-slate-800">
       <Link href="/">
         <div className="flex h-4 items-center">
           <Logo />
@@ -106,7 +106,7 @@ const Navsearch = () => {
   }, [currency]);
 
   return (
-    <div className="relative xl:w-80 lg:w-52 w-40">
+    <div className="relative xl:w-80 lg:w-52 w-36">
       <input
         type="text"
         placeholder="Search..."
