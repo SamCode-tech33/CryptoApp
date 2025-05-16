@@ -242,7 +242,7 @@ export const CustomToolTipMini = ({ active, payload }: any) => {
     const valueProper = payload[0].payload.valueProper;
     const name = formatDate(payload[0].payload.name);
     return (
-      <div className="dark:text-white text-xs md:flex flex-col items-end z-10 dark:bg-slate-600 bg-violet-300 rounded-md py-1 px-2 hidden">
+      <div className="dark:text-white text-xs sm:flex flex-col items-end z-10 rounded-md hidden text-right w-24">
         <p>{name}</p>
         <p>
           {currencySymbol}
@@ -254,13 +254,12 @@ export const CustomToolTipMini = ({ active, payload }: any) => {
 };
 
 export const CustomizedLabel = (props: any) => {
-  const { x, y, height, width, index } = props;
+  const { x, width, index } = props;
   return (
     <text
       x={x + width / 2}
-      y={y + height + 12}
-      dy={11}
-      fill="gray"
+      y={215}
+      fill="rgb(148 163 184)"
       fontSize={13}
       textAnchor="middle"
     >

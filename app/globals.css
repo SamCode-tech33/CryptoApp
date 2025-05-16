@@ -24,6 +24,21 @@ path {
   stroke-linejoin: round;
 }
 
+@keyframes blink {
+  0% { opacity: 0.9; }
+  25% { opacity: 0.6; }
+  50% { opacity: 0.2; }
+  75% {opacity: 0.6;}
+  100% { opacity: 0.9; }
+}
+
+.blinking-load {
+  animation-name: blink;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
 .w-half {
   width: 41.5vw
 }
@@ -38,6 +53,9 @@ path {
 
 .lg-mx-22 {
   margin: 20px 2px;
+  @media (min-width: 768px) {
+    margin: 20px 2px;
+  }
   @media (min-width: 1024px) {
     margin: 20px 74px;
   }
@@ -169,18 +187,14 @@ path {
   position: absolute !important;
 }
 
-.left-add-asset {
-  left: 17.5%;
-}
-
 .buy-with-abs {
   left: 0%;
   top: 100%;
 }
 
 .left-emblem {
-  top: 4%;
-  left: 86.5%;
+  top: 5%;
+  left: 89%;
 }
 
 @media (min-width: 640px) {
@@ -219,9 +233,10 @@ path {
 }
 
 .sticky-nav {
-  position: sticky;
+  position: fixed;
   bottom: 0%;
-  left: 50%;
+  left: 0%;
+  width: 100%
 }
 
 .port-height {
@@ -236,97 +251,189 @@ path {
   border-top-color: white;
   animation: spin 0.3s ease-in-out infinite;
   position: absolute;
-  top: 50%;
+  top: 85%;
   left: 50%;
 }
 
+.filter-focus {
+  transform: translate(-50%, -50%);
+}
+
 .w-number {
-  width: 2.5%;
-}
-
-.w-filter {
-  width: 68%;
-}
-
-@media (min-width: 730px) {
-  .w-filter {
-    width: 65%;
-  }
+  width: 3%;
 }
 
 @media (min-width: 1280px) {
-  .w-filter {
-    width: 41%;
+  .w-number {
+    width: 2.5%;
   }
 }
 
 .w-name {
-  width: 55%;
+  width: 33%;
+}
+
+@media (min-width: 640px) {
+  .w-name {
+    width: 30%;
+  }
 }
 
 @media (min-width: 768px) {
   .w-name {
-    width: 30.8%;
-  }
-}
-
-.w-price {
-  width: 45%;
-}
-
-@media (min-width: 640px) {
-  .w-price {
     width: 20%;
   }
 }
 
+@media (min-width: 1280px) {
+  .w-name {
+    width: 15%;
+  }
+}
+
+.w-price {
+  width: 33%;
+}
+
+@media (min-width: 640px) {
+  .w-price {
+    width: 25%;
+  }
+}
+
+@media (min-width: 768px) {
+  .w-price {
+    width: 15%;
+  }
+}
+
+@media (min-width: 1280px) {
+  .w-price {
+    width: 10%;
+  }
+}
+
 .w-1h {
-  width: 14%;
+  width: 10%;
+}
+
+@media (min-width: 1280px) {
+  .w-1h {
+    width: 5%;
+  }
 }
 
 .w-24h {
-  width: 14%;
+  width: 10%;
+}
+
+@media (min-width: 1280px) {
+  .w-24h {
+    width: 5%;
+  }
 }
 
 .w-7d {
-  width: 14%;
+  width: 10%;
+}
+
+@media (min-width: 1280px) {
+  .w-7d {
+    width: 5%;
+  }
 }
 
 .w-volume {
-  width: 15%
+  width: 16%
 }
 
-@media (min-width: 1480px) {
+@media (min-width: 1570px) {
   .w-volume {
-    width: 17.5%;
+    width: 18%;
   }
 }
 
-@media (min-width: 1820px) {
+@media (min-width: 1750px) {
   .w-volume {
-    width: 19.2%;
+    width: 20%;
   }
-}
-
-.w-circ {
-  width: 20%
 }
 
 .w-last7 {
-  width: 16%;
-  margin-left: 16px;
+  width: 33%;
+}
+
+@media (min-width: 640px) {
+  .w-last7 {
+    width: 22%;
+  }
 }
 
 @media (min-width: 768px) {
   .w-last7 {
-    width: 8.8%;
-    margin-left: 0;
+    width: 15%;
+  }
+}
+
+@media (min-width: 1280px) {
+  .w-last7 {
+    width: 9%;
   }
 }
 
 @keyframes spin {
   to {
     transform: rotate(360deg)
+  }
+}
+
+.w-bank {
+  width: 15.3%;
+}
+
+.w-funds-add {
+  width: 100%;
+}
+
+@media (min-width: 1280px) {
+  .w-funds-add {
+    width: 84.7%;
+  }
+}
+
+.w-funds {
+  width: 100%;
+}
+
+@media (min-width: 1280px) {
+  .w-funds {
+    width: 60%;
+  }
+}
+
+.w-add {
+  width: 100%;
+}
+
+@media (min-width: 1280px) {
+  .w-add {
+    width: 40%;
+  }
+}
+
+.m-bank {
+  margin: 0 0 0 16px;
+}
+
+@media (min-width: 400px) {
+  .m-bank {
+    margin: 0 16px 0 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .m-bank {
+    margin: 0 0 0 16px;
   }
 }
 
