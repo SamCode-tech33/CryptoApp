@@ -10,7 +10,7 @@ export const Stickynav = () => {
   const inactiveClasses = "dark:hover:bg-slate-700 hover:bg-white";
 
   return (
-    <div className="sticky-nav dark:bg-slate-900 bg-slate-300 px-3 py-1">
+    <div className="sticky-nav dark:bg-slate-900 bg-slate-300 px-3 py-1 sm:hidden">
       <div className="flex justify-between items-center sm:hidden">
         <Link
           href="/"

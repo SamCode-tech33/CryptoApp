@@ -15,7 +15,7 @@ export const Notification = ({ noti, message, error }: any) => {
     <div>
       {noti ? (
         <div
-          className={`absolute z-10 left-0 top-0 p-4 flex items-center rounded-md bg-green-500/50 ${
+          className={`absolute z-10 right-0 top-0 p-4 flex items-center rounded-md bg-green-500/50 ${
             inOut && "notification"
           }`}
         >
