@@ -49,7 +49,7 @@ export default function Slidercoin() {
             [...Array(100)].map((_, i) => (
               <div key={i} className="lg:h-20 px-2">
                 <Skeleton
-                  classTail="h-full w-full py-3 px-2 dark:bg-slate-800 rounded-md mx-2 flex justify-between xl:justify-start text-sm items-center bg-gray-300"
+                  classTail="h-full py-3 px-2 dark:bg-slate-800 rounded-md mx-2 flex justify-between xl:justify-start text-sm items-center cursor-pointer bg-white"
                   style={{ animationDelay: `${i * 0.1}s` }}
                 />
               </div>

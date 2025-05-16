@@ -7,7 +7,6 @@ import {
   AreaChart,
 } from "recharts";
 import { CustomTooltip, getGraphComparison, getGraphData } from "../Utility";
-import { useElementSize } from "../windowSizing";
 
 const Linegraph = ({
   coinHistory,
@@ -24,7 +23,6 @@ const Linegraph = ({
   coinCompName,
   coinName,
 }: any) => {
-  const { ref, size } = useElementSize();
 
   if (coinHistory.length !== limit) {
     const timeInsufficientArray = coinHistory;
@@ -53,20 +51,25 @@ const Linegraph = ({
   const pdataCombination = getGraphComparison(pdata, pdataComp);
   return (
     <div
-      ref={ref}
-      className="h-80 w-full dark:bg-slate-800 rounded-md flex justify-end flex-col bg-white relative mb-4 xl:mr-2 xl:mb-0 px-1"
+      className="h-full w-full dark:bg-slate-800 rounded-md flex justify-end flex-col bg-white relative mb-4 xl:mr-2 xl:mb-0 px-1"
     >
-      {compare.length ? (
-        <h1 className="ml-1 mt-2 text-lg">
-          <span className="text-violet-500">{coinName}</span> <span>/</span>{" "}
-          <span className="value-comp-tool">{coinCompName}</span>
-        </h1>
-      ) : (
-        <h1 className="ml-1 mt-2 text-violet-500 text-lg">{coinName}</h1>
-      )}
-      <h1 className="ml-1 mb-6 text-violet-500 text-lg">{today}</h1>
-      <ResponsiveContainer height="70%">
-        <AreaChart data={pdataCombination}>
+      {" "}
+      <div className="flex w-full justify-between h-full mt-1">
+        {compare.length ? (
+          <h1 className="ml-2 text-lg">
+            <span className="text-violet-500">{coinName}</span> <span>/</span>{" "}
+            <span className="value-comp-tool">{coinCompName}</span>
+          </h1>
+        ) : (
+          <h1 className="ml-2 text-violet-500 text-lg">{coinName}</h1>
+        )}
+        <h1 className="ml-2 text-violet-500 text-lg mr-1.5">{today}</h1>
+      </div>
+      <ResponsiveContainer height="80%">
+        <AreaChart
+          data={pdataCombination}
+          margin={{ left: 6, bottom: 8, right: 6 }}
+        >
           <defs>
             <linearGradient id="color" x1="0" y1="0" x2="0" y2="0.8">
               <stop offset="0%" stopColor="#8B5CF6" stopOpacity={0.8} />
@@ -104,7 +107,6 @@ const Linegraph = ({
                 rightSym={rightSym}
               />
             }
-            position={{ x: size.width - 135, y: onConverter ? -95 : -107 }}
           />
           <Area
             type="monotone"
