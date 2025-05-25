@@ -200,7 +200,7 @@ export const CustomTooltip = ({
     ).split(":");
     const formattedDate = date[0] + ":" + date[1];
     return (
-      <div className="text-violet-500 flex flex-col items-end dark:bg-slate-900 p-2 rounded-md z-99 bg-slate-300">
+      <div className="dark:text-white flex flex-col items-end dark:bg-slate-900 p-2 rounded-md z-99 bg-slate-300">
         <p>{formattedDate}</p>
         <p>
           {onConverter ? (
@@ -242,7 +242,7 @@ export const CustomToolTipMini = ({ active, payload }: any) => {
     const valueProper = payload[0].payload.valueProper;
     const name = formatDate(payload[0].payload.name);
     return (
-      <div className="dark:text-white bg-slate-900 text-xs sm:flex flex-col items-end z-99 rounded-md hidden px-4 py-2">
+      <div className="dark:text-white dark:bg-slate-900 text-xs sm:flex flex-col items-end z-99 rounded-md hidden px-4 py-2 bg-slate-300">
         <p>{name}</p>
         <p>
           {currencySymbol}
