@@ -20,7 +20,6 @@ import {
   deleteAsset,
   sellAsset,
   changeCurrency,
-  assetChange,
 } from "@/lib/portfolioSlice";
 import { Updownarrow } from "../components/Utility";
 import DatePicker from "react-datepicker";
@@ -37,9 +36,6 @@ export default function Portfolio() {
   );
   const totalFunds = useSelector(
     (state: RootState) => state.portfolio.totalFunds
-  );
-  const assetValue = useSelector(
-    (state: RootState) => state.portfolio.assetValue
   );
   const currency = useSelector(
     (state: RootState) => state.currency.currencyType
@@ -74,6 +70,7 @@ export default function Portfolio() {
   const [errNoti, setErrNoti] = useState(false);
   const [noti, setNoti] = useState(false);
   const [notiMessage, setNotiMessage] = useState("");
+  const [totalAssetValue, setTotalAssetValue] = useState(0);
 
   const getCoinPriceOnDate = async () => {
     try {
@@ -167,7 +164,9 @@ export default function Portfolio() {
         coinSymbol: coinSymbol,
         coinAmount: Number(assetHeader.split(" ")[0]),
         currencyAmount: Number(assetHeader.split(" ")[1].split(",").join("")),
-        date: new Date(dateUnix).toString().split("GMT")[0],
+        date: new Date(new Date(dateUnix * 1000 - 86399000).toISOString())
+          .toString()
+          .split("GMT")[0],
         dateUnix: dateUnix,
         id: Math.random() + Math.random(),
       };
@@ -208,6 +207,8 @@ export default function Portfolio() {
 
   const handleSale = (
     soldAmount: any,
+    currentValueAmount: any,
+    adjustedSaleAmount: any,
     soldCoinAmount: any,
     currencyAmount: any,
     coinSymbol: any,
@@ -216,24 +217,23 @@ export default function Portfolio() {
     coinAmount: any,
     id: any
   ) => {
-    if (Number(sellAmount) && soldAmount < currencyAmount) {
+    if (Number(sellAmount) && soldAmount < currentValueAmount) {
       const alteredPortfolioItem = {
         coinName: coinName,
         coinSymbol: coinSymbol,
         coinAmount: coinAmount - soldCoinAmount,
-        currencyAmount: currencyAmount - soldAmount,
+        currencyAmount: currencyAmount - adjustedSaleAmount,
         date: date,
         id: id,
       };
       dispatch(sellAsset(alteredPortfolioItem));
       dispatch(addFunds(soldAmount));
-      dispatch(assetChange(soldAmount));
       setIsSelling(false);
       setNoti(true);
       setNotiMessage("Sale Completed");
       setTimeout(() => setNotiMessage(""), 2000);
       setTimeout(() => setNoti(false), 2000);
-    } else if (soldAmount > currencyAmount) {
+    } else if (soldAmount > currentValueAmount) {
       setErrNoti(true);
       setNotiMessage("Cannot Complete Sale - Selling More Than Owned");
       setTimeout(() => setNotiMessage(""), 2000);
@@ -274,6 +274,24 @@ export default function Portfolio() {
   useEffect(() => {
     handlePurchase();
   }, [coinPrice]);
+
+  useEffect(() => {
+    if (data.length && portfolio.length) {
+      const portfolioAssetArray = portfolio.map((asset) => asset.coinAmount);
+      const portfolioSymbolArray = portfolio.map((asset) => asset.coinSymbol);
+      const currentValueArray = data
+        .filter((coin) => portfolioSymbolArray.includes(coin.symbol))
+        .map((asset) => asset.quote[currency].price);
+      const currentValueTimesAmount = currentValueArray.map(
+        (coin, i) => coin * portfolioAssetArray[i]
+      );
+      const totalAssets = currentValueTimesAmount.reduce(
+        (acc, current) => acc + current,
+        0
+      );
+      setTotalAssetValue(totalAssets);
+    }
+  }, [data, portfolio]);
 
   return (
     <div className="bg-gray-200 sm:pt-1 dark:bg-slate-900 port-height mt-4">
@@ -607,7 +625,7 @@ export default function Portfolio() {
       </div>
       <div className="dark:bg-slate-800 rounded-lg mb-4 flex p-5 lg:mx-36 md:mx-14 mx-4 items-center bg-white relative">
         <div className="w-full flex justify-between">
-          <div className=" dark:bg-slate-600 rounded-md xl:flex flex-col items-center bg-violet-200 mr-4 w-64 hidden">
+          <div className=" dark:bg-slate-600 rounded-md xl:flex flex-col items-center bg-violet-200 mr-4 w-bank hidden">
             <div className="my-4">
               <Bankicon />
             </div>
@@ -630,7 +648,7 @@ export default function Portfolio() {
                 </span>
                 <span>
                   {currencySymbol}
-                  {addCommas(assetValue)}
+                  {addCommas(totalAssetValue)}
                 </span>
               </div>
               <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 rounded-md mr-4 w-1/2 p-2 md:text-sm text-xs">
@@ -639,7 +657,7 @@ export default function Portfolio() {
                 </span>
                 <span>
                   {currencySymbol}
-                  {addCommas(totalFunds + assetValue)}
+                  {addCommas(totalFunds + totalAssetValue)}
                 </span>
               </div>
             </div>
@@ -737,7 +755,7 @@ export default function Portfolio() {
                         </div>
                         <div className="mr-4 flex items-center">
                           {isSelling && (
-                            <div className="absolute z-10 dark:bg-slate-900 p-5 rounded-md left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center bg-slate-300">
+                            <div className="absolute z-10 dark:bg-slate-900 p-8 rounded-md border border-gray-500 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center bg-slate-300 md:w-auto w-3/4">
                               <div className="flex justify-between items-center w-full">
                                 <span>Amount to sell?</span>
                                 <button
@@ -747,7 +765,7 @@ export default function Portfolio() {
                                       setSellAmount("");
                                     }
                                   }}
-                                  className="dark:bg-slate-700 dark:hover:bg-slate-500 p-1 rounded-lg"
+                                  className="dark:bg-slate-700 dark:hover:bg-slate-500 p-0.5 rounded-lg"
                                 >
                                   <Xmark />
                                 </button>
@@ -801,7 +819,7 @@ export default function Portfolio() {
                                   </div>
                                 </div>
                                 <button
-                                  className="p-2.5 rounded-md dark:bg-slate-600 bg-white dark:hover:bg-slate-400 hover:bg-violet-300"
+                                  className="p-2 rounded-md dark:bg-slate-600 bg-white dark:hover:bg-slate-400 hover:bg-violet-300"
                                   onClick={() => {
                                     let soldAmount;
                                     let soldCoinAmount;
@@ -815,8 +833,19 @@ export default function Portfolio() {
                                         Number(sellAmount) * coinPrice;
                                       soldCoinAmount = sellAmount;
                                     }
+                                    const currentValueAmount =
+                                      Number(coinQuote.price) *
+                                      Number(asset.coinAmount);
+
+                                    const adjustedSaleAmount =
+                                      (asset.currencyAmount /
+                                        (Number(coinQuote.price) *
+                                          Number(asset.coinAmount))) *
+                                      Number(sellAmount);
                                     handleSale(
                                       soldAmount,
+                                      currentValueAmount,
+                                      adjustedSaleAmount,
                                       soldCoinAmount,
                                       asset.currencyAmount,
                                       asset.coinSymbol,
@@ -869,16 +898,20 @@ export default function Portfolio() {
                             </div>
                           )}
                           {isDeleting && (
-                            <div className="absolute z-10 dark:bg-slate-900 p-4 rounded-md flex flex-col items-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-300">
+                            <div className="absolute z-10 dark:bg-slate-900 p-8 rounded-md flex flex-col border border-gray-500 items-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-300 md:w-auto w-3/4">
                               <span>
                                 By deleting this, you agree to sell the entire
                                 asset
                               </span>
-                              <div className="flex w-full justify-around">
+                              <div className="flex w-full justify-between mt-8">
                                 <button
                                   className="p-3 dark:bg-slate-600 dark:hover:bg-slate-400 my-4 rounded-lg bg-violet-300 hover:bg-violet-400"
                                   onClick={() =>
-                                    handleDelete(asset.currencyAmount, asset.id)
+                                    handleDelete(
+                                      Number(coinQuote.price) *
+                                        Number(asset.coinAmount),
+                                      asset.id
+                                    )
                                   }
                                 >
                                   Delete & Sell

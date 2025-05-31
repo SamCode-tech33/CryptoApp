@@ -108,10 +108,11 @@ export default function Convertor() {
     setSelectedPriceRight(coinPrice);
   };
 
-  const handleCalculate = () => {
-    setConversionValue(convertAmount);
+  const handleCalculate = (e: any) => {
+    setConversionValue(e.target.value);
+    setConvertAmount(e.target.value);
     const converted = (
-      (Number(convertAmount) * Number(selectedPriceLeft.split(",").join(""))) /
+      (Number(e.target.value) * Number(selectedPriceLeft.split(",").join(""))) /
       Number(selectedPriceRight.split(",").join(""))
     ).toFixed(3);
     setConvertedNum(converted);
@@ -295,8 +296,7 @@ export default function Convertor() {
                       value={convertAmount}
                       className="px-4 md:py-2 py-1 rounded-sm dark:bg-slate-600 dark:text-white dark:caret-white bg-gray-300 md:w-auto w-36"
                       onChange={(e) => {
-                        handleCalculate();
-                        setConvertAmount(e.target.value);
+                        handleCalculate(e);
                       }}
                     />
                   </div>

@@ -143,7 +143,7 @@ export default function Coins() {
         </div>
       </div>
       <Slidercoin />
-      <div className="flex flex-col items-center justify-center xl:flex-row xl:justify-between lg:mx-20 mx-2">
+      <div className="flex flex-col items-center justify-center xl:flex-row xl:justify-between lg:mx-20 mx-2 h-80">
         {error && (
           <div className="h-80 w-full dark:bg-slate-800 rounded-md flex justify-end flex-col bg-white relative mb-4 xl:mr-2 xl:mb-0">
             An error has occured, please check again later.
@@ -179,6 +179,7 @@ export default function Coins() {
             coinName={symbol}
             compare={compare}
             today={today}
+            coinCompName={compare}
           />
         )}
       </div>

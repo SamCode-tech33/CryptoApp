@@ -240,10 +240,10 @@ export default function Navcoin() {
             <div className="w-1h relative md:block hidden">1h%</div>
             <div className="w-24h relative md:block hidden">24h%</div>
             <div className="w-7d relative md:block hidden mr-2">7d%</div>
-            <div className="w-volume xl:flex hidden 2xl:text-base text-sm mr-4">
+            <div className="w-volume xl:flex hidden 2xl:text-sm text-xs mr-4">
               <span>24h Volume / Market Cap</span>
             </div>
-            <div className="w-volume xl:flex hidden 2xl:text-base text-sm mr-1">
+            <div className="w-volume xl:flex hidden 2xl:text-sm text-xs">
               <span>Circulating Coins / Total Supply</span>
             </div>
             <div className="w-last7 flex sm:mr-8">
