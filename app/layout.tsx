@@ -8,13 +8,15 @@ import { persistor } from "@/lib/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { Globalheader } from "./components/globalHeader";
 import { Stickynav } from "./components/Stickynav";
+import { useHeadTags } from "./hooks/useHeadTags";
+
 const Navlinks = React.lazy(() => import("./components/navigation"));
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) { useHeadTags(); 
   return (
     <html lang="en">
       <body className="dark:bg-slate-900 bg-gray-200 pb-20">
