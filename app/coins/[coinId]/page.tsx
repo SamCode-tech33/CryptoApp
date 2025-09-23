@@ -14,26 +14,33 @@ import {
 import axios from "axios";
 import { Copy } from "@/app/components/svgComps";
 import { Skeleton } from "@/app/components/Skeleton";
+import { CoinInfo, CoinData, HistoryItem } from "@/app/zenCoinTypes";
 
-export default function Coin({ params }: any) {
-  const [coinsInfo, setCoinsInfo] = useState<any>({});
-  const [coin, setCoin] = useState<any>(null);
+export default function Coin({
+  params,
+}: {
+  params: Promise<{ coinId: string }>;
+}) {
+  const [coinsInfo, setCoinsInfo] = useState<Record<string, CoinInfo>>({});
+  const [coin, setCoin] = useState<CoinData | null>(null);
   const [loading1, setLoading1] = useState(false);
   const [copy, setCopy] = useState("");
   const [high, setHigh] = useState(0);
   const [low, setLow] = useState(0);
   const [loading2, setLoading2] = useState(false);
   const [error2, setError2] = useState(false);
-  const [highDate, setHighDate] = useState({});
-  const [lowDate, setLowDate] = useState({});
-  const copyNoteRef = useRef<any>(null);
+  const [highDate, setHighDate] = useState<Date | null>(null);
+  const [lowDate, setLowDate] = useState<Date | null>(null);
+  const copyNoteRef = useRef<NodeJS.Timeout | null>(null);
 
   const dispatch = useDispatch<AppDispatch>();
   const { data, loading, error } = useSelector(
     (state: RootState) => state.coins
   );
-  const coinId: any = React.use(params);
-  const coinSite = coinsInfo[coinId.coinId];
+  const { coinId } = React.use(params);
+
+  //React.use(params);
+  const coinSite = coinsInfo[coinId];
   const currency = useSelector(
     (state: RootState) => state.currency.currencyType
   );
@@ -46,16 +53,16 @@ export default function Coin({ params }: any) {
     try {
       const { data } = await axios.get(
         `/api/specificDay?fsym=${
-          coin.symbol
+          coin?.symbol
         }&tsym=${currency}&limit=${2000}&toTs=${Date.now()}`
       );
-      const history = data.Data.Data;
+      const history: HistoryItem[] = data.Data.Data;
       const allTimeHigh = history.reduce(
-        (max: any, item: any) => (item.high > max.high ? item : max),
+        (max, item) => (item.high > max.high ? item : max),
         history[0]
       );
       const allTimeLow = history.reduce(
-        (min: any, item: any) => (item.low < min.low ? item : min),
+        (min, item) => (item.low < min.low ? item : min),
         history[0]
       );
       setHigh(allTimeHigh.high);
@@ -90,12 +97,12 @@ export default function Coin({ params }: any) {
 
   useEffect(() => {
     dispatch(fetchCoins({ start: 1, limit: 400, convert: currency }));
-    getCoinsInfo(coinId.coinId);
+    getCoinsInfo(Number(coinId));
   }, []);
 
   useEffect(() => {
     if (data.length) {
-      setCoin(data.find((coin: any) => coin.id.toString() === coinId.coinId));
+      setCoin(data.find((coin) => coin.id.toString() === coinId));
     }
   }, [data]);
 
@@ -129,7 +136,7 @@ export default function Coin({ params }: any) {
                         {coin.name} ({coin.symbol})
                       </span>
                       <Copy
-                        site={coinSite?.urls.website}
+                        site={coinSite?.urls.website[0] ?? ""}
                         handleCopy={handleCopy}
                         copy={copy}
                         siteName="https://bitcoin.org/"
@@ -156,9 +163,13 @@ export default function Coin({ params }: any) {
                       }
                     >
                       {Math.abs(
-                        coin.quote?.[currency].percent_change_1h.toFixed(2)
+                        Number(
+                          coin.quote?.[currency].percent_change_1h.toFixed(2)
+                        )
                       ) ||
-                        Math.abs(coin.quote.USD.percent_change_1h.toFixed(2))}
+                        Math.abs(
+                          Number(coin.quote.USD.percent_change_1h.toFixed(2))
+                        )}
                       %
                     </span>
                   </div>
@@ -222,7 +233,7 @@ export default function Coin({ params }: any) {
                           </span>
                         </div>
                         <span className="text-sm ml-7">
-                          {highDate.toString().split("G")[0]}
+                          {highDate?.toString().split("G")[0]}
                         </span>
                       </div>
                       <div className="flex justify-between">
@@ -239,7 +250,7 @@ export default function Coin({ params }: any) {
                         </span>
                       </div>
                       <span className="text-sm ml-7">
-                        {lowDate.toString().split("G")[0]}
+                        {lowDate?.toString().split("G")[0]}
                       </span>
                     </div>
                   )}

@@ -1,11 +1,12 @@
 import { Rangefilter } from "../rangeFilter";
 import { useState } from "react";
+import { CoinfilterProps } from "@/app/zenCoinTypes";
 
 export const Coinfilter = ({
   handleFullClear,
   handleFilterRender,
   closeFocus,
-}: any) => {
+}: CoinfilterProps) => {
   const [coinName, setCoinName] = useState("");
   const [lowerPrice, setLowerPrice] = useState("");
   const [lower1, setLower1] = useState("");
@@ -95,7 +96,7 @@ export const Coinfilter = ({
                 type="text"
                 className="dark:bg-slate-600 rounded-sm dark:caret-white border-gray-300 border p-1"
                 value={coinName}
-                onChange={(e: any) => {
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setCoinName(e.target.value);
                   setInputError("");
                 }}
@@ -107,12 +108,12 @@ export const Coinfilter = ({
       </div>
       <div>
         <Rangefilter
-          handleLowerValue={(e: any) => {
+          handleLowerValue={(e: React.ChangeEvent<HTMLInputElement>) => {
             setLowerPrice(e.target.value);
             setInputError("");
           }}
           lowerValue={lowerPrice}
-          handleUpperValue={(e: any) => {
+          handleUpperValue={(e: React.ChangeEvent<HTMLInputElement>) => {
             setUpperPrice(e.target.value);
             setInputError("");
           }}
@@ -122,12 +123,12 @@ export const Coinfilter = ({
       </div>
       <div>
         <Rangefilter
-          handleLowerValue={(e: any) => {
+          handleLowerValue={(e: React.ChangeEvent<HTMLInputElement>) => {
             setLower1(e.target.value);
             setInputError("");
           }}
           lowerValue={lower1}
-          handleUpperValue={(e: any) => {
+          handleUpperValue={(e: React.ChangeEvent<HTMLInputElement>) => {
             setUpper1(e.target.value);
             setInputError("");
           }}
@@ -137,12 +138,12 @@ export const Coinfilter = ({
       </div>
       <div>
         <Rangefilter
-          handleLowerValue={(e: any) => {
+          handleLowerValue={(e: React.ChangeEvent<HTMLInputElement>) => {
             setLower24(e.target.value);
             setInputError("");
           }}
           lowerValue={lower24}
-          handleUpperValue={(e: any) => {
+          handleUpperValue={(e: React.ChangeEvent<HTMLInputElement>) => {
             setUpper24(e.target.value);
             setInputError("");
           }}
@@ -152,12 +153,12 @@ export const Coinfilter = ({
       </div>
       <div>
         <Rangefilter
-          handleLowerValue={(e: any) => {
+          handleLowerValue={(e: React.ChangeEvent<HTMLInputElement>) => {
             setLower7(e.target.value);
             setInputError("");
           }}
           lowerValue={lower7}
-          handleUpperValue={(e: any) => {
+          handleUpperValue={(e: React.ChangeEvent<HTMLInputElement>) => {
             setUpper7(e.target.value);
             setInputError("");
           }}

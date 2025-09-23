@@ -1,6 +1,18 @@
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
 import { Arrowright } from "../svgComps";
+import {
+  CoinHistoryInterval,
+  GraphResult,
+  GraphData,
+  VolumeGraphResult,
+  HistoricalDataPointHour,
+  ArrowProps,
+  StaticarrowProps,
+  DefaulticonProps,
+  CustomTooltipProps,
+  CustomToolTipMiniProps,
+} from "@/app/zenCoinTypes";
 
 const handleImageError = (
   event: React.SyntheticEvent<HTMLImageElement, Event>
@@ -8,28 +20,25 @@ const handleImageError = (
   event.currentTarget.src = "https://i.ibb.co/rKMFQPFM/pngaaa-com-3638314.png";
 };
 
-export const addCommas = (num: number) => {
+export const addCommas = (num: number | null): string => {
   if (num === null) {
     num = 0;
   }
   const coinPriceArray = num.toFixed(0).split("");
   const decimals = num.toFixed(2);
   const coinDecimals = decimals.slice(decimals.length - 3);
-  const coinPriceCommas = coinPriceArray.map((num: any, i: number) => {
+  const coinPriceCommas = coinPriceArray.map((numChar, i) => {
     const commaSpot = (coinPriceArray.length - (i + 1)) % 3;
     if (commaSpot === 0 && i !== coinPriceArray.length - 1) {
-      num = num + ",";
+      return numChar + ",";
     }
-    return num;
+    return numChar;
   });
-  if (num === 0) {
-    return "0";
-  } else {
-    return coinPriceCommas.join("") + coinDecimals;
-  }
+  return num === 0 ? "0" : coinPriceCommas.join("") + coinDecimals;
 };
 
-const SamplePrevArrow = (props: any) => {
+const SamplePrevArrow: React.FC<ArrowProps> = (props) => {
+  /* eslint-disable react/prop-types */
   const { onClick } = props;
   return (
     <div
@@ -41,7 +50,7 @@ const SamplePrevArrow = (props: any) => {
   );
 };
 
-const SampleNextArrow = (props: any) => {
+const SampleNextArrow: React.FC<ArrowProps> = (props) => {
   const { onClick } = props;
   return (
     <div
@@ -108,37 +117,33 @@ export const sliderSettings = {
   ],
 };
 
-export const Updownarrow = ({ coin }: { coin: any }) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill={coin > 0 ? "#11D861" : "#E9190F"}
-      viewBox="0 0 24 24"
-      stroke={coin > 0 ? "#11D861" : "#E9190F"}
-      className="h-3 mr-0.5"
-    >
-      <path
-        d={
-          coin > 0 ? "m4.5 15.75 7.5-7.5 7.5 7.5" : "m19.5 8.25-7.5 7.5-7.5-7.5"
-        }
-      />
-    </svg>
-  );
-};
+/* eslint-disable react/prop-types */
+export const Updownarrow: React.FC<{ coin: any }> = ({ coin }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill={coin > 0 ? "#11D861" : "#E9190F"}
+    viewBox="0 0 24 24"
+    stroke={coin > 0 ? "#11D861" : "#E9190F"}
+    className="h-3 mr-0.5"
+  >
+    <path
+      d={coin > 0 ? "m4.5 15.75 7.5-7.5 7.5 7.5" : "m19.5 8.25-7.5 7.5-7.5-7.5"}
+    />
+  </svg>
+);
 
-export const Staticarrow = ({ way, color }: { way: any; color: any }) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill={color}
-      viewBox="0 0 24 24"
-      stroke={color}
-      className="h-4 mr-3"
-    >
-      <path d={way} />
-    </svg>
-  );
-};
+/* eslint-disable react/prop-types */
+export const Staticarrow: React.FC<StaticarrowProps> = ({ way, color }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill={color}
+    viewBox="0 0 24 24"
+    stroke={color}
+    className="h-4 mr-3"
+  >
+    <path d={way} />
+  </svg>
+);
 
 export const Plus = () => {
   return (
@@ -154,37 +159,36 @@ export const Plus = () => {
   );
 };
 
-export const Defaulticon = ({
+/* eslint-disable react/prop-types */
+export const Defaulticon: React.FC<DefaulticonProps> = ({
   coin,
-  height,
-  margin,
-}: {
-  coin: any;
-  height: any;
-  margin: any;
-}) => {
-  return (
-    <img
-      id="currentPhoto"
-      src={`https://assets.coincap.io/assets/icons/${coin.toLowerCase()}@2x.png`}
-      alt=""
-      onError={handleImageError}
-      className={`${height} ${margin}`}
-    />
-  );
-};
+  height = "",
+  margin = "",
+}) => (
+  <img
+    id="currentPhoto"
+    src={`https://assets.coincap.io/assets/icons/${coin.toLowerCase()}@2x.png`}
+    alt={coin}
+    onError={handleImageError}
+    className={`${height} ${margin}`}
+  />
+);
 
-export const CustomTooltip = ({
+/* eslint-disable react/prop-types */
+export const CustomTooltip: React.FC<CustomTooltipProps> = ({
   active,
   payload,
   compHidden,
   onConverter,
   rightSym,
-}: any) => {
+  currency,
+}) => {
   const compare = useSelector((state: RootState) => state.symbol.compare);
-  const currencySymbol = useSelector(
+  const currencySymbolFromStore = useSelector(
     (state: RootState) => state.currency.currencySymbol
   );
+  const currencySymbol = currency ?? currencySymbolFromStore;
+
   if (active && payload && payload.length) {
     const valueProper = payload[0].payload.valueProper;
     const valueCompProper = payload[0].payload.valueCompProper;
@@ -223,9 +227,12 @@ export const CustomTooltip = ({
       </div>
     );
   }
+
+  return null;
 };
 
-const formatDate = (date: any) => {
+/* eslint-disable react/prop-types */
+const formatDate = (date: string) => {
   const formattedDate = new Date(date);
   const month = formattedDate.getMonth() + 1;
   const day = formattedDate.getDate();
@@ -234,13 +241,19 @@ const formatDate = (date: any) => {
   return `${month}/${day} ${hours}:${minutes}`;
 };
 
-export const CustomToolTipMini = ({ active, payload }: any) => {
+/* eslint-disable react/prop-types */
+export const CustomToolTipMini: React.FC<CustomToolTipMiniProps> = ({
+  active,
+  payload,
+}) => {
   const currencySymbol = useSelector(
     (state: RootState) => state.currency.currencySymbol
   );
+
   if (active && payload && payload.length) {
     const valueProper = payload[0].payload.valueProper;
     const name = formatDate(payload[0].payload.name);
+
     return (
       <div className="dark:text-white dark:bg-slate-900 text-xs sm:flex flex-col items-end z-99 rounded-md hidden px-4 py-2 bg-slate-300">
         <p>{name}</p>
@@ -251,10 +264,20 @@ export const CustomToolTipMini = ({ active, payload }: any) => {
       </div>
     );
   }
+  return null;
 };
 
-export const CustomizedLabel = (props: any) => {
-  const { x, width, index } = props;
+interface CustomizedLabelProps {
+  x?: number;
+  y?: number;
+  width?: number;
+  index?: number;
+  value?: any;
+}
+
+/* eslint-disable react/prop-types */
+export const CustomizedLabel: React.FC<CustomizedLabelProps> = (props) => {
+  const { x = 0, width = 0, index = 0 } = props;
   return (
     <text
       x={x + width / 2}
@@ -269,105 +292,112 @@ export const CustomizedLabel = (props: any) => {
 };
 
 export function getGraphData(
-  coinHistory: any,
+  coinHistory: CoinHistoryInterval[],
   selectedTime: string,
   graphTime: number,
   graphPeriod: number,
   max: number,
   min: number
-) {
-  const coinHist = coinHistory.map((interval: any, i: number) => {
-    if (i !== 0 && interval.HIGH > coinHistory[i - 1].HIGH) {
-      max = interval.HIGH;
-    }
-    if (i !== 0 && interval.LOW < coinHistory[i - 1].LOW) {
-      min = interval.LOW;
-    }
+): GraphResult {
+  const coinHist: GraphData[] = coinHistory.map((interval, i) => {
+    if (i !== 0 && interval.HIGH > coinHistory[i - 1].HIGH) max = interval.HIGH;
+    if (i !== 0 && interval.LOW < coinHistory[i - 1].LOW) min = interval.LOW;
+
     const value = (interval.HIGH + interval.LOW) / 2;
     const valueProper = addCommas(value);
-    if (selectedTime === "minutes 5 288") {
-      graphTime = 300000;
-      graphPeriod = 86400000;
-    } else if (selectedTime === "hours 1 168") {
-      graphTime = 3600000;
-      graphPeriod = 604800000;
-    } else if (selectedTime === "hours 1 336") {
-      graphTime = 3600000;
-      graphPeriod = 1209600000;
-    } else if (selectedTime === "hours 2 360") {
-      graphTime = 7200000;
-      graphPeriod = 2592000000;
-    } else if (selectedTime === "days 1 365") {
-      graphTime = 86400000;
-      graphPeriod = 31579200000;
-    } else if (selectedTime === "days 4 457") {
-      graphTime = 345600000;
-      graphPeriod = 157939200000;
+
+    // Adjust graph timing based on selectedTime
+    switch (selectedTime) {
+      case "minutes 5 288":
+        graphTime = 300_000;
+        graphPeriod = 86_400_000;
+        break;
+      case "hours 1 168":
+        graphTime = 3_600_000;
+        graphPeriod = 604_800_000;
+        break;
+      case "hours 1 336":
+        graphTime = 3_600_000;
+        graphPeriod = 1_209_600_000;
+        break;
+      case "hours 2 360":
+        graphTime = 7_200_000;
+        graphPeriod = 2_592_000_000;
+        break;
+      case "days 1 365":
+        graphTime = 86_400_000;
+        graphPeriod = 31_579_200_000;
+        break;
+      case "days 4 457":
+        graphTime = 345_600_000;
+        graphPeriod = 157_939_200_000;
+        break;
     }
+
     return {
       coin: interval.INSTRUMENT,
       name: new Date(Date.now() + i * graphTime - graphPeriod + graphTime)
         .toString()
         .split("G")[0],
-      value: value,
-      valueProper: valueProper,
+      value,
+      valueProper,
     };
   });
+
   return { max, min, coinHist };
 }
 
-export function getGraphComparison(pdata: any, pdataComp: any) {
-  const histCompare = pdata.coinHist.map((data: any, index: number) => {
+export function getGraphComparison(
+  pdata: GraphResult,
+  pdataComp: GraphResult
+): GraphData[] {
+  return pdata.coinHist.map((data, index) => {
     if (pdataComp.coinHist.length) {
-      let valueComp = 0;
-      let valueCompProper = 0;
-      if (pdataComp.coinHist[index]) {
-        valueComp = pdataComp.coinHist[index].value;
-        valueCompProper = pdataComp.coinHist[index].valueProper;
-      } else {
-        valueComp = 0;
-        valueCompProper = 0;
-      }
+      const comp = pdataComp.coinHist[index] ?? { value: 0, valueProper: "0" };
       return {
         ...data,
-        valueComp: valueComp,
-        valueCompProper: valueCompProper,
+        valueComp: comp.value,
+        valueCompProper: comp.valueProper,
       };
-    } else {
-      return data;
     }
+    return data;
   });
-  return histCompare;
 }
 
-export function getVolumeGraphData(coinPeriod: any, totalVolume: number) {
-  const coinHist = coinPeriod.map((hour: any, i: number) => {
-    const value = hour.QUOTE_VOLUME;
-    totalVolume = totalVolume + value;
+export function getVolumeGraphData(
+  coinPeriod: HistoricalDataPointHour[],
+  totalVolume: number
+): VolumeGraphResult {
+  const coinHist: GraphData[] = coinPeriod.map((hour, i) => {
+    const value = hour.QUOTE_VOLUME ?? 0;
+    totalVolume += value;
     const valueProper = addCommas(value);
     return {
       coin: hour.INSTRUMENT,
-      name: new Date(Date.now() + i * 3600000 - 86400000 + 3600000)
+      name: new Date(Date.now() + i * 3_600_000 - 86_400_000 + 3_600_000)
         .toString()
         .split("G")[0],
-      value: value,
-      valueProper: valueProper,
+      value,
+      valueProper,
     };
   });
+
   return { totalVolume, coinHist };
 }
 
-export function getVolumeGraphComparison(pdata: any, pdataComp: any) {
-  const histCompare = pdata.coinHist.map((data: any, index: number) => {
+export function getVolumeGraphComparison(
+  pdata: VolumeGraphResult,
+  pdataComp: VolumeGraphResult
+): GraphData[] {
+  return pdata.coinHist.map((data, index) => {
     if (pdataComp.coinHist.length) {
+      const comp = pdataComp.coinHist[index] ?? { value: 0, valueProper: "0" };
       return {
         ...data,
-        valueComp: pdataComp.coinHist[index].value,
-        valueCompProper: pdataComp.coinHist[index].valueProper,
+        valueComp: comp.value,
+        valueCompProper: comp.valueProper,
       };
-    } else {
-      return data;
     }
+    return data;
   });
-  return histCompare;
 }

@@ -1,52 +1,79 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface portfolioState {
-  portfolio: any[];
-  totalFunds: number;
+export interface PortfolioItem {
+  coinName: string;
+  coinSymbol: string;
+  coinAmount: number;
+  currencyAmount: number; // fiat value of this holding
+  date: string;
+  id: number;
 }
 
-const initialState: portfolioState = {
+interface PortfolioState {
+  portfolio: PortfolioItem[];
+  totalFunds: number; // bank money
+  totalAssetValue: number; // crypto fiat-equivalent
+}
+
+const initialState: PortfolioState = {
   portfolio: [],
   totalFunds: 20000000,
+  totalAssetValue: 0,
 };
 
 const portfolioSlice = createSlice({
   name: "portfolio",
   initialState,
   reducers: {
-    buyAsset: (state, newState) => {
-      state.portfolio = [...state.portfolio, newState.payload];
-      state.totalFunds =
-        Number(state.totalFunds) - Number(newState.payload.currencyAmount);
+    buyAsset: (state, action: PayloadAction<PortfolioItem>) => {
+      state.portfolio.push(action.payload);
+      const amt = Number(action.payload.currencyAmount) || 0;
+      state.totalFunds -= amt;
+      state.totalAssetValue += amt;
     },
-    sellAsset: (state, newState) => {
-      state.portfolio = state.portfolio.map((asset) => {
-        if (asset.id === newState.payload.id) {
-          return newState.payload;
-        } else {
-          return asset;
+
+    sellAsset: (state, action: PayloadAction<PortfolioItem>) => {
+      const idx = state.portfolio.findIndex(
+        (asset) => asset.id === action.payload.id
+      );
+      if (idx !== -1) {
+        const oldValue = Number(state.portfolio[idx].currencyAmount) || 0;
+        const newValue = Number(action.payload.currencyAmount) || 0;
+        const delta = oldValue - newValue; // fiat sold
+
+        if (delta > 0) {
+          state.totalFunds += delta; // moves to bank
+          state.totalAssetValue -= delta; // subtracts from assets
         }
-      });
-    },
-    deleteAsset: (state, newState) => {
-      state.portfolio = state.portfolio.filter((asset) => {
-        if (asset.id !== newState.payload.id) {
-          return asset;
+        if (action.payload.coinAmount <= 0) {
+          state.portfolio.splice(idx, 1); // removes if empty
         } else {
-          state.totalFunds =
-            Number(state.totalFunds) + Number(newState.payload.currencyAmount);
+          state.portfolio[idx] = action.payload; // otherwise update
         }
-      });
+      }
     },
-    addFunds: (state, newState) => {
-      state.totalFunds = Number(state.totalFunds) + Number(newState.payload);
+
+    deleteAsset: (
+      state,
+      action: PayloadAction<{ id: number; currencyAmount: number }>
+    ) => {
+      const { id, currencyAmount } = action.payload;
+      // removes the asset
+      state.portfolio = state.portfolio.filter((asset) => asset.id !== id);
+      // adds back to funds
+      state.totalFunds += Number(currencyAmount);
+      // subtracts from crypto asset value
+      state.totalAssetValue -= Number(currencyAmount);
     },
-    changeCurrency: (state, newState) => {
-      state.totalFunds =
-        state.totalFunds *
-        (newState.payload[0].currencyAmount /
-          state.portfolio[0].currencyAmount);
-      state.portfolio = newState.payload;
+    addFunds: (state, action: PayloadAction<number>) => {
+      state.totalFunds += Number(action.payload);
+    },
+    changeCurrency: (state, action: PayloadAction<PortfolioItem[]>) => {
+      state.portfolio = action.payload;
+      state.totalAssetValue = action.payload.reduce(
+        (sum, p) => sum + Number(p.currencyAmount || 0),
+        0
+      );
     },
   },
 });

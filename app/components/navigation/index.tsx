@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/store";
 import { fetchCoins } from "@/lib/coinsSlice";
@@ -10,7 +10,19 @@ import { ModeToggle } from "../themeselector";
 import { Logo } from "../svgComps";
 import { usePathname } from "next/navigation";
 
-const Navlinks = () => {
+interface NavCoin {
+  id: string;
+  name: string;
+  symbol: string;
+  quote?: Record<
+    string,
+    {
+      price: number;
+    } & Record<string, number>
+  >;
+}
+
+const Navlinks: React.FC = () => {
   const pathname = usePathname();
   return (
     <div className="flex justify-between items-center lg:px-36 md:px-14 pl-5 pr-4 bg-white py-3 dark:bg-slate-800">
@@ -82,8 +94,8 @@ const Navlinks = () => {
   );
 };
 
-const Navsearch = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const Navsearch: React.FC = () => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const searchTerm = useSelector((state: RootState) => state.search.searchTerm);
   const currency = useSelector(
@@ -96,7 +108,7 @@ const Navsearch = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { data, loading } = useSelector((state: RootState) => state.coins);
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     dispatch(changeSearch(e.target.value));
   };
 
@@ -136,7 +148,7 @@ const Navsearch = () => {
         }
       >
         {data
-          .filter((coin) =>
+          .filter((coin: NavCoin) =>
             coin.name.toLowerCase().includes(searchTerm.toLowerCase())
           )
           .map((coin) => {

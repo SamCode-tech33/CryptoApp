@@ -13,17 +13,18 @@ import { Filtericon, Uparrow } from "../svgComps";
 import { Coinbar } from "../coinBarSlide";
 import { Coinfilter } from "../Coinfilter";
 import { Skeleton } from "../Skeleton";
+import { Coin, QueryObject } from "@/app/zenCoinTypes";
 
 export default function Navcoin() {
-  const [query, setQuery] = useState<any>({});
-  const [dataMap, setDataMap] = useState<any>([]);
+  const [query, setQuery] = useState<QueryObject>({});
+  const [dataMap, setDataMap] = useState<Coin[]>([]);
   const [start, setStart] = useState<number>(1);
-  const [dataSet, setDataSet] = useState<any>([]);
-  const [loading, setLoading] = useState<any>(false);
-  const [error, setError] = useState<any>(false);
-  const [percentSelected, setPercentSelected] = useState("1h%");
-  const [percentOpen, setPercentOpen] = useState(false);
-  const [filterFocus, setFilterFocus] = useState(false);
+  const [dataSet, setDataSet] = useState<Coin[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [percentSelected, setPercentSelected] = useState<string>("1h%");
+  const [percentOpen, setPercentOpen] = useState<boolean>(false);
+  const [filterFocus, setFilterFocus] = useState<boolean>(false);
 
   const currency = useSelector(
     (state: RootState) => state.currency.currencyType
@@ -35,13 +36,13 @@ export default function Navcoin() {
   const getCoins = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(
+      const { data } = await axios.get<{ data: Coin[] }>(
         `/api/coins?start=${start}&convert=${currency}`
       );
       if (start === 1) {
         setDataSet(data.data);
       } else {
-        setDataSet((prevDataSet: any) => [...prevDataSet, ...data.data]);
+        setDataSet((prevDataSet) => [...prevDataSet, ...data.data]);
       }
       setLoading(false);
       //eslint-disable-next-line
@@ -73,15 +74,15 @@ export default function Navcoin() {
 
   const retainQuery = () => {
     if (query.q && dataMap.length) {
-      setDataMap((prevDataMap: any) =>
-        prevDataMap.filter((coin: any) =>
-          coin.name.toLowerCase().includes(query.q.toLowerCase())
+      setDataMap((prevDataMap) =>
+        prevDataMap.filter((coin) =>
+          coin.name.toLowerCase().includes(query.q!.toLowerCase())
         )
       );
     }
     if (query.price && dataMap.length) {
-      setDataMap((prevDataMap: any) =>
-        prevDataMap.filter((coin: any) => {
+      setDataMap((prevDataMap) =>
+        prevDataMap.filter((coin) => {
           let coinQuote;
           if (coin.quote?.[currency]) {
             coinQuote = coin.quote?.[currency];
@@ -89,15 +90,15 @@ export default function Navcoin() {
             coinQuote = coin.quote.USD;
           }
           return (
-            coinQuote.price > parseFloat(query.price.split("_")[0]) &&
-            coinQuote.price < parseFloat(query.price.split("_")[1])
+            coinQuote.price > parseFloat(query.price!.split("_")[0]) &&
+            coinQuote.price < parseFloat(query.price!.split("_")[1])
           );
         })
       );
     }
     if (query.hour1 && dataMap.length) {
-      setDataMap((prevDataMap: any) =>
-        prevDataMap.filter((coin: any) => {
+      setDataMap((prevDataMap) =>
+        prevDataMap.filter((coin) => {
           let coinQuote;
           if (coin.quote?.[currency]) {
             coinQuote = coin.quote?.[currency];
@@ -106,15 +107,15 @@ export default function Navcoin() {
           }
           return (
             coinQuote.percent_change_1h >
-              parseFloat(query.hour1.split("_")[0]) &&
-            coinQuote.percent_change_1h < parseFloat(query.hour1.split("_")[1])
+              parseFloat(query.hour1!.split("_")[0]) &&
+            coinQuote.percent_change_1h < parseFloat(query.hour1!.split("_")[1])
           );
         })
       );
     }
     if (query.hour24 && dataMap.length) {
-      setDataMap((prevDataMap: any) =>
-        prevDataMap.filter((coin: any) => {
+      setDataMap((prevDataMap) =>
+        prevDataMap.filter((coin) => {
           let coinQuote;
           if (coin.quote?.[currency]) {
             coinQuote = coin.quote?.[currency];
@@ -123,16 +124,16 @@ export default function Navcoin() {
           }
           return (
             coinQuote.percent_change_24h >
-              parseFloat(query.hour24.split("_")[0]) &&
+              parseFloat(query.hour24!.split("_")[0]) &&
             coinQuote.percent_change_24h <
-              parseFloat(query.hour24.split("_")[1])
+              parseFloat(query.hour24!.split("_")[1])
           );
         })
       );
     }
     if (query.day7 && dataMap.length) {
-      setDataMap((prevDataMap: any) =>
-        prevDataMap.filter((coin: any) => {
+      setDataMap((prevDataMap) =>
+        prevDataMap.filter((coin) => {
           let coinQuote;
           if (coin.quote?.[currency]) {
             coinQuote = coin.quote?.[currency];
@@ -141,8 +142,8 @@ export default function Navcoin() {
           }
           return (
             coinQuote.percent_change_7d >
-              parseFloat(query.day7.split("_")[0]) &&
-            coinQuote.percent_change_7d < parseFloat(query.day7.split("_")[1])
+              parseFloat(query.day7!.split("_")[0]) &&
+            coinQuote.percent_change_7d < parseFloat(query.day7!.split("_")[1])
           );
         })
       );
@@ -153,9 +154,12 @@ export default function Navcoin() {
     setStart((prevStart) => prevStart + 100);
   };
 
-  const handlePercentSelect = (e: any) => {
+  const handlePercentSelect = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    const target = e.target as HTMLDivElement;
     setPercentOpen(false);
-    setPercentSelected(e.target.innerText);
+    setPercentSelected(target.innerText);
   };
 
   useEffect(() => {

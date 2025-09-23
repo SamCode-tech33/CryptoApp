@@ -1,10 +1,21 @@
+import { ChangeEvent } from "react";
+interface RangefilterProps {
+  name: string;
+  lowerValue: string;
+  upperValue: string;
+  // eslint-disable-next-line
+  handleLowerValue: (e: ChangeEvent<HTMLInputElement>) => void;
+  // eslint-disable-next-line
+  handleUpperValue: (e: ChangeEvent<HTMLInputElement>) => void;
+}
+
 export const Rangefilter = ({
   name,
   handleLowerValue,
   lowerValue,
   handleUpperValue,
   upperValue,
-}: any) => {
+}: RangefilterProps) => {
   return (
     <div className="p-2 rounded-sm flex justify-center flex-col ml-4">
       <div className="flex items-center mb-4">

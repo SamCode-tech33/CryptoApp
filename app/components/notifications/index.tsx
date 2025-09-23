@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
+interface NotificationProps {
+  noti?: boolean;
+  error: boolean;
+  message: string;
+}
 
-export const Notification = ({ noti, message, error }: any) => {
+export const Notification = ({ noti, message, error }: NotificationProps) => {
   const [inOut, setInOut] = useState(false);
 
   useEffect(() => {

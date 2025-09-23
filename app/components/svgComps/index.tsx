@@ -78,7 +78,12 @@ export const Compexit = () => {
   );
 };
 
-export const Uparrow = ({ isOpen }: any) => {
+interface UparrowProps {
+  isOpen: boolean;
+}
+
+/* eslint-disable react/prop-types */
+export const Uparrow: React.FC<UparrowProps> = ({ isOpen }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -199,7 +204,21 @@ export const Bankicon = () => {
   );
 };
 
-export const Copy = ({ site, handleCopy, copy, siteName }: any) => {
+interface CopyProps {
+  site: string;
+  // eslint-disable-next-line
+  handleCopy: (id: string) => void;
+  copy: string;
+  siteName: string;
+}
+
+/* eslint-disable react/prop-types */
+export const Copy: React.FC<CopyProps> = ({
+  site,
+  handleCopy,
+  copy,
+  siteName,
+}) => {
   return (
     <div className="flex items-center">
       <Link

@@ -1,6 +1,12 @@
 import { addCommas } from "../Utility";
+import { CoinbarProps } from "@/app/zenCoinTypes";
 
-export const Coinbar = ({ currencySymbol, value1, value2, first }: any) => {
+export const Coinbar = ({
+  currencySymbol,
+  value1,
+  value2,
+  first,
+}: CoinbarProps) => {
   return (
     <div className="w-volume xl:flex justify-left flex-col hidden ml-3 2xl:text-sm text-xs">
       {first === true ? (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, ChangeEvent } from "react";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/store";
@@ -12,6 +12,7 @@ import { changeGraph } from "@/lib/symbolSlice";
 import { changeTimePeriod } from "@/lib/timeSlice";
 import { Skeleton } from "../components/Skeleton";
 import { Notification } from "../components/notifications";
+import { HistoricalDataPoint } from "../zenCoinTypes";
 
 export default function Convertor() {
   const dispatch = useDispatch<AppDispatch>();
@@ -28,27 +29,29 @@ export default function Convertor() {
     (state: RootState) => state.currency.currencySymbol
   );
 
-  const [menuTriggerLeft, setMenuTriggerLeft] = useState("Bitcoin (BTC)");
-  const [menuIconLeft, setMenuIconLeft] = useState("BTC");
-  const [menuTriggerRight, setMenuTriggerRight] = useState("Ethereum (ETH)");
-  const [menuIconRight, setMenuIconRight] = useState("ETH");
+  const [menuTriggerLeft, setMenuTriggerLeft] =
+    useState<string>("Bitcoin (BTC)");
+  const [menuIconLeft, setMenuIconLeft] = useState<string>("BTC");
+  const [menuTriggerRight, setMenuTriggerRight] =
+    useState<string>("Ethereum (ETH)");
+  const [menuIconRight, setMenuIconRight] = useState<string>("ETH");
   const [selectedPriceLeft, setSelectedPriceLeft] = useState<string>("");
   const [selectedPriceRight, setSelectedPriceRight] = useState<string>("");
-  const [convertedNum, setConvertedNum] = useState("0.000");
-  const [today, setToday] = useState("");
+  const [convertedNum, setConvertedNum] = useState<string>("0.000");
+  const [today, setToday] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("minutes 5 288");
-  const [load, setLoad] = useState(false);
-  const [rendered, setRendered] = useState(false);
-  const [err, setErr] = useState(false);
-  const [coinHistory, setCoinHistory] = useState<any>([]);
+  const [load, setLoad] = useState<boolean>(false);
+  const [rendered, setRendered] = useState<boolean>(false);
+  const [err, setErr] = useState<boolean>(false);
+  const [coinHistory, setCoinHistory] = useState<HistoricalDataPoint[]>([]);
   const [conversionValue, setConversionValue] = useState("");
   const [isOpenLeft, setIsOpenLeft] = useState<boolean>(false);
   const [isOpenRight, setIsOpenRight] = useState<boolean>(false);
-  const [searchTermLeft, setSearchTermLeft] = useState("");
-  const [searchTermRight, setSearchTermRight] = useState("");
-  const [errNoti, setErrNoti] = useState(false);
-  const [notiMessage, setNotiMessage] = useState("");
-  const [convertAmount, setConvertAmount] = useState("");
+  const [searchTermLeft, setSearchTermLeft] = useState<string>("");
+  const [searchTermRight, setSearchTermRight] = useState<string>("");
+  const [errNoti, setErrNoti] = useState<boolean>(false);
+  const [notiMessage, setNotiMessage] = useState<string>("");
+  const [convertAmount, setConvertAmount] = useState<string>("");
 
   const getCoinsHistory = async (symbol: string) => {
     setLoad(true);
@@ -100,15 +103,12 @@ export default function Convertor() {
     }
   };
 
-  const changePriceLeft = (coinPrice: any) => {
+  const changePriceLeft = (coinPrice: string) =>
     setSelectedPriceLeft(coinPrice);
-  };
-
-  const changePriceRight = (coinPrice: any) => {
+  const changePriceRight = (coinPrice: string) =>
     setSelectedPriceRight(coinPrice);
-  };
 
-  const handleCalculate = (e: any) => {
+  const handleCalculate = (e: ChangeEvent<HTMLInputElement>) => {
     setConversionValue(e.target.value);
     setConvertAmount(e.target.value);
     const converted = (
@@ -122,13 +122,13 @@ export default function Convertor() {
     dispatch(changeGraph(symbol));
   };
 
-  const handleTime = (e: any) => {
-    const [time, aggre, limit] = e.target.id.split(" ");
-    setSelectedTime(e.target.id);
+  const handleTime = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const [time, aggre, limit] = e.currentTarget.id.split(" ");
+    setSelectedTime(e.currentTarget.id);
     const newPeriod = {
-      time: time,
-      aggre: aggre,
-      limit: limit,
+      time,
+      aggre,
+      limit,
     };
     dispatch(changeTimePeriod(newPeriod));
   };
