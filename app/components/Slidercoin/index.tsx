@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, MouseEvent as ReactMouseEvent } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -15,6 +15,19 @@ import { fetchCoins } from "@/lib/coinsSlice";
 import { RootState, AppDispatch } from "@/lib/store";
 import { changeGraph } from "@/lib/symbolSlice";
 import { Skeleton } from "../Skeleton";
+
+interface CoinSliderQuote {
+  price: number;
+  percent_change_1h: number;
+  [key: string]: any;
+}
+
+interface SliderCoin {
+  id: string;
+  name: string;
+  symbol: string;
+  quote?: Record<string, CoinSliderQuote>;
+}
 
 export default function Slidercoin() {
   const dispatch = useDispatch<AppDispatch>();
@@ -32,7 +45,7 @@ export default function Slidercoin() {
     (state: RootState) => state.currency.currencySymbol
   );
 
-  const handleClick = (e: any) => {
+  const handleClick = (e: ReactMouseEvent<HTMLDivElement>) => {
     dispatch(changeGraph(e.currentTarget.id));
   };
 
@@ -58,7 +71,7 @@ export default function Slidercoin() {
             .filter((coin) =>
               coin.name.toLowerCase().includes(searchTerm.toLowerCase())
             )
-            .map((coin: any) => {
+            .map((coin: SliderCoin) => {
               if (!coin.quote?.[currency]) {
                 return null;
               }
@@ -112,7 +125,10 @@ export default function Slidercoin() {
                                 : "text-red-600 text-sm sm:text-base"
                             }
                           >
-                            {Math.abs(coinQuote.percent_change_1h.toFixed(2))}%
+                            {Math.abs(
+                              Number(coinQuote.percent_change_1h.toFixed(2))
+                            )}
+                            %
                           </span>
                         </div>
                       </div>

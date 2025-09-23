@@ -15,6 +15,7 @@ import {
 } from "../Utility";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
+import { BarGraphProps } from "@/app/zenCoinTypes";
 
 const Bargraph = ({
   coinHistoryHour,
@@ -22,7 +23,7 @@ const Bargraph = ({
   coinName,
   compare,
   coinCompName,
-}: any) => {
+}: BarGraphProps) => {
   const pdata = getVolumeGraphData(coinHistoryHour, 0);
   const pdataComp = getVolumeGraphData(coinCompareHour, 0);
   const pdataCombination = getVolumeGraphComparison(pdata, pdataComp);

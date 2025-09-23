@@ -12,15 +12,14 @@ import { addCommas, CustomToolTipMini } from "../Utility";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
 import { Skeleton } from "../Skeleton";
+import {
+  CoinHistoryInterval,
+  SevendaygraphProps,
+  PData,
+} from "@/app/zenCoinTypes";
 
-export const Sevendaygraph = ({
-  symbol,
-  sevenDay,
-}: {
-  symbol: string;
-  sevenDay: string;
-}) => {
-  const [coinHistory, setCoinHistory] = useState<any>([]);
+export const Sevendaygraph = ({ symbol, sevenDay }: SevendaygraphProps) => {
+  const [coinHistory, setCoinHistory] = useState<CoinHistoryInterval[]>([]);
   const [err, setErr] = useState<boolean>(false);
   const [load, setLoad] = useState<boolean>(false);
 
@@ -45,7 +44,7 @@ export const Sevendaygraph = ({
 
   let max = 0;
   let min = 0;
-  const pdata = coinHistory.map((interval: any, i: number) => {
+  const pdata: PData[] = coinHistory.map((interval, i) => {
     if (i !== 0 && interval.HIGH > coinHistory[i - 1].HIGH) {
       max = interval.HIGH;
     }

@@ -15,7 +15,7 @@ export function Currency() {
     (state: RootState) => state.currency.currencyType
   );
 
-  const newCurrency = (id: any) => {
+  const newCurrency = (id: string) => {
     dispatch(changeCurrency(id.split(" ")[1]));
     dispatch(changeCurrencySymbol(id.split(" ")[0]));
   };

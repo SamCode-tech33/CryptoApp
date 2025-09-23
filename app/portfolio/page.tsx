@@ -27,13 +27,14 @@ import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import { Notification } from "../components/notifications";
 import { Skeleton } from "../components/Skeleton";
+import { PortfolioItem } from "../zenCoinTypes";
 
 export default function Portfolio() {
   const dispatch = useDispatch<AppDispatch>();
   const { data, loading } = useSelector((state: RootState) => state.coins);
   const portfolio = useSelector(
     (state: RootState) => state.portfolio.portfolio
-  );
+  ) as PortfolioItem[];
   const totalFunds = useSelector(
     (state: RootState) => state.portfolio.totalFunds
   );
@@ -44,40 +45,43 @@ export default function Portfolio() {
     (state: RootState) => state.currency.currencySymbol
   );
 
-  const [isAddingAsset, setIsAddingAsset] = useState(false);
-  const [isCoinSelect, setIsCoinSelect] = useState(false);
-  const [isPurchaseSelect, setIsPurchaseSelect] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [coinName, setCoinName] = useState("Bitcoin");
-  const [coinSymbol, setCoinSymbol] = useState("BTC");
-  const [purchaseAmount, setPurchaseAmount] = useState("");
-  const [coinPrice, setCoinPrice] = useState(0);
-  const [buyWith, setBuyWith] = useState(currency);
-  const [isBuyWithSelect, setIsBuyWithSelect] = useState(false);
-  const [purchaseHeader, setPurchaseHeader] = useState("Purchase Amount:");
-  const [startDate, setStartDate] = useState(new Date());
-  const [dateUnix, setDateUnix] = useState(Date.now());
-  const [purchaseAmountChosen, setPurchaseAmountChosen] = useState(false);
-  const [assetHeader, setAssetHeader] = useState("");
-  const [noPurchase, setNoPurchase] = useState(false);
-  const [purchaseNotNumber, setPurchaseNotNumber] = useState(false);
-  const [addFundsAmount, setAddFundsAmount] = useState("");
-  const [isSelling, setIsSelling] = useState(false);
-  const [sellAmount, setSellAmount] = useState("");
-  const [isSellWithSelect, setIsSellWithSelect] = useState(false);
-  const [sellWith, setSellWith] = useState(currency);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [errNoti, setErrNoti] = useState(false);
-  const [noti, setNoti] = useState(false);
-  const [notiMessage, setNotiMessage] = useState("");
-  const [totalAssetValue, setTotalAssetValue] = useState(0);
+  const [isAddingAsset, setIsAddingAsset] = useState<boolean>(false);
+  const [isCoinSelect, setIsCoinSelect] = useState<boolean>(false);
+  const [isPurchaseSelect, setIsPurchaseSelect] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [coinName, setCoinName] = useState<string>("Bitcoin");
+  const [coinSymbol, setCoinSymbol] = useState<string>("BTC");
+  const [purchaseAmount, setPurchaseAmount] = useState<string>("");
+  const [coinPrice, setCoinPrice] = useState<number>(0);
+  const [buyWith, setBuyWith] = useState<string>(currency);
+  const [isBuyWithSelect, setIsBuyWithSelect] = useState<boolean>(false);
+  const [purchaseHeader, setPurchaseHeader] =
+    useState<string>("Purchase Amount:");
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [dateUnix, setDateUnix] = useState<number>(Date.now());
+  const [purchaseAmountChosen, setPurchaseAmountChosen] =
+    useState<boolean>(false);
+  const [assetHeader, setAssetHeader] = useState<string>("");
+  const [noPurchase, setNoPurchase] = useState<boolean>(false);
+  const [purchaseNotNumber, setPurchaseNotNumber] = useState<boolean>(false);
+  const [addFundsAmount, setAddFundsAmount] = useState<string>("");
+  const [isSelling, setIsSelling] = useState<boolean>(false);
+  const [sellAmount, setSellAmount] = useState<string>("");
+  const [isSellWithSelect, setIsSellWithSelect] = useState<boolean>(false);
+  const [sellWith, setSellWith] = useState<string>(currency);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [errNoti, setErrNoti] = useState<boolean>(false);
+  const [noti, setNoti] = useState<boolean>(false);
+  const [notiMessage, setNotiMessage] = useState<string>("");
+  const [totalAssetValue, setTotalAssetValue] = useState<number>(0);
 
   const getCoinPriceOnDate = async () => {
     try {
       const { data } = await axios.get(
         `/api/specificDay?fsym=${coinSymbol}&tsym=${currency}&limit=${1}&toTs=${dateUnix}`
       );
-      const dayPrice = (data.Data.Data[1].low + data.Data.Data[1].high) / 2;
+      const dayPrice: number =
+        (data.Data.Data[1].low + data.Data.Data[1].high) / 2;
       setCoinPrice(dayPrice);
       //eslint-disable-next-line
     } catch (error) {}
@@ -151,9 +155,9 @@ export default function Portfolio() {
   };
 
   const handlePortfolio = (
-    coinSymbol: any,
-    assetHeader: any,
-    dateUnix: any
+    coinSymbol: string,
+    assetHeader: string,
+    dateUnix: number
   ) => {
     if (
       assetHeader !== "" &&
@@ -192,7 +196,7 @@ export default function Portfolio() {
 
   const handleAddFunds = () => {
     if (Number(addFundsAmount)) {
-      dispatch(addFunds(addFundsAmount));
+      dispatch(addFunds(Number(addFundsAmount)));
       setAddFundsAmount("");
       setNoti(true);
       setNotiMessage(`Added ${currencySymbol}${addFundsAmount} to Account.`);
@@ -206,34 +210,34 @@ export default function Portfolio() {
   };
 
   const handleSale = (
-    soldAmount: any,
-    currentValueAmount: any,
-    adjustedSaleAmount: any,
-    soldCoinAmount: any,
-    currencyAmount: any,
-    coinSymbol: any,
-    coinName: any,
-    date: any,
-    coinAmount: any,
-    id: any
+    soldAmount: string | number,
+    currentValueAmount: number,
+    adjustedSaleAmount: number,
+    soldCoinAmount: string | number,
+    currencyAmount: number,
+    coinSymbol: string,
+    coinName: string,
+    date: string,
+    coinAmount: number,
+    id: number
   ) => {
-    if (Number(sellAmount) && soldAmount < currentValueAmount) {
+    if (Number(sellAmount) && Number(soldAmount) < currentValueAmount) {
       const alteredPortfolioItem = {
         coinName: coinName,
         coinSymbol: coinSymbol,
-        coinAmount: coinAmount - soldCoinAmount,
+        coinAmount: coinAmount - Number(soldCoinAmount),
         currencyAmount: currencyAmount - adjustedSaleAmount,
         date: date,
         id: id,
       };
       dispatch(sellAsset(alteredPortfolioItem));
-      dispatch(addFunds(soldAmount));
+      dispatch(addFunds(Number(soldAmount)));
       setIsSelling(false);
       setNoti(true);
       setNotiMessage("Sale Completed");
       setTimeout(() => setNotiMessage(""), 2000);
       setTimeout(() => setNoti(false), 2000);
-    } else if (soldAmount > currentValueAmount) {
+    } else if (Number(soldAmount) > currentValueAmount) {
       setErrNoti(true);
       setNotiMessage("Cannot Complete Sale - Selling More Than Owned");
       setTimeout(() => setNotiMessage(""), 2000);
@@ -246,12 +250,8 @@ export default function Portfolio() {
     }
   };
 
-  const handleDelete = (currencyAmount: any, id: any) => {
-    const deleteInfo = {
-      currencyAmount: currencyAmount,
-      id: id,
-    };
-    dispatch(deleteAsset(deleteInfo));
+  const handleDelete = (currencyAmount: number, id: number) => {
+    dispatch(deleteAsset({ id, currencyAmount }));
     setIsDeleting(false);
     setNoti(true);
     setNotiMessage("Total Sale of Asset Completed");
@@ -279,17 +279,24 @@ export default function Portfolio() {
     if (data.length && portfolio.length) {
       const portfolioAssetArray = portfolio.map((asset) => asset.coinAmount);
       const portfolioSymbolArray = portfolio.map((asset) => asset.coinSymbol);
+
       const currentValueArray = data
         .filter((coin) => portfolioSymbolArray.includes(coin.symbol))
         .map((asset) => asset.quote[currency].price);
+
       const currentValueTimesAmount = currentValueArray.map(
         (coin, i) => coin * portfolioAssetArray[i]
       );
+
       const totalAssets = currentValueTimesAmount.reduce(
         (acc, current) => acc + current,
         0
       );
+
       setTotalAssetValue(totalAssets);
+    } else {
+      // if portfolio is empty, force reset to 0
+      setTotalAssetValue(0);
     }
   }, [data, portfolio]);
 
@@ -581,17 +588,19 @@ export default function Portfolio() {
               <div className="relative">
                 <DatePicker
                   selected={startDate}
-                  onChange={(date: any) => setStartDate(date)}
+                  onChange={(date: Date | null) => date && setStartDate(date)}
                   maxDate={new Date()}
                   className="date-cal dark:bg-slate-600"
-                  onSelect={(date: any) => {
-                    setDateUnix(
-                      Math.floor(
-                        new Date(
-                          new Date(date).setUTCHours(23, 59, 59, 999)
-                        ).getTime() / 1000
-                      )
-                    );
+                  onSelect={(date: Date | null) => {
+                    if (date) {
+                      setDateUnix(
+                        Math.floor(
+                          new Date(
+                            new Date(date).setUTCHours(23, 59, 59, 999)
+                          ).getTime() / 1000
+                        )
+                      );
+                    }
                   }}
                 />
               </div>
@@ -664,7 +673,7 @@ export default function Portfolio() {
             <div className="w-add flex justify-between lg:text-base text-xs mx-1 items-center">
               <div className="flex items-center ml-0.5">
                 <div className="2xl:text-base xl:text-sm text-xs">
-                  Crypto Purchases require, sufficient funding:
+                  Crypto Purchases require sufficient funding:
                 </div>
                 <div className="ml-4">
                   <form
@@ -1083,7 +1092,7 @@ export default function Portfolio() {
                             <div className="flex items-center">
                               <span>
                                 {currencySymbol}
-                                {addCommas(asset.currencyAmount)}
+                                {addCommas(Number(coinQuote.price))}
                               </span>
                             </div>
                           </div>
@@ -1091,17 +1100,9 @@ export default function Portfolio() {
                         <div className="flex w-full xl:flex-row flex-col mr-4">
                           <div className="flex flex-col items-center dark:bg-slate-700 bg-violet-200 p-2 rounded-md w-full h-full mr-4 mb-4">
                             <span className="md:text-sm text-xs opacity-50 md:opacity-100 mb-2 md:underline">
-                              Current Fiat Value
+                              Current Holdings (Fiat)
                             </span>
-                            <span
-                              className={
-                                Number(coinQuote.price) *
-                                  Number(asset.coinAmount) >
-                                Number(asset.currencyAmount)
-                                  ? "text-green-500"
-                                  : "text-red-500"
-                              }
-                            >
+                            <span>
                               {currencySymbol}
                               {addCommas(coinQuote.price * asset.coinAmount)}
                             </span>
@@ -1115,57 +1116,20 @@ export default function Portfolio() {
                                 <Updownarrow
                                   coin={
                                     Number(coinQuote.price) *
-                                      Number(asset.coinAmount) -
-                                    Number(asset.currencyAmount)
+                                    Number(asset.coinAmount)
                                   }
                                 />
                                 <span
                                   className={
                                     Number(coinQuote.price) *
-                                      Number(asset.coinAmount) >
-                                    Number(asset.currencyAmount)
-                                      ? "text-green-500 sm:mr-3"
-                                      : "text-red-500 sm:mr-3"
-                                  }
-                                >
-                                  {" "}
-                                  {currencySymbol}
-                                  {addCommas(
-                                    Math.abs(
-                                      Number(coinQuote.price) *
-                                        Number(asset.coinAmount) -
-                                        Number(asset.currencyAmount)
-                                    )
-                                  )}
-                                </span>
-                              </div>
-                              <div className="flex items-center">
-                                <Updownarrow
-                                  coin={
+                                      Number(asset.coinAmount) >=
                                     Number(coinQuote.price) *
-                                      Number(asset.coinAmount) -
-                                    Number(asset.currencyAmount)
-                                  }
-                                />
-                                <span
-                                  className={
-                                    Number(coinQuote.price) *
-                                      Number(asset.coinAmount) >
-                                    Number(asset.currencyAmount)
+                                      Number(asset.coinAmount)
                                       ? "text-green-500"
                                       : "text-red-500"
                                   }
                                 >
-                                  {(
-                                    (Math.abs(
-                                      Number(coinQuote.price) *
-                                        Number(asset.coinAmount) -
-                                        Number(asset.currencyAmount)
-                                    ) /
-                                      Number(asset.currencyAmount)) *
-                                    100
-                                  ).toFixed(3)}
-                                  %
+                                  {0}%
                                 </span>
                               </div>
                             </div>

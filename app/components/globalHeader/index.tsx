@@ -5,9 +5,10 @@ import { useState, useEffect } from "react";
 import { addCommas, Updownarrow, Defaulticon } from "../Utility";
 import { Skeleton } from "../Skeleton";
 import axios from "axios";
+import { GlobalData } from "@/app/zenCoinTypes";
 
 export const Globalheader = () => {
-  const [globalData, setGlobalData] = useState<any>({});
+  const [globalData, setGlobalData] = useState<GlobalData>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
@@ -101,17 +102,16 @@ export const Globalheader = () => {
                 className="bg-white h-2 rounded-md"
                 style={{
                   width:
-                    Number(
-                      globalData.total_volume?.usd /
-                        globalData.total_market_cap?.usd
-                    ) *
+                    ((globalData.total_volume?.usd ?? 0) /
+                      (globalData.total_market_cap?.usd ?? 1)) *
                       64 <
                     7.5
                       ? "8px"
-                      : `${Number(
-                          globalData.total_volume?.usd /
-                            globalData.total_market_cap?.usd
-                        )}%`,
+                      : `${
+                          ((globalData.total_volume?.usd ?? 0) /
+                            (globalData.total_market_cap?.usd ?? 1)) *
+                          100
+                        }%`,
                 }}
               ></div>
             </div>

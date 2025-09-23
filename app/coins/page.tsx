@@ -10,16 +10,26 @@ import { setCompare } from "@/lib/symbolSlice";
 import { changeTimePeriod } from "@/lib/timeSlice";
 import { Comparegraph, Compexit } from "../components/svgComps";
 import { Skeleton } from "../components/Skeleton";
+import {
+  HistoricalDataPoint,
+  TimeSelection,
+  HistoricalApiResponse,
+} from "@/app/zenCoinTypes";
 const Linegraph = React.lazy(() => import("../components/Linegraph"));
 const Bargraph = React.lazy(() => import("../components/Bargraph"));
 const Slidercoin = React.lazy(() => import("../components/Slidercoin"));
 
 export default function Coins() {
-  const [coinHistory, setCoinHistory] = useState<any>([]);
-  const [coinHistoryHour, setCoinHistoryHour] = useState<any>([]);
-  const [coinCompare, setCoinCompare] = useState<any>([]);
-  const [coinCompareHour, setCoinCompareHour] = useState<any>([]);
-  const [selectedTime, setSelectedTime] = useState<string>("minutes 5 288");
+  const [coinHistory, setCoinHistory] = useState<HistoricalDataPoint[]>([]);
+  const [coinHistoryHour, setCoinHistoryHour] = useState<HistoricalDataPoint[]>(
+    []
+  );
+  const [coinCompare, setCoinCompare] = useState<HistoricalDataPoint[]>([]);
+  const [coinCompareHour, setCoinCompareHour] = useState<HistoricalDataPoint[]>(
+    []
+  );
+  const [selectedTime, setSelectedTime] =
+    useState<TimeSelection>("minutes 5 288");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
 
@@ -50,7 +60,7 @@ export default function Coins() {
     setLoading(true);
     try {
       if (symbol.length) {
-        const { data } = await axios.get(
+        const { data } = await axios.get<HistoricalApiResponse>(
           `/api/historical?instrument=${symbol}-${currency}&timeperiod=${time}&aggre=${aggre}&limit=${limit}`
         );
         setCoinHistory(data.Data);
@@ -81,9 +91,10 @@ export default function Coins() {
     setLoading(false);
   };
 
-  const handleTime = (e: any) => {
-    const [time, aggre, limit] = e.target.id.split(" ");
-    setSelectedTime(e.target.id);
+  const handleTime = (e: React.MouseEvent) => {
+    const target = e.target as HTMLButtonElement;
+    const [time, aggre, limit] = target.id.split(" ");
+    setSelectedTime(target.id as TimeSelection);
     const newPeriod = {
       time: time,
       aggre: aggre,

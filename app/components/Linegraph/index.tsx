@@ -7,6 +7,7 @@ import {
   AreaChart,
 } from "recharts";
 import { CustomTooltip, getGraphComparison, getGraphData } from "../Utility";
+import { LineGraphProps } from "../../zenCoinTypes";
 
 const Linegraph = ({
   coinHistory,
@@ -22,15 +23,19 @@ const Linegraph = ({
   rightSym,
   coinCompName,
   coinName,
-}: any) => {
-
+}: LineGraphProps) => {
   if (coinHistory.length !== limit) {
     const timeInsufficientArray = coinHistory;
     for (let i = limit - coinHistory.length; i > 0; i--) {
       timeInsufficientArray.unshift({
+        time: Date.now() / 1000, // or 0
         HIGH: 0,
-        INSTRUMENT: `${symbol}-${currency}`,
         LOW: 0,
+        OPEN: 0,
+        CLOSE: 0,
+        volumefrom: 0,
+        volumeto: 0,
+        INSTRUMENT: `${symbol}-${currency}`,
       });
     }
   }
@@ -39,9 +44,14 @@ const Linegraph = ({
     const timeInsufficientArray = coinCompare;
     for (let i = limit - coinCompare.length; i > 0; i--) {
       timeInsufficientArray.unshift({
+        time: Date.now() / 1000, // or 0
         HIGH: 0,
-        INSTRUMENT: `${compare}-${currency}`,
         LOW: 0,
+        OPEN: 0,
+        CLOSE: 0,
+        volumefrom: 0,
+        volumeto: 0,
+        INSTRUMENT: `${symbol}-${currency}`,
       });
     }
   }
@@ -50,9 +60,7 @@ const Linegraph = ({
   const pdataComp = getGraphData(coinCompare, selectedTime, 0, 0, 0, 0);
   const pdataCombination = getGraphComparison(pdata, pdataComp);
   return (
-    <div
-      className="h-full w-full dark:bg-slate-800 rounded-md flex justify-end flex-col bg-white relative mb-4 xl:mr-2 xl:mb-0 px-1"
-    >
+    <div className="h-full w-full dark:bg-slate-800 rounded-md flex justify-end flex-col bg-white relative mb-4 xl:mr-2 xl:mb-0 px-1">
       {" "}
       <div className="flex w-full justify-between h-full mt-1">
         {compare.length ? (
